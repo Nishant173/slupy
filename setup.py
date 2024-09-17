@@ -3,12 +3,12 @@ from setuptools import find_packages, setup
 
 # Constants
 PACKAGE_NAME = "slupy"
-PACKAGE_VERSION = "0.0.1"
+PACKAGE_VERSION = "0.0.2"
 AUTHOR_NAME = "Nishant Rao"
 AUTHOR_EMAIL_ID = "nishant.rao173@gmail.com"
 FILEPATH_TO_README = os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.md")
 FILEPATH_TO_REQUIREMENTS = os.path.join(os.path.abspath(os.path.dirname(__file__)), "requirements.txt")
-REPOSITORY_URL = "https://github.com/Nishant173/slu"
+REPOSITORY_URL = "https://github.com/Nishant173/slupy"
 
 # Requirements
 install_requires = []
