@@ -1,7 +1,7 @@
 from datetime import date, datetime, timezone
 import unittest
 
-from slu.dates.time_travel import TimeTravel
+from slupy.dates.time_travel import TimeTravel
 
 
 class TestTimeTravel(unittest.TestCase):

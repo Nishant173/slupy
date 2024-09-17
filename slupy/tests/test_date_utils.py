@@ -1,7 +1,7 @@
 from datetime import date, datetime, timezone
 import unittest
 
-from slu.dates import functions, utils
+from slupy.dates import functions, utils
 
 
 class TestDateUtils(unittest.TestCase):

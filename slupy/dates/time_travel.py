@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 from typing import Literal, Union
 
-from slu.checks import basic_checks
-from slu.dates import constants, utils
+from slupy.checks import basic_checks
+from slupy.dates import constants, utils
 
 
 class TimeTravel:

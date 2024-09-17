@@ -2,7 +2,7 @@ import os
 from setuptools import find_packages, setup
 
 # Constants
-PACKAGE_NAME = "slu"
+PACKAGE_NAME = "slupy"
 PACKAGE_VERSION = "0.0.1"
 AUTHOR_NAME = "Nishant Rao"
 AUTHOR_EMAIL_ID = "nishant.rao173@gmail.com"

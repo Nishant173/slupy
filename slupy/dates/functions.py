@@ -3,9 +3,9 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from slu.checks import basic_checks
-from slu.dates import constants, utils
-from slu.dates.time_travel import TimeTravel
+from slupy.checks import basic_checks
+from slupy.dates import constants, utils
+from slupy.dates.time_travel import TimeTravel
 
 
 def offset_between_datetimes(

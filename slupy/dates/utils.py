@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any, Literal, Optional, Tuple, Union
 
-from slu.dates import constants
+from slupy.dates import constants
 
 
 def is_date_object(x: Any, /) -> bool:
