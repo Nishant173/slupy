@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Literal, Optional, Tuple, Union
+import math
+from typing import Any, Dict, Literal, Optional, Tuple, Union
 
+from slupy.basics import basics
 from slupy.dates import constants
+from slupy.dates.time_conversions import TimeUnitConverter
 
 
 def is_date_object(x: Any, /) -> bool:
@@ -16,6 +19,54 @@ def is_datetime_object(x: Any, /) -> bool:
 
 def is_date_or_datetime_object(x: Any, /) -> bool:
     return isinstance(x, datetime) or isinstance(x, date)
+
+
+def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Union[int, float]]:
+    """
+    Returns dictionary having the keys: ['weeks', 'days', 'hours', 'minutes', 'seconds', 'milliseconds'] containing the time elapsed.
+
+    >>> get_timetaken_dictionary(num_seconds=3725.4292)
+    >>> get_timetaken_dictionary(num_seconds=885354.128129)
+    """
+    assert basics.is_non_negative_number(num_seconds), "Param `num_seconds` must be a non-negative number"
+    weeks, remainder = divmod(num_seconds, TimeUnitConverter.SECONDS_PER_WEEK)
+    days, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_DAY)
+    hours, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_HOUR)
+    minutes, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_MINUTE)
+    seconds = math.floor(remainder)
+    milliseconds = (remainder - seconds) * TimeUnitConverter.MILLISECONDS_PER_SECOND
+    milliseconds = round(milliseconds, 5)
+
+    dictionary_time_taken = {
+        "weeks": basics.integerify_if_possible(weeks),
+        "days": basics.integerify_if_possible(days),
+        "hours": basics.integerify_if_possible(hours),
+        "minutes": basics.integerify_if_possible(minutes),
+        "seconds": basics.integerify_if_possible(seconds),
+        "milliseconds": basics.integerify_if_possible(milliseconds),
+    }
+    return dictionary_time_taken
+
+
+def get_timetaken_fstring(*, num_seconds: Union[int, float], shorten_unit: Optional[bool] = False) -> str:
+    """Returns f-string containing the elapsed time"""
+    dict_time_taken = get_timetaken_dictionary(num_seconds=num_seconds)
+    dict_unit_shortener = {
+        "weeks": "w",
+        "days": "d",
+        "hours": "h",
+        "minutes": "m",
+        "seconds": "s",
+        "milliseconds": "ms",
+    }
+    time_taken_components = [
+        f"{value} {dict_unit_shortener.get(unit, unit) if shorten_unit else unit}"
+        for unit, value in dict_time_taken.items() if value != 0
+    ]
+    if not time_taken_components:
+        return "0 s" if shorten_unit else "0 seconds"
+    time_taken_fstring = ", ".join(time_taken_components)
+    return time_taken_fstring
 
 
 def is_first_day_of_month(dt_obj: Union[datetime, date], /) -> bool:

@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 from typing import Literal, Union
 
-from slupy.checks import basic_checks
+from slupy.basics import basics
 from slupy.dates import constants, utils
 
 
@@ -14,6 +14,7 @@ class TimeTravel:
     Instance methods:
         - add()
         - copy()
+        - diff_for_humans()
         - subtract()
 
     Properties:
@@ -92,7 +93,7 @@ class TimeTravel:
         Used for cases where day-of-month could be 29, 30, 31.
         Returns the day-of-month to use [1-31].
         """
-        assert basic_checks.is_non_negative_integer(day_of_month) and 29 <= day_of_month <= 31, (
+        assert basics.is_positive_integer(day_of_month) and 29 <= day_of_month <= 31, (
             "Param `day_of_month` must be one of: [29, 30, 31]"
         )
         if to_month in constants.MONTHS_HAVING_30_DAYS:
@@ -165,21 +166,21 @@ class TimeTravel:
             microseconds: int = 0,
         ) -> TimeTravel:
         """Returns the same `TimeTravel` instance after modifying it in-place"""
-        assert basic_checks.is_non_negative_integer(years), "Param `years` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(months), "Param `months` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(weeks), "Param `weeks` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(days), "Param `days` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(hours), "Param `hours` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(minutes), "Param `minutes` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(seconds), "Param `seconds` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(milliseconds), "Param `milliseconds` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(microseconds), "Param `microseconds` must be a non-negative integer"
+        assert basics.is_non_negative_integer(years), "Param `years` must be a non-negative integer"
+        assert basics.is_non_negative_integer(months), "Param `months` must be a non-negative integer"
+        assert basics.is_non_negative_integer(weeks), "Param `weeks` must be a non-negative integer"
+        assert basics.is_non_negative_integer(days), "Param `days` must be a non-negative integer"
+        assert basics.is_non_negative_integer(hours), "Param `hours` must be a non-negative integer"
+        assert basics.is_non_negative_integer(minutes), "Param `minutes` must be a non-negative integer"
+        assert basics.is_non_negative_integer(seconds), "Param `seconds` must be a non-negative integer"
+        assert basics.is_non_negative_integer(milliseconds), "Param `milliseconds` must be a non-negative integer"
+        assert basics.is_non_negative_integer(microseconds), "Param `microseconds` must be a non-negative integer"
         if self.dtype == "DATE":
-            assert basic_checks.is_zero_or_none(hours), "Param `hours` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(minutes), "Param `minutes` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(seconds), "Param `seconds` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(milliseconds), "Param `milliseconds` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(microseconds), "Param `microseconds` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(hours), "Param `hours` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(minutes), "Param `minutes` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(seconds), "Param `seconds` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(milliseconds), "Param `milliseconds` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(microseconds), "Param `microseconds` must not be passed when a date-object is used"
         self = self._add_years(years=years)
         self = self._add_months(months=months)
         self.value += timedelta(
@@ -207,21 +208,21 @@ class TimeTravel:
             microseconds: int = 0,
         ) -> TimeTravel:
         """Returns the same `TimeTravel` instance after modifying it in-place"""
-        assert basic_checks.is_non_negative_integer(years), "Param `years` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(months), "Param `months` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(weeks), "Param `weeks` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(days), "Param `days` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(hours), "Param `hours` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(minutes), "Param `minutes` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(seconds), "Param `seconds` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(milliseconds), "Param `milliseconds` must be a non-negative integer"
-        assert basic_checks.is_non_negative_integer(microseconds), "Param `microseconds` must be a non-negative integer"
+        assert basics.is_non_negative_integer(years), "Param `years` must be a non-negative integer"
+        assert basics.is_non_negative_integer(months), "Param `months` must be a non-negative integer"
+        assert basics.is_non_negative_integer(weeks), "Param `weeks` must be a non-negative integer"
+        assert basics.is_non_negative_integer(days), "Param `days` must be a non-negative integer"
+        assert basics.is_non_negative_integer(hours), "Param `hours` must be a non-negative integer"
+        assert basics.is_non_negative_integer(minutes), "Param `minutes` must be a non-negative integer"
+        assert basics.is_non_negative_integer(seconds), "Param `seconds` must be a non-negative integer"
+        assert basics.is_non_negative_integer(milliseconds), "Param `milliseconds` must be a non-negative integer"
+        assert basics.is_non_negative_integer(microseconds), "Param `microseconds` must be a non-negative integer"
         if self.dtype == "DATE":
-            assert basic_checks.is_zero_or_none(hours), "Param `hours` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(minutes), "Param `minutes` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(seconds), "Param `seconds` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(milliseconds), "Param `milliseconds` must not be passed when a date-object is used"
-            assert basic_checks.is_zero_or_none(microseconds), "Param `microseconds` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(hours), "Param `hours` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(minutes), "Param `minutes` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(seconds), "Param `seconds` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(milliseconds), "Param `milliseconds` must not be passed when a date-object is used"
+            assert basics.is_zero_or_none(microseconds), "Param `microseconds` must not be passed when a date-object is used"
         self = self._subtract_years(years=years)
         self = self._subtract_months(months=months)
         self.value -= timedelta(
@@ -234,4 +235,19 @@ class TimeTravel:
             microseconds=microseconds,
         )
         return self
+
+    def diff_for_humans(self) -> str:
+        """
+        Returns a string having a human-readable format of the difference between `value` and `initial_value`.
+        Computes it as `value` - `initial_value`.
+        """
+        difference_in_seconds = (self.value - self.initial_value).total_seconds()
+        timetaken_fstring = utils.get_timetaken_fstring(
+            num_seconds=abs(difference_in_seconds),
+            shorten_unit=False,
+        )
+        if difference_in_seconds == 0:
+            return timetaken_fstring
+        sign = "(+)" if difference_in_seconds > 0 else "(-)"
+        return f"{sign} {timetaken_fstring}"
 

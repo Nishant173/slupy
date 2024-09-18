@@ -18,6 +18,20 @@ class TestTimeTravel(unittest.TestCase):
         )
         self.date_obj: date = date(year=2020, month=5, day=25)
 
+    def test_diff_for_humans(self):
+        time_travel = TimeTravel(self.datetime_obj)
+        self.assertEqual(
+            time_travel.diff_for_humans(),
+            "0 seconds",
+        )
+        time_travel.add(weeks=5, days=5, hours=3, minutes=45, seconds=30, milliseconds=500)
+        time_travel.subtract(weeks=1)
+        time_travel.add(hours=2)
+        self.assertEqual(
+            time_travel.diff_for_humans(),
+            "(+) 4 weeks, 5 days, 5 hours, 45 minutes, 30 seconds, 500 milliseconds",
+        )
+
     def test_initial_value(self):
         time_travel = TimeTravel(self.date_obj)
         self.assertEqual(time_travel.initial_value, self.date_obj)
