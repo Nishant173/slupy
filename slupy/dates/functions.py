@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from slupy.checks import basic_checks
 from slupy.dates import constants, utils
@@ -75,10 +75,7 @@ def get_datetime_buckets(
         else:
             time_travel.subtract(**offset_kwargs)
             temp_end = time_travel.copy().add(days=1) if time_travel.value_dtype == "DATE" else time_travel.copy()
-        if buckets:
-            buckets.append((temp_start.value, temp_end.value))
-        else:
-            buckets.append((start, temp_end.value))
+        buckets.append((temp_start.value, temp_end.value))
         num_buckets_filled += 1
     if not ascending:
         buckets = [(y, x) for x, y in buckets][::-1]

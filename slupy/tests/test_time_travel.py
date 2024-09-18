@@ -18,6 +18,14 @@ class TestTimeTravel(unittest.TestCase):
         )
         self.date_obj: date = date(year=2020, month=5, day=25)
 
+    def test_initial_value(self):
+        time_travel = TimeTravel(self.date_obj)
+        self.assertEqual(time_travel.initial_value, self.date_obj)
+        self.assertEqual(time_travel.value, self.date_obj)
+        time_travel.add(days=5).subtract(years=5)
+        self.assertEqual(time_travel.initial_value, self.date_obj)
+        self.assertNotEqual(time_travel.value, self.date_obj)
+
     def test_value_copy_in_initializer(self):
         time_travel = TimeTravel(self.datetime_obj)
         self.assertEqual(time_travel.value, self.datetime_obj)

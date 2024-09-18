@@ -167,4 +167,21 @@ class TestDateUtils(unittest.TestCase):
             ],
         )
 
+        self.assertEqual(
+            functions.get_datetime_buckets(
+                start=date(year=2000, month=1, day=1),
+                num_buckets=5,
+                offset_kwargs=dict(weeks=1),
+                ascending=False,
+                as_string=True,
+            ),
+            [
+                ('1999-11-28', '1999-12-04'),
+                ('1999-12-05', '1999-12-11'),
+                ('1999-12-12', '1999-12-18'),
+                ('1999-12-19', '1999-12-25'),
+                ('1999-12-26', '2000-01-01'),
+            ],
+        )
+
 

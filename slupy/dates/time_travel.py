@@ -17,13 +17,15 @@ class TimeTravel:
         - subtract
 
     Properties:
+        - initial_value
         - value
         - value_dtype
     """
 
-    def __init__(self, value: Union[datetime, date], /) -> None:
-        assert utils.is_date_or_datetime_object(value), "Param must be of type 'date' or 'datetime'"
-        self._value = value.replace()  # make a copy
+    def __init__(self, origin: Union[datetime, date], /) -> None:
+        assert utils.is_date_or_datetime_object(origin), "Param must be of type 'date' or 'datetime'"
+        self._initial_value = origin.replace()  # make a copy
+        self._value = origin.replace()  # make a copy
         self._value_dtype: Literal["DATE", "DATETIME"] = (
             "DATETIME" if isinstance(self._value, datetime) else "DATE"
         )
@@ -37,6 +39,14 @@ class TimeTravel:
     def copy(self) -> TimeTravel:
         """Returns a copy (new instance) of the `TimeTravel` object"""
         return TimeTravel(self.value)
+
+    @property
+    def initial_value(self) -> Union[datetime, date]:
+        return self._initial_value
+
+    @initial_value.setter
+    def initial_value(self, obj) -> None:
+        raise NotImplementedError("Not allowed to set the `initial_value` property")
 
     def value_as_string(self) -> str:
         """Returns the string representation of the `value` property"""
