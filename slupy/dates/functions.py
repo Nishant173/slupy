@@ -40,7 +40,7 @@ def offset_between_datetimes(
                 break
             dt_objs.append(time_travel.value)
     if as_string:
-        format_ = constants.DATETIME_FORMAT if time_travel.value_dtype == "DATETIME" else constants.DATE_FORMAT
+        format_ = constants.DATETIME_FORMAT if time_travel.dtype == "DATETIME" else constants.DATE_FORMAT
         dt_objs = list(map(lambda x: x.strftime(format_), dt_objs))
     return dt_objs
 
@@ -71,16 +71,16 @@ def get_datetime_buckets(
         temp_start = time_travel.copy()
         if ascending:
             time_travel.add(**offset_kwargs)
-            temp_end = time_travel.copy().subtract(days=1) if time_travel.value_dtype == "DATE" else time_travel.copy()
+            temp_end = time_travel.copy().subtract(days=1) if time_travel.dtype == "DATE" else time_travel.copy()
         else:
             time_travel.subtract(**offset_kwargs)
-            temp_end = time_travel.copy().add(days=1) if time_travel.value_dtype == "DATE" else time_travel.copy()
+            temp_end = time_travel.copy().add(days=1) if time_travel.dtype == "DATE" else time_travel.copy()
         buckets.append((temp_start.value, temp_end.value))
         num_buckets_filled += 1
     if not ascending:
         buckets = [(y, x) for x, y in buckets][::-1]
     if as_string:
-        format_ = constants.DATETIME_FORMAT if time_travel.value_dtype == "DATETIME" else constants.DATE_FORMAT
+        format_ = constants.DATETIME_FORMAT if time_travel.dtype == "DATETIME" else constants.DATE_FORMAT
         buckets = [(x.strftime(format_), y.strftime(format_)) for x, y in buckets]
     return buckets
 

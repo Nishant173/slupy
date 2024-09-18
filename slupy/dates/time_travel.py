@@ -12,21 +12,21 @@ class TimeTravel:
     Class that represents a time-traveller.
 
     Instance methods:
-        - add
-        - copy
-        - subtract
+        - add()
+        - copy()
+        - subtract()
 
     Properties:
+        - dtype
         - initial_value
         - value
-        - value_dtype
     """
 
     def __init__(self, origin: Union[datetime, date], /) -> None:
         assert utils.is_date_or_datetime_object(origin), "Param must be of type 'date' or 'datetime'"
         self._initial_value = origin.replace()  # make a copy
         self._value = origin.replace()  # make a copy
-        self._value_dtype: Literal["DATE", "DATETIME"] = (
+        self._dtype: Literal["DATE", "DATETIME"] = (
             "DATETIME" if isinstance(self._value, datetime) else "DATE"
         )
 
@@ -50,7 +50,7 @@ class TimeTravel:
 
     def value_as_string(self) -> str:
         """Returns the string representation of the `value` property"""
-        if self.value_dtype == "DATETIME":
+        if self.dtype == "DATETIME":
             return self.value.strftime(constants.DATETIME_FORMAT)
         return self.value.strftime(constants.DATE_FORMAT)
 
@@ -64,12 +64,12 @@ class TimeTravel:
         self._value = obj
 
     @property
-    def value_dtype(self) -> Literal["DATE", "DATETIME"]:
-        return self._value_dtype
+    def dtype(self) -> Literal["DATE", "DATETIME"]:
+        return self._dtype
 
-    @value_dtype.setter
-    def value_dtype(self, obj) -> None:
-        raise NotImplementedError("Not allowed to set the `value_dtype` property")
+    @dtype.setter
+    def dtype(self, obj) -> None:
+        raise NotImplementedError("Not allowed to set the `dtype` property")
 
     def _add_years(self, *, years: int = 0) -> TimeTravel:
         updated_year = self.value.year + years
@@ -174,7 +174,7 @@ class TimeTravel:
         assert basic_checks.is_non_negative_integer(seconds), "Param `seconds` must be a non-negative integer"
         assert basic_checks.is_non_negative_integer(milliseconds), "Param `milliseconds` must be a non-negative integer"
         assert basic_checks.is_non_negative_integer(microseconds), "Param `microseconds` must be a non-negative integer"
-        if self.value_dtype == "DATE":
+        if self.dtype == "DATE":
             assert basic_checks.is_zero_or_none(hours), "Param `hours` must not be passed when a date-object is used"
             assert basic_checks.is_zero_or_none(minutes), "Param `minutes` must not be passed when a date-object is used"
             assert basic_checks.is_zero_or_none(seconds), "Param `seconds` must not be passed when a date-object is used"
@@ -216,7 +216,7 @@ class TimeTravel:
         assert basic_checks.is_non_negative_integer(seconds), "Param `seconds` must be a non-negative integer"
         assert basic_checks.is_non_negative_integer(milliseconds), "Param `milliseconds` must be a non-negative integer"
         assert basic_checks.is_non_negative_integer(microseconds), "Param `microseconds` must be a non-negative integer"
-        if self.value_dtype == "DATE":
+        if self.dtype == "DATE":
             assert basic_checks.is_zero_or_none(hours), "Param `hours` must not be passed when a date-object is used"
             assert basic_checks.is_zero_or_none(minutes), "Param `minutes` must not be passed when a date-object is used"
             assert basic_checks.is_zero_or_none(seconds), "Param `seconds` must not be passed when a date-object is used"
