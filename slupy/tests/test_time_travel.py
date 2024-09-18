@@ -32,7 +32,7 @@ class TestTimeTravel(unittest.TestCase):
         self.assertIsNot(time_travel.value, self.datetime_obj)
         self.assertNotEqual(id(time_travel.value), id(self.datetime_obj))
 
-    def test_value_dtype(self):
+    def test_dtype(self):
         self.assertEqual(TimeTravel(self.datetime_obj).dtype, "DATETIME")
         self.assertEqual(TimeTravel(self.date_obj).dtype, "DATE")
         with self.assertRaises(AssertionError):

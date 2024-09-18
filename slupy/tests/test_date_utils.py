@@ -21,6 +21,50 @@ class TestDateUtils(unittest.TestCase):
         self.date_obj_3: date = date(year=2020, month=12, day=25)  # month with 31 days
         self.date_obj_4: date = date(year=2020, month=4, day=25)  # month with 30 days
 
+    def test_is_first_day_of_month(self):
+        self.assertTrue(
+            utils.is_first_day_of_month(date(year=2019, month=2, day=1)),
+        )
+        self.assertTrue(
+            not utils.is_first_day_of_month(date(year=2019, month=2, day=2)),
+        )
+
+    def test_is_last_day_of_month(self):
+        self.assertTrue(
+            utils.is_last_day_of_month(date(year=2019, month=2, day=28)),
+        )
+        self.assertTrue(
+            utils.is_last_day_of_month(date(year=2020, month=2, day=29)),
+        )
+        self.assertTrue(
+            not utils.is_last_day_of_month(date(year=2020, month=2, day=28)),
+        )
+        self.assertTrue(
+            utils.is_last_day_of_month(date(year=2020, month=6, day=30)),
+        )
+        self.assertTrue(
+            not utils.is_last_day_of_month(date(year=2020, month=12, day=30)),
+        )
+        self.assertTrue(
+            utils.is_last_day_of_month(date(year=2020, month=12, day=31)),
+        )
+
+    def test_is_first_day_of_year(self):
+        self.assertTrue(
+            utils.is_first_day_of_year(date(year=2019, month=1, day=1)),
+        )
+        self.assertTrue(
+            not utils.is_first_day_of_year(date(year=2019, month=1, day=2)),
+        )
+
+    def test_is_last_day_of_year(self):
+        self.assertTrue(
+            utils.is_last_day_of_year(date(year=2019, month=12, day=31)),
+        )
+        self.assertTrue(
+            not utils.is_last_day_of_year(date(year=2019, month=12, day=30)),
+        )
+
     def test_get_first_day_of_current_month(self):
         self.assertEqual(
             utils.get_first_day_of_current_month(self.date_obj_1),

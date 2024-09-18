@@ -18,6 +18,26 @@ def is_date_or_datetime_object(x: Any, /) -> bool:
     return isinstance(x, datetime) or isinstance(x, date)
 
 
+def is_first_day_of_month(dt_obj: Union[datetime, date], /) -> bool:
+    return dt_obj.day == 1
+
+
+def is_last_day_of_month(dt_obj: Union[datetime, date], /) -> bool:
+    if dt_obj.month in constants.MONTHS_HAVING_30_DAYS:
+        return dt_obj.day == 30
+    if dt_obj.month in constants.MONTHS_HAVING_31_DAYS:
+        return dt_obj.day == 31
+    return dt_obj.day == 29 if is_leap_year(dt_obj.year) else dt_obj.day == 28
+
+
+def is_first_day_of_year(dt_obj: Union[datetime, date], /) -> bool:
+    return dt_obj.month == 1 and dt_obj.day == 1
+
+
+def is_last_day_of_year(dt_obj: Union[datetime, date], /) -> bool:
+    return dt_obj.month == 12 and dt_obj.day == 31
+
+
 def get_first_day_of_current_month(dt_obj: Union[datetime, date], /) -> Union[datetime, date]:
     return dt_obj.replace(day=1)
 
