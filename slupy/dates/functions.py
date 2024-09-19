@@ -16,6 +16,12 @@ def offset_between_datetimes(
         ascending: Optional[bool] = True,
         as_string: Optional[bool] = False,
     ) -> Union[List[datetime], List[date], List[str]]:
+    """
+    Returns list of datetime/date/string objects separated by the given offset.
+
+    For reference to `offset_kwargs` dictionary, please check the `slupy.dates.time_travel.TimeTravel` class' `add()`
+    and `subtract()` methods.
+    """
     assert (
         (utils.is_datetime_object(start) and utils.is_datetime_object(end))
         or (utils.is_date_object(start) and utils.is_date_object(end))
@@ -57,6 +63,12 @@ def get_datetime_buckets(
         List[Tuple[date, date]],
         List[Tuple[str, str]],
     ]:
+    """
+    Returns list of buckets of datetime/date/string objects, where each bucket is separated by the given offset.
+
+    For reference to `offset_kwargs` dictionary, please check the `slupy.dates.time_travel.TimeTravel` class' `add()`
+    and `subtract()` methods.
+    """
     assert utils.is_date_or_datetime_object(start), "Param `start` must be of type 'date' or 'datetime'"
     assert checks.is_positive_integer(num_buckets), "Param `num_buckets` must be a positive integer"
     assert len(offset_kwargs) == 1, "Only 1 offset can be used at a time"
