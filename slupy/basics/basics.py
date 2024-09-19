@@ -175,27 +175,3 @@ def list_has_non_negative_number(array: List[Union[int, float]]) -> bool:
 def list_has_positive_number(array: List[Union[int, float]]) -> bool:
     return any((number > 0 for number in array))
 
-
-def cumulative_aggregate(*, numbers: List[Union[int, float]], method: str) -> List[Union[int, float]]:
-    """
-    Returns list of cumulative aggregates.
-    Options for `method` are: `["sum", "difference", "product", "division"]`.
-    """
-    method_mapper = {
-        "sum": lambda x, y: x + y,
-        "difference": lambda x, y: x - y,
-        "product": lambda x, y: x * y,
-        "division": lambda x, y: x / y,
-    }
-    assert method in method_mapper, f"Param `method` must be one of: {list(method_mapper.keys())}"
-
-    length = len(numbers)
-    if length == 0:
-        return []
-    cumulative_array = [numbers[0]]
-    if length == 1:
-        return cumulative_array
-    for number in numbers[1:]:
-        cumulative_array.append(method_mapper[method](cumulative_array[-1], number))
-    return cumulative_array
-
