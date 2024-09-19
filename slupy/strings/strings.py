@@ -101,22 +101,22 @@ def retardify(string: str) -> str:
     return retardified_text
 
 
-def get_first_n_characters(text: str, num_chars: int) -> str:
+def get_first_n_characters(*, text: str, num_chars: int) -> str:
     assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[:num_chars]
 
 
-def get_last_n_characters(text: str, num_chars: int) -> str:
+def get_last_n_characters(*, text: str, num_chars: int) -> str:
     assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[-num_chars:]
 
 
-def remove_first_n_characters(text: str, num_chars: int) -> str:
+def remove_first_n_characters(*, text: str, num_chars: int) -> str:
     assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[num_chars:]
 
 
-def remove_last_n_characters(text: str, num_chars: int) -> str:
+def remove_last_n_characters(*, text: str, num_chars: int) -> str:
     assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[:-num_chars]
 
