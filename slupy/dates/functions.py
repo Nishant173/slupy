@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Dict, List, Optional, Tuple, Union
 
-from slupy.basics import basics
+from slupy.core import checks
 from slupy.dates import constants, utils
 from slupy.dates.time_travel import TimeTravel
 
@@ -24,8 +24,8 @@ def offset_between_datetimes(
     )
     assert start <= end, "Param `start` must be <= `end`"
     assert len(offset_kwargs) == 1, "Only 1 offset can be used at a time"
-    assert basics.is_boolean(ascending), "Param `ascending` must be of type 'bool'"
-    assert basics.is_boolean(as_string), "Param `as_string` must be of type 'bool'"
+    assert checks.is_boolean(ascending), "Param `ascending` must be of type 'bool'"
+    assert checks.is_boolean(as_string), "Param `as_string` must be of type 'bool'"
     dt_objs = [start] if ascending else [end]
     time_travel = TimeTravel(start) if ascending else TimeTravel(end)
     while True:
@@ -58,10 +58,10 @@ def get_datetime_buckets(
         List[Tuple[str, str]],
     ]:
     assert utils.is_date_or_datetime_object(start), "Param `start` must be of type 'date' or 'datetime'"
-    assert basics.is_positive_integer(num_buckets), "Param `num_buckets` must be a positive integer"
+    assert checks.is_positive_integer(num_buckets), "Param `num_buckets` must be a positive integer"
     assert len(offset_kwargs) == 1, "Only 1 offset can be used at a time"
-    assert basics.is_boolean(ascending), "Param `ascending` must be of type 'bool'"
-    assert basics.is_boolean(as_string), "Param `as_string` must be of type 'bool'"
+    assert checks.is_boolean(ascending), "Param `ascending` must be of type 'bool'"
+    assert checks.is_boolean(as_string), "Param `as_string` must be of type 'bool'"
     buckets = []
     num_buckets_filled = 0
     time_travel = TimeTravel(start)
