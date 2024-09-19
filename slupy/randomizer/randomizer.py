@@ -1,6 +1,6 @@
 import random
 import string
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 HEX_CODE_CHARSET = set(string.digits).union(set(string.ascii_uppercase))
 

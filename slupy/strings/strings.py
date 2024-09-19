@@ -121,7 +121,7 @@ def remove_last_n_characters(text: str, num_chars: int) -> str:
     return text[:-num_chars]
 
 
-def remove_characters_at_indices(text: str, indices: List[int]) -> str:
+def remove_characters_at_indices(*, text: str, indices: List[int]) -> str:
     """
     Removes characters present at the given `indices` in the `text`.
     Expects `indices` to be in range (0, n-1) where n is the length of the `text`.

@@ -18,7 +18,7 @@ def is_datetime_object(x: Any, /) -> bool:
 
 
 def is_date_or_datetime_object(x: Any, /) -> bool:
-    return isinstance(x, datetime) or isinstance(x, date)
+    return is_date_object(x) or is_datetime_object(x)
 
 
 def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Union[int, float]]:

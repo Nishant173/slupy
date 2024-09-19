@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import List, Union
 
 
 def integerify_if_possible(number: Union[int, float], /) -> Union[int, float]:

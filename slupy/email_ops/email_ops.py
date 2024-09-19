@@ -56,6 +56,7 @@ def _add_attachments_to_multipart_object(
 
 
 def send_email(
+        *,
         from_email_id: str,
         from_email_id_password: str,
         to_email_ids: List[str],
