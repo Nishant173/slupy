@@ -1,13 +1,31 @@
 import re
 import string
-from typing import List
+from typing import List, Optional
 
-from slupy.basics import basics
+from slupy.core import checks
 
 
 ALPHABETS_LOWER_CASED = set(string.ascii_lowercase)
 ALPHABETS_UPPER_CASED = set(string.ascii_uppercase)
 ALPHABETS = ALPHABETS_LOWER_CASED.union(ALPHABETS_UPPER_CASED)
+
+
+def make_message(
+        message: str,
+        /,
+        *,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
+        sep: Optional[str] = None,
+    ) -> str:
+    sep = "" if sep is None else sep
+    components = []
+    if prefix:
+        components.append(prefix)
+    components.append(message)
+    if suffix:
+        components.append(suffix)
+    return f"{sep}".join(components)
 
 
 def camel_to_pascal(string: str) -> str:
@@ -83,27 +101,27 @@ def retardify(string: str) -> str:
     return retardified_text
 
 
-def get_first_n_characters(text: str, num_chars: int) -> str:
-    assert basics.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
+def get_first_n_characters(*, text: str, num_chars: int) -> str:
+    assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[:num_chars]
 
 
-def get_last_n_characters(text: str, num_chars: int) -> str:
-    assert basics.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
+def get_last_n_characters(*, text: str, num_chars: int) -> str:
+    assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[-num_chars:]
 
 
-def remove_first_n_characters(text: str, num_chars: int) -> str:
-    assert basics.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
+def remove_first_n_characters(*, text: str, num_chars: int) -> str:
+    assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[num_chars:]
 
 
-def remove_last_n_characters(text: str, num_chars: int) -> str:
-    assert basics.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
+def remove_last_n_characters(*, text: str, num_chars: int) -> str:
+    assert checks.is_positive_integer(num_chars), "Param `num_chars` must be a positive integer"
     return text[:-num_chars]
 
 
-def remove_characters_at_indices(text: str, indices: List[int]) -> str:
+def remove_characters_at_indices(*, text: str, indices: List[int]) -> str:
     """
     Removes characters present at the given `indices` in the `text`.
     Expects `indices` to be in range (0, n-1) where n is the length of the `text`.

@@ -1,5 +1,5 @@
 import math
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import List, Union
 
 
 def is_prime(number: int) -> bool:

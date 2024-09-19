@@ -1,11 +1,11 @@
-from typing import Any, List, Optional
-import json
+from typing import List, Optional
 import ntpath
 import os
 import shutil
 
 
 def get_extension(filepath: str) -> str:
+    """Returns the extension of the given filepath"""
     return os.path.splitext(filepath)[-1][1:]
 
 
@@ -23,11 +23,11 @@ def get_absolute_filepath(filepath: str) -> str:
 
 def get_line_count(filepath: str) -> int:
     """Returns count of number of lines in the given file"""
-    num_lines = sum(1 for _ in open(file=filepath, encoding="utf8"))
-    return num_lines
+    return sum(1 for _ in open(file=filepath, encoding="utf8"))
 
 
 def filter_filepaths_by_extensions(
+        *,
         filepaths: List[str],
         extensions: List[str],
     ) -> List[str]:
@@ -55,7 +55,7 @@ def get_unique_extensions(filepaths: List[str]) -> List[str]:
     return unique_extensions
 
 
-def __get_filepaths_at_first_level(src_dir: str) -> List[str]:
+def _get_filepaths_at_first_level(src_dir: str) -> List[str]:
     folders_and_files_in_directory = os.listdir(src_dir)
     folders_and_files_in_directory = list(
         map(lambda folder_or_file: os.path.join(src_dir, folder_or_file), folders_and_files_in_directory)
@@ -66,7 +66,7 @@ def __get_filepaths_at_first_level(src_dir: str) -> List[str]:
     return files_in_directory
 
 
-def __get_filepaths_at_all_levels(src_dir: str) -> List[str]:
+def _get_filepaths_at_all_levels(src_dir: str) -> List[str]:
     filepaths = []
     for path, _, filenames in os.walk(src_dir):
         for filename in filenames:
@@ -101,9 +101,9 @@ def get_filepaths(
         raise ValueError(f"Expected `depth` to be in {depth_options}, but got '{depth}'")
     
     if depth == 'all_levels':
-        filepaths = __get_filepaths_at_all_levels(src_dir=src_dir)
+        filepaths = _get_filepaths_at_all_levels(src_dir=src_dir)
     elif depth == 'first_level':
-        filepaths = __get_filepaths_at_first_level(src_dir=src_dir)
+        filepaths = _get_filepaths_at_first_level(src_dir=src_dir)
     if extensions is not None:
         filepaths = filter_filepaths_by_extensions(filepaths=filepaths, extensions=extensions)
     return filepaths

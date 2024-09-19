@@ -4,7 +4,7 @@ from datetime import date, datetime
 import math
 from typing import Any, Dict, Literal, Optional, Tuple, Union
 
-from slupy.basics import basics
+from slupy.core import checks, conversions
 from slupy.dates import constants
 from slupy.dates.time_conversions import TimeUnitConverter
 
@@ -18,7 +18,7 @@ def is_datetime_object(x: Any, /) -> bool:
 
 
 def is_date_or_datetime_object(x: Any, /) -> bool:
-    return isinstance(x, datetime) or isinstance(x, date)
+    return is_date_object(x) or is_datetime_object(x)
 
 
 def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Union[int, float]]:
@@ -28,7 +28,7 @@ def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Uni
     >>> get_timetaken_dictionary(num_seconds=3725.4292)
     >>> get_timetaken_dictionary(num_seconds=885354.128129)
     """
-    assert basics.is_non_negative_number(num_seconds), "Param `num_seconds` must be a non-negative number"
+    assert checks.is_non_negative_number(num_seconds), "Param `num_seconds` must be a non-negative number"
     weeks, remainder = divmod(num_seconds, TimeUnitConverter.SECONDS_PER_WEEK)
     days, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_DAY)
     hours, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_HOUR)
@@ -38,12 +38,12 @@ def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Uni
     milliseconds = round(milliseconds, 5)
 
     dictionary_time_taken = {
-        "weeks": basics.integerify_if_possible(weeks),
-        "days": basics.integerify_if_possible(days),
-        "hours": basics.integerify_if_possible(hours),
-        "minutes": basics.integerify_if_possible(minutes),
-        "seconds": basics.integerify_if_possible(seconds),
-        "milliseconds": basics.integerify_if_possible(milliseconds),
+        "weeks": conversions.integerify_if_possible(weeks),
+        "days": conversions.integerify_if_possible(days),
+        "hours": conversions.integerify_if_possible(hours),
+        "minutes": conversions.integerify_if_possible(minutes),
+        "seconds": conversions.integerify_if_possible(seconds),
+        "milliseconds": conversions.integerify_if_possible(milliseconds),
     }
     return dictionary_time_taken
 

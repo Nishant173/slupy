@@ -15,7 +15,7 @@ def timer(func: Callable) -> Callable:
         end = time.time()
         time_taken_in_secs = round(end - start, 3)
         timetaken_fstring = get_timetaken_fstring(num_seconds=time_taken_in_secs)
-        print(f"Executed {func.__name__!r} in: {timetaken_fstring}")
+        print(f"Executed '{func.__name__}' in: {timetaken_fstring}")
         return result
     return wrapper_timer
 
