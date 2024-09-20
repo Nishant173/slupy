@@ -2,7 +2,7 @@ import random
 import string
 from typing import List, Optional
 
-HEX_CODE_CHARSET = set(string.digits).union(set(string.ascii_uppercase))
+HEX_CODE_CHARSET = tuple(string.digits + string.ascii_uppercase)
 
 
 def generate_random_hex_code() -> str:
@@ -26,6 +26,9 @@ def generate_random_string(
         include_digits: Optional[bool] = True,
         include_punctuations: Optional[bool] = True,
     ) -> str:
+    assert any([include_lowercase, include_uppercase, include_digits, include_punctuations]), (
+        "The allowed charset cannot be empty"
+    )
     character_set = ""
     if include_lowercase:
         character_set += string.ascii_lowercase

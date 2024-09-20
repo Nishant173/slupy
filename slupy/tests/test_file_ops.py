@@ -5,10 +5,10 @@ from slupy.file_ops import file_ops
 
 class TestFileOps(unittest.TestCase):
 
-    def test_get_extension(self):
-        self.assertEqual(file_ops.get_extension("hello1.csv"), "csv")
-        self.assertEqual(file_ops.get_extension("hello2.XLSX"), "XLSX")
-        self.assertEqual(file_ops.get_extension("hello3.txt"), "txt")
+    def test_get_extension_from_filepath(self):
+        self.assertEqual(file_ops.get_extension_from_filepath("hello1.csv"), "csv")
+        self.assertEqual(file_ops.get_extension_from_filepath("hello2.XLSX"), "XLSX")
+        self.assertEqual(file_ops.get_extension_from_filepath("hello3.txt"), "txt")
 
     def test_get_basename_from_filepath(self):
         self.assertEqual(

@@ -51,15 +51,25 @@ class TestStrings(unittest.TestCase):
 
     def test_remove_characters_at_indices(self):
         self.assertEqual(
+            strings.remove_characters_at_indices(text="hello and good morning", indices=[]),
+            "hello and good morning",
+        )
+        self.assertEqual(
             strings.remove_characters_at_indices(text="hello and good morning", indices=[6, 8, 11, 21]),
             "hello n god mornin",
         )
         with self.assertRaises(IndexError):
             strings.remove_characters_at_indices(text="hello and good morning", indices=[100])
 
-    def test_retardify(self):
+    def test_to_dumbo_text(self):
         self.assertEqual(
-            strings.retardify("Hello, and good morning!"),
+            strings.to_dumbo_text("Hello, and good morning!"),
             "hElLo, AnD gOoD mOrNiNg!",
+        )
+
+    def test_make_message(self):
+        self.assertEqual(
+            strings.make_message("hello", prefix="prefix", suffix="suffix", sep="|"),
+            "prefix|hello|suffix",
         )
 

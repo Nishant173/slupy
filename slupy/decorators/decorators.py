@@ -33,7 +33,7 @@ def slow_down(func: Callable) -> Callable:
     return wrapper_slow_down
 
 
-def repeat(num_times: int) -> Callable:
+def repeat(*, num_times: int) -> Callable:
     """Decorator that executes the decorated function `num_times` times"""
     def repeat_decorator(func):
         @functools.wraps(func)

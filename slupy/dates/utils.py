@@ -70,10 +70,12 @@ def get_timetaken_fstring(*, num_seconds: Union[int, float], shorten_unit: Optio
 
 
 def is_first_day_of_month(dt_obj: Union[datetime, date], /) -> bool:
+    """Checks if the given date/datetime object represents the first day of any month"""
     return dt_obj.day == 1
 
 
 def is_last_day_of_month(dt_obj: Union[datetime, date], /) -> bool:
+    """Checks if the given date/datetime object represents the last day of any month"""
     if dt_obj.month in constants.MONTHS_HAVING_30_DAYS:
         return dt_obj.day == 30
     if dt_obj.month in constants.MONTHS_HAVING_31_DAYS:
@@ -82,18 +84,22 @@ def is_last_day_of_month(dt_obj: Union[datetime, date], /) -> bool:
 
 
 def is_first_day_of_year(dt_obj: Union[datetime, date], /) -> bool:
+    """Checks if the given date/datetime object represents the first day of any year"""
     return dt_obj.month == 1 and dt_obj.day == 1
 
 
 def is_last_day_of_year(dt_obj: Union[datetime, date], /) -> bool:
+    """Checks if the given date/datetime object represents the last day of any year"""
     return dt_obj.month == 12 and dt_obj.day == 31
 
 
 def get_first_day_of_current_month(dt_obj: Union[datetime, date], /) -> Union[datetime, date]:
+    """Returns a new date/datetime object having the first day of the current month"""
     return dt_obj.replace(day=1)
 
 
 def get_last_day_of_current_month(dt_obj: Union[datetime, date], /) -> Union[datetime, date]:
+    """Returns a new date/datetime object having the last day of the current month"""
     current_month = dt_obj.month
     if current_month in constants.MONTHS_HAVING_30_DAYS:
         return dt_obj.replace(day=30)
@@ -103,13 +109,14 @@ def get_last_day_of_current_month(dt_obj: Union[datetime, date], /) -> Union[dat
 
 
 def get_first_day_of_next_month(dt_obj: Union[datetime, date], /) -> Union[datetime, date]:
+    """Returns a new date/datetime object having the first day of the next month"""
     if dt_obj.month == 12:
         return dt_obj.replace(year=dt_obj.year + 1, month=1, day=1)
     return dt_obj.replace(month=dt_obj.month + 1, day=1)
 
 
-def is_february_29th(x: Union[datetime, date]) -> bool:
-    assert is_date_or_datetime_object(x), "Param must be of type 'date' or 'datetime'"
+def is_february_29th(x: Union[datetime, date], /) -> bool:
+    """Checks if the given date/datetime object represents February 29th (of any year)"""
     return x.month == 2 and x.day == 29
 
 

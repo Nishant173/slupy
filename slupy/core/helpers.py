@@ -65,7 +65,7 @@ def create_repr(
     class Person:
         pass
 
-    create_repr(
+    >>> create_repr(
         instance=Person(),
         kwargs_dict={
             "first_name": "James",

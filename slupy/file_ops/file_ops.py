@@ -4,18 +4,18 @@ import os
 import shutil
 
 
-def get_extension(filepath: str) -> str:
+def get_extension_from_filepath(filepath: str, /) -> str:
     """Returns the extension of the given filepath"""
     return os.path.splitext(filepath)[-1][1:]
 
 
-def get_basename_from_filepath(filepath: str) -> str:
+def get_basename_from_filepath(filepath: str, /) -> str:
     """Returns base-name of the file/folder from the given `filepath` (along with the extension, if any)"""
     head, tail = ntpath.split(p=filepath)
     return tail or ntpath.basename(head)
 
 
-def get_absolute_filepath(filepath: str) -> str:
+def get_absolute_filepath(filepath: str, /) -> str:
     """Returns absolute filepath of the file/folder from the given `filepath` (along with the extension, if any)"""
     absolute_filepath = os.path.realpath(path=filepath)
     return absolute_filepath
@@ -43,14 +43,14 @@ def filter_filepaths_by_extensions(
         map(lambda extension: extension.strip().lower(), extensions)
     )
     filepaths_needed = list(
-        filter(lambda filepath: get_extension(filepath=filepath).strip().lower() in extensions, filepaths)
+        filter(lambda filepath: get_extension_from_filepath(filepath).strip().lower() in extensions, filepaths)
     )
     return filepaths_needed
 
 
-def get_unique_extensions(filepaths: List[str]) -> List[str]:
+def get_unique_extensions(*, filepaths: List[str]) -> List[str]:
     """Returns all unique extensions available in the list of filepaths given"""
-    all_extensions = list(map(get_extension, filepaths))
+    all_extensions = list(map(get_extension_from_filepath, filepaths))
     unique_extensions = sorted(list(set(all_extensions)))
     return unique_extensions
 
@@ -76,6 +76,7 @@ def _get_filepaths_at_all_levels(src_dir: str) -> List[str]:
 
 
 def get_filepaths(
+        *,
         src_dir: str,
         depth: str,
         extensions: Optional[List[str]] = None,
@@ -117,8 +118,8 @@ def create_archive_file(
     Creates archive file of the given source directory.
     Options for `archive_format` are: ['zip', 'tar', 'gztar', 'bztar', 'xztar'].
     """
-    absolute_path_to_src_dir = get_absolute_filepath(filepath=src_dir)
-    basename_of_src_dir = get_basename_from_filepath(filepath=src_dir)
+    absolute_path_to_src_dir = get_absolute_filepath(src_dir)
+    basename_of_src_dir = get_basename_from_filepath(src_dir)
     shutil.make_archive(
         base_name=basename_of_src_dir,
         format=archive_format,
