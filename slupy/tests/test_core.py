@@ -1,6 +1,6 @@
 import unittest
 
-from slupy.core import dev_helpers
+from slupy.core import helpers
 
 
 class Person:
@@ -10,7 +10,7 @@ class Person:
 class TestCore(unittest.TestCase):
 
     def test_create_repr(self):
-        repr_string = dev_helpers.create_repr(
+        repr_string = helpers.create_repr(
             instance=Person(),
             kwargs_dict={"name": "james", "age": 42, "is_partner": False},
             multi_line=False,
