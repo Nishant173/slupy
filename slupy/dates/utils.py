@@ -158,6 +158,14 @@ def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
     return (year_difference, day_difference)
 
 
+def compute_date_difference(a: date, b: date, /) -> Tuple[int, int]:
+    """Computes the date-difference as `a - b`, and returns a tuple of (years, days)"""
+    years, days = compute_absolute_date_difference(a, b)
+    if a < b:
+        return (years * -1, days * -1)
+    return (years, days)
+
+
 def is_leap_year(year: int, /) -> bool:
     assert isinstance(year, int), "Param `year` must be of type 'int'"
     if year % 4 != 0:

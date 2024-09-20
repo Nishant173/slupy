@@ -149,6 +149,43 @@ class TestDateUtils(unittest.TestCase):
             (2, 168),
         )
 
+    def test_compute_date_difference(self):
+        self.assertEqual(
+            utils.compute_date_difference(
+                date(year=2020, month=1, day=11),
+                date(year=2020, month=6, day=28),
+            ),
+            (0, -169),
+        )
+        self.assertEqual(
+            utils.compute_date_difference(
+                date(year=2019, month=1, day=11),
+                date(year=2020, month=6, day=28),
+            ),
+            (-1, -169),
+        )
+        self.assertEqual(
+            utils.compute_date_difference(
+                date(year=2019, month=1, day=11),
+                date(year=2021, month=6, day=28),
+            ),
+            (-2, -168),
+        )
+        self.assertEqual(
+            utils.compute_date_difference(
+                date(year=2021, month=6, day=28),
+                date(year=2020, month=1, day=11),
+            ),
+            (1, 168),
+        )
+        self.assertEqual(
+            utils.compute_date_difference(
+                date(year=2020, month=6, day=28),
+                date(year=2020, month=1, day=11),
+            ),
+            (0, 169),
+        )
+
     def test_is_leap_year(self):
         self.assertTrue(
             utils.is_leap_year(2000),
