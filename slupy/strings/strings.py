@@ -18,6 +18,7 @@ def make_message(
         suffix: Optional[str] = None,
         sep: Optional[str] = None,
     ) -> str:
+    """Helps construct a message with a `prefix` and a `suffix` (separated by the `sep`)"""
     sep = "" if sep is None else sep
     components = []
     if prefix:
@@ -84,21 +85,20 @@ def snake_to_camel(string: str) -> str:
     return string_in_camel
 
 
-def retardify(string: str) -> str:
+def to_dumbo_text(s: str, /) -> str:
     """
     Converts given text to retardified text.
-    >>> retardify(string="Hello, and good morning!") # Returns "hElLo, AnD gOoD mOrNiNg!"
+    >>> to_dumbo_text("Hello, and good morning!") # Returns "hElLo, AnD gOoD mOrNiNg!"
     """
-    string = string.lower().strip()
     counter = 0
-    retardified_text = ""
-    for character in string:
+    result_text = ""
+    for character in s.lower():
         if character in ALPHABETS:
             counter += 1
             if counter % 2 == 0:
                 character = character.upper()
-        retardified_text += character
-    return retardified_text
+        result_text += character
+    return result_text
 
 
 def get_first_n_characters(*, text: str, num_chars: int) -> str:

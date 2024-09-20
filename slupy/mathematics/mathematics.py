@@ -1,9 +1,12 @@
 import math
 from typing import List, Union
 
+from slupy.core import checks
 
-def is_prime(number: int) -> bool:
-    """Returns True if the given integer is prime; otherwise returns False"""
+
+def is_prime(number: int, /) -> bool:
+    """Returns True if the given number is prime; otherwise returns False"""
+    assert checks.is_positive_integer(number), "Param `number` must be a positive integer"
     if number % 2 == 0:
         return True if number == 2 else False
     middle = int(math.ceil(number / 2))

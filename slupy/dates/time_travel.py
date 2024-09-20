@@ -32,10 +32,10 @@ class TimeTravel:
         )
 
     def __str__(self) -> str:
-        return self.value_as_string()
+        return self._value_as_string()
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}(value='{self.value_as_string()}')"
+        return f"{self.__class__.__name__}(value='{self._value_as_string()}')"
 
     def copy(self) -> TimeTravel:
         """Returns a copy (new instance) of the `TimeTravel` object"""
@@ -49,7 +49,7 @@ class TimeTravel:
     def initial_value(self, obj) -> None:
         raise NotImplementedError("Not allowed to set the `initial_value` property")
 
-    def value_as_string(self) -> str:
+    def _value_as_string(self) -> str:
         """Returns the string representation of the `value` property"""
         if self.dtype == "DATETIME":
             return self.value.strftime(constants.DATETIME_FORMAT)

@@ -1,4 +1,23 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
+
+Sliceable = Union[list, tuple, str]
+
+
+def slice_by_position(
+        sliceable: Sliceable,
+        /,
+        *,
+        start: int,
+        end: int,
+    ) -> Sliceable:
+    """
+    Slice the given sliceable object by position (not by index).
+    The position can range from 1-n (where `n` is the length of the sliceable).
+    """
+    length = len(sliceable)
+    assert start >= 1, "Position `start` is out of bounds"
+    assert end <= length, "Position `end` is out of bounds"
+    return sliceable[start - 1 : end]
 
 
 def _get_kwarg_as_string(key: Any, value: Any) -> str:
@@ -46,7 +65,7 @@ def create_repr(
     class Person:
         pass
 
-    create_repr(
+    >>> create_repr(
         instance=Person(),
         kwargs_dict={
             "first_name": "James",

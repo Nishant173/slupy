@@ -74,14 +74,14 @@ def is_non_negative_number(x: Any, /) -> bool:
     return is_number(x) and x >= 0
 
 
-def list_has_negative_number(array: List[Union[int, float]]) -> bool:
+def list_has_negative_number(array: List[Union[int, float]], /) -> bool:
     return any((number < 0 for number in array))
 
 
-def list_has_non_negative_number(array: List[Union[int, float]]) -> bool:
+def list_has_non_negative_number(array: List[Union[int, float]], /) -> bool:
     return any((number >= 0 for number in array))
 
 
-def list_has_positive_number(array: List[Union[int, float]]) -> bool:
+def list_has_positive_number(array: List[Union[int, float]], /) -> bool:
     return any((number > 0 for number in array))
 
