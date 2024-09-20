@@ -21,6 +21,27 @@ def offset_between_datetimes(
 
     For reference to `offset_kwargs` dictionary, please check the `slupy.dates.time_travel.TimeTravel` class' `add()`
     and `subtract()` methods.
+
+    Examples:
+    ```
+    from datetime import date, datetime
+
+    >>> offset_between_datetimes(
+        start=date(year=2000, month=1, day=21),
+        end=date(year=2000, month=1, day=27),
+        offset_kwargs=dict(days=1),
+        ascending=True,
+        as_string=True,
+    )  # Returns ["2000-01-21", "2000-01-22", "2000-01-23", "2000-01-24", "2000-01-25", "2000-01-26", "2000-01-27"]
+
+    >>> offset_between_datetimes(
+        start=date(year=2000, month=1, day=21),
+        end=date(year=2000, month=1, day=27),
+        offset_kwargs=dict(days=1),
+        ascending=False,
+        as_string=True,
+    )  # Returns ["2000-01-27", "2000-01-26", "2000-01-25", "2000-01-24", "2000-01-23", "2000-01-22", "2000-01-21"]
+    ```
     """
     assert (
         (utils.is_datetime_object(start) and utils.is_datetime_object(end))
@@ -68,6 +89,27 @@ def get_datetime_buckets(
 
     For reference to `offset_kwargs` dictionary, please check the `slupy.dates.time_travel.TimeTravel` class' `add()`
     and `subtract()` methods.
+
+    Examples:
+    ```
+    from datetime import date, datetime
+
+    >>> get_datetime_buckets(
+        start=date(year=2000, month=1, day=1),
+        num_buckets=5,
+        offset_kwargs=dict(weeks=1),
+        ascending=True,
+        as_string=True,
+    )  # Returns [("2000-01-01", "2000-01-07"), ("2000-01-08", "2000-01-14"), ("2000-01-15", "2000-01-21"), ("2000-01-22", "2000-01-28"), ("2000-01-29", "2000-02-04")]
+
+    >>> get_datetime_buckets(
+        start=date(year=2000, month=1, day=1),
+        num_buckets=3,
+        offset_kwargs=dict(weeks=1),
+        ascending=False,
+        as_string=True,
+    )  # Returns [("1999-12-12", "1999-12-18"), ("1999-12-19", "1999-12-25"), ("1999-12-26", "2000-01-01")]
+    ```
     """
     assert utils.is_date_or_datetime_object(start), "Param `start` must be of type 'date' or 'datetime'"
     assert checks.is_positive_integer(num_buckets), "Param `num_buckets` must be a positive integer"
