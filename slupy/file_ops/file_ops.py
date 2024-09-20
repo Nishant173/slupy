@@ -21,11 +21,6 @@ def get_absolute_filepath(filepath: str, /) -> str:
     return absolute_filepath
 
 
-def get_line_count(filepath: str) -> int:
-    """Returns count of number of lines in the given file"""
-    return sum(1 for _ in open(file=filepath, encoding="utf8"))
-
-
 def filter_filepaths_by_extensions(
         *,
         filepaths: List[str],
@@ -111,6 +106,7 @@ def get_filepaths(
 
 
 def create_archive_file(
+        *,
         src_dir: str,
         archive_format: str,
     ) -> None:
