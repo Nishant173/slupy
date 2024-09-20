@@ -18,6 +18,7 @@ def make_message(
         suffix: Optional[str] = None,
         sep: Optional[str] = None,
     ) -> str:
+    """Helps construct a message with a `prefix` and a `suffix` (separated by the `sep`)"""
     sep = "" if sep is None else sep
     components = []
     if prefix:

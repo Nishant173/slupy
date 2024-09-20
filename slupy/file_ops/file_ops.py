@@ -121,5 +121,4 @@ def create_archive_file(
         format=archive_format,
         root_dir=absolute_path_to_src_dir,
     )
-    return None
 
