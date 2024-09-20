@@ -131,30 +131,30 @@ def compare_day_and_month(a: date, b: date, /) -> Literal["<", ">", "=="]:
     return "=="
 
 
-def compute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
+def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
     """Computes the absolute date-difference, and returns a tuple of (years, days)"""
     if d1 == d2:
         return (0, 0)
-    if d1 > d2:
-        d1, d2 = d2, d1  # ensure that d1 < d2
-
     d1_copy = d1.replace()
-    year_difference = d2.year - d1.year
-    operator = compare_day_and_month(d2, d1)
+    d2_copy = d2.replace()
+    if d2_copy < d1_copy:
+        d1_copy, d2_copy = d2_copy, d1_copy  # ensure that d2_copy > d1_copy
+    year_difference = d2_copy.year - d1_copy.year
+    operator = compare_day_and_month(d2_copy, d1_copy)
     if operator == ">":
         if is_february_29th(d1_copy):
-            d1_copy = d1_copy.replace(year=d2.year, month=2, day=28)
+            d1_copy = d1_copy.replace(year=d2_copy.year, month=2, day=28)
         else:
-            d1_copy = d1_copy.replace(year=d2.year)
+            d1_copy = d1_copy.replace(year=d2_copy.year)
     elif operator == "<":
         year_difference -= 1
         if is_february_29th(d1_copy):
-            d1_copy = d1_copy.replace(year=d2.year - 1, month=2, day=28)
+            d1_copy = d1_copy.replace(year=d2_copy.year - 1, month=2, day=28)
         else:
-            d1_copy = d1_copy.replace(year=d2.year - 1)
+            d1_copy = d1_copy.replace(year=d2_copy.year - 1)
     elif operator == "==":
         return (year_difference, 0)
-    day_difference = (d2 - d1_copy).days
+    day_difference = (d2_copy - d1_copy).days
     return (year_difference, day_difference)
 
 
