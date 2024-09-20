@@ -29,8 +29,8 @@ def commafy_number(number: Union[int, float], /) -> str:
     Adds commas to number for better readability.
 
     ```
-    >>> commafy_number(number=1738183090) # Returns "1,738,183,090"
-    >>> commafy_number(number=1738183090.90406) # Returns "1,738,183,090.90406"
+    >>> commafy_number(1738183090) # Returns "1,738,183,090"
+    >>> commafy_number(1738183090.90406) # Returns "1,738,183,090.90406"
     ```
     """
     if int(number) == number:

@@ -49,7 +49,7 @@ def _add_attachments_to_multipart_object(
         payload.add_header(
             _name='Content-Disposition',
             _value='attachment',
-            filename=file_ops.get_basename_from_filepath(filepath=filepath),
+            filename=file_ops.get_basename_from_filepath(filepath),
         )
         multipart_obj.attach(payload=payload)
     return multipart_obj
