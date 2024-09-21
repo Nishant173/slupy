@@ -11,6 +11,10 @@ class TestStrings(unittest.TestCase):
             "HelloAndGoodMorning",
         )
         self.assertEqual(
+            strings.camel_to_snake("helloAndGoodMorning"),
+            "hello_and_good_morning",
+        )
+        self.assertEqual(
             strings.pascal_to_camel("HelloAndGoodMorning"),
             "helloAndGoodMorning",
         )
@@ -23,12 +27,16 @@ class TestStrings(unittest.TestCase):
             "HelloAndGoodMorning",
         )
         self.assertEqual(
-            strings.camel_to_snake("helloAndGoodMorning"),
-            "hello_and_good_morning",
-        )
-        self.assertEqual(
             strings.snake_to_camel("hello_and_good_morning"),
             "helloAndGoodMorning",
+        )
+        self.assertEqual(
+            strings.snake_to_kebab("hello_and_good_morning"),
+            "hello-and-good-morning",
+        )
+        self.assertEqual(
+            strings.kebab_to_snake("hello-and-good-morning"),
+            "hello_and_good_morning",
         )
 
     def test_string_slicing(self):
@@ -71,5 +79,109 @@ class TestStrings(unittest.TestCase):
         self.assertEqual(
             strings.make_message("hello", prefix="prefix", suffix="suffix", sep="|"),
             "prefix|hello|suffix",
+        )
+
+    def test_is_part_of_charset(self):
+        charset = set(list("aeiouAEIOU._-"))
+        self.assertTrue(
+            strings.is_part_of_charset(text="auoiAEEE...__.._--AAUUUiii", charset=charset),
+        )
+        self.assertTrue(
+            not strings.is_part_of_charset(text="aer", charset=charset),
+        )
+
+    def test_is_snake_case(self):
+        self.assertTrue(
+            strings.is_kebab_case("hello123"),
+        )
+        self.assertTrue(
+            strings.is_snake_case("hello1_world1"),
+        )
+        self.assertTrue(
+            not strings.is_snake_case("hello-world"),
+        )
+        self.assertTrue(
+            not strings.is_snake_case("Hello_world"),
+        )
+        self.assertTrue(
+            not strings.is_snake_case("h.ello_world"),
+        )
+        self.assertTrue(
+            not strings.is_snake_case("hello_world_"),
+        )
+        self.assertTrue(
+            strings.is_snake_case("HELLO_WORLD_123_YES", as_uppercase=True),
+        )
+        self.assertTrue(
+            not strings.is_snake_case("hello_world", as_uppercase=True),
+        )
+        self.assertTrue(
+            strings.is_kebab_case("HELLO123", as_uppercase=True),
+        )
+
+    def test_is_kebab_case(self):
+        self.assertTrue(
+            strings.is_kebab_case("hello123"),
+        )
+        self.assertTrue(
+            strings.is_kebab_case("hello1-world1-123-yes-000"),
+        )
+        self.assertTrue(
+            not strings.is_kebab_case("hello_world"),
+        )
+        self.assertTrue(
+            not strings.is_kebab_case("Hello-world"),
+        )
+        self.assertTrue(
+            not strings.is_kebab_case("h.ello-world"),
+        )
+        self.assertTrue(
+            not strings.is_kebab_case("hello-world-"),
+        )
+        self.assertTrue(
+            strings.is_kebab_case("HELLO-WORLD123-YES-000", as_uppercase=True),
+        )
+        self.assertTrue(
+            not strings.is_kebab_case("hello-world", as_uppercase=True),
+        )
+        self.assertTrue(
+            strings.is_kebab_case("HELLO", as_uppercase=True),
+        )
+
+    def test_is_camel_case(self):
+        self.assertTrue(
+            strings.is_camel_case("hello"),
+        )
+        self.assertTrue(
+            strings.is_camel_case("helloWorld"),
+        )
+        self.assertTrue(
+            not strings.is_camel_case("hello-world"),
+        )
+        self.assertTrue(
+            not strings.is_camel_case("hello_world"),
+        )
+        self.assertTrue(
+            strings.is_camel_case("hELLOWORLD"),
+        )
+        self.assertTrue(
+            not strings.is_camel_case("HELLOWORLD"),
+        )
+
+    def test_is_pascal_case(self):
+        self.assertTrue(
+            strings.is_pascal_case("Hello"),
+        )
+        self.assertTrue(
+            strings.is_pascal_case("HelloWorld"),
+        )
+        self.assertTrue(
+            not strings.is_pascal_case("Hello-world"),
+        )
+        self.assertTrue(
+            not strings.is_pascal_case("Hello_world"),
+        )
+        self.assertTrue(
+            strings.is_pascal_case("HELLOWORLD"),
         )
 

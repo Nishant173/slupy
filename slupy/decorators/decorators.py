@@ -15,7 +15,7 @@ def timer(func: Callable) -> Callable:
         end = time.time()
         time_taken_in_secs = round(end - start, 3)
         timetaken_fstring = get_timetaken_fstring(num_seconds=time_taken_in_secs)
-        print(f"Executed '{func.__name__}' in: {timetaken_fstring}")
+        print(f"Executed function '{func.__name__}' in: {timetaken_fstring}")
         return result
     return wrapper_timer
 
@@ -38,6 +38,7 @@ def repeat(*, num_times: int) -> Callable:
     def repeat_decorator(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
+            print(f"Repeating function '{func.__name__}' {num_times} times")
             for _ in range(num_times):
                 result = func(*args, **kwargs)
             return result

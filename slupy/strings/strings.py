@@ -5,9 +5,15 @@ from typing import List, Optional
 from slupy.core import checks
 
 
+DIGITS = set(string.digits)
 ALPHABETS_LOWER_CASED = set(string.ascii_lowercase)
 ALPHABETS_UPPER_CASED = set(string.ascii_uppercase)
 ALPHABETS = ALPHABETS_LOWER_CASED.union(ALPHABETS_UPPER_CASED)
+ALPHABETS_AND_DIGITS = ALPHABETS.union(DIGITS)
+CHARSET_LOWER_SNAKE_CASE = ALPHABETS_LOWER_CASED.union(DIGITS).union(["_"])
+CHARSET_UPPER_SNAKE_CASE = ALPHABETS_UPPER_CASED.union(DIGITS).union(["_"])
+CHARSET_LOWER_KEBAB_CASE = ALPHABETS_LOWER_CASED.union(DIGITS).union(["-"])
+CHARSET_UPPER_KEBAB_CASE = ALPHABETS_UPPER_CASED.union(DIGITS).union(["-"])
 
 
 def make_message(
@@ -29,60 +35,127 @@ def make_message(
     return f"{sep}".join(components)
 
 
-def camel_to_pascal(string: str) -> str:
+def is_part_of_charset(*, text: str, charset: set[str]) -> bool:
+    """Checks if the given `text` is part of the given `charset`"""
+    assert isinstance(text, str) and bool(text), "Param `text` must be a non-empty string"
+    assert isinstance(charset, set) and bool(charset), "Param `charset` must be a non-empty set of strings"
+    return all((char in charset for char in text))
+
+
+def is_snake_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
+    charset = CHARSET_UPPER_SNAKE_CASE if as_uppercase else CHARSET_LOWER_SNAKE_CASE
+    return (
+        is_part_of_charset(text=s, charset=charset)
+        and not s.startswith("_")
+        and not s.endswith("_")
+        and "__" not in s  # cannot have successive underscores
+    )
+
+
+def is_kebab_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
+    charset = CHARSET_UPPER_KEBAB_CASE if as_uppercase else CHARSET_LOWER_KEBAB_CASE
+    return (
+        is_part_of_charset(text=s, charset=charset)
+        and not s.startswith("-")
+        and not s.endswith("-")
+        and "--" not in s  # cannot have successive hyphens
+    )
+
+
+def is_camel_case(s: str, /) -> bool:
+    return (
+        is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
+        and s[0].islower()
+        and not s[0].isdigit()
+    )
+
+
+def is_pascal_case(s: str, /) -> bool:
+    return (
+        is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
+        and s[0].isupper()
+        and not s[0].isdigit()
+    )
+
+
+def camel_to_pascal(string: str, /) -> str:
     """
     Converts camel-case to pascal-case.
-    >>> camel_to_pascal(string="helloAndGoodMorning") # Returns "HelloAndGoodMorning"
+    >>> camel_to_pascal("helloAndGoodMorning") # Returns "HelloAndGoodMorning"
     """
+    assert is_camel_case(string), "Given string is not in camel case"
     return string[0].upper() + string[1:]
 
 
-def pascal_to_camel(string: str) -> str:
+def camel_to_snake(string: str, /) -> str:
+    """
+    Converts camel-case to snake-case.
+    >>> camel_to_snake("helloAndGoodMorning") # Returns "hello_and_good_morning"
+    """
+    assert is_camel_case(string), "Given string is not in camel case"
+    string_in_pascal = camel_to_pascal(string)
+    string_in_snake = pascal_to_snake(string_in_pascal)
+    return string_in_snake
+
+
+def pascal_to_camel(string: str, /) -> str:
     """
     Converts pascal-case to camel-case.
-    >>> pascal_to_camel(string="HelloAndGoodMorning") # Returns "helloAndGoodMorning"
+    >>> pascal_to_camel("HelloAndGoodMorning") # Returns "helloAndGoodMorning"
     """
+    assert is_pascal_case(string), "Given string is not in pascal case"
     return string[0].lower() + string[1:]
 
 
-def pascal_to_snake(string: str) -> str:
+def pascal_to_snake(string: str, /) -> str:
     """
     Converts pascal-case to snake-case.
-    >>> pascal_to_snake(string="HelloAndGoodMorning") # Returns "hello_and_good_morning"
+    >>> pascal_to_snake("HelloAndGoodMorning") # Returns "hello_and_good_morning"
     """
+    assert is_pascal_case(string), "Given string is not in pascal case"
     words = re.findall(pattern="[A-Z][^A-Z]*", string=string)
     words_lower_cased = list(map(str.lower, words))
     return "_".join(words_lower_cased)
 
 
-def camel_to_snake(string: str) -> str:
-    """
-    Converts camel-case to snake-case.
-    >>> camel_to_snake(string="helloAndGoodMorning") # Returns "hello_and_good_morning"
-    """
-    string_in_pascal = camel_to_pascal(string=string)
-    string_in_snake = pascal_to_snake(string=string_in_pascal)
-    return string_in_snake
-
-
-def snake_to_pascal(string: str) -> str:
+def snake_to_pascal(string: str, /) -> str:
     """
     Converts snake-case to pascal-case.
-    >>> snake_to_pascal(string="hello_and_good_morning") # Returns "HelloAndGoodMorning"
+    >>> snake_to_pascal("hello_and_good_morning") # Returns "HelloAndGoodMorning"
     """
+    assert is_snake_case(string), "Given string is not in snake case"
     words = string.split('_')
     words_capitalized = list(map(str.capitalize, words))
     return "".join(words_capitalized)
 
 
-def snake_to_camel(string: str) -> str:
+def snake_to_camel(string: str, /) -> str:
     """
     Converts snake-case to camel-case.
-    >>> snake_to_camel(string="hello_and_good_morning") # Returns "helloAndGoodMorning"
+    >>> snake_to_camel("hello_and_good_morning") # Returns "helloAndGoodMorning"
     """
-    string_in_pascal = snake_to_pascal(string=string)
-    string_in_camel = pascal_to_camel(string=string_in_pascal)
+    assert is_snake_case(string), "Given string is not in snake case"
+    string_in_pascal = snake_to_pascal(string)
+    string_in_camel = pascal_to_camel(string_in_pascal)
     return string_in_camel
+
+
+def snake_to_kebab(string: str, /) -> str:
+    """
+    Converts snake-case to kebab-case.
+    >>> snake_to_kebab("hello_and_good_morning") # Returns "hello-and-good-morning"
+    """
+    assert is_snake_case(string), "Given string is not in snake case"
+    return string.replace("_", "-")
+
+
+def kebab_to_snake(string: str, /) -> str:
+    """
+    Converts kebab-case to snake-case.
+    >>> kebab_to_snake("hello-and-good-morning") # Returns "hello_and_good_morning"
+    """
+    assert is_kebab_case(string), "Given string is not in kebab case"
+    return string.replace("-", "_")
 
 
 def to_dumbo_text(s: str, /) -> str:
