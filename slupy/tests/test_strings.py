@@ -30,6 +30,14 @@ class TestStrings(unittest.TestCase):
             strings.snake_to_camel("hello_and_good_morning"),
             "helloAndGoodMorning",
         )
+        self.assertEqual(
+            strings.snake_to_kebab("hello_and_good_morning"),
+            "hello-and-good-morning",
+        )
+        self.assertEqual(
+            strings.kebab_to_snake("hello-and-good-morning"),
+            "hello_and_good_morning",
+        )
 
     def test_string_slicing(self):
         self.assertEqual(

@@ -140,6 +140,24 @@ def snake_to_camel(string: str, /) -> str:
     return string_in_camel
 
 
+def snake_to_kebab(string: str, /) -> str:
+    """
+    Converts snake-case to kebab-case.
+    >>> snake_to_kebab("hello_and_good_morning") # Returns "hello-and-good-morning"
+    """
+    assert is_snake_case(string), "Given string is not in snake case"
+    return string.replace("_", "-")
+
+
+def kebab_to_snake(string: str, /) -> str:
+    """
+    Converts kebab-case to snake-case.
+    >>> kebab_to_snake("hello-and-good-morning") # Returns "hello_and_good_morning"
+    """
+    assert is_kebab_case(string), "Given string is not in kebab case"
+    return string.replace("-", "_")
+
+
 def to_dumbo_text(s: str, /) -> str:
     """
     Converts given text to retardified text.
