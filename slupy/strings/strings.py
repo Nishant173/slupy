@@ -5,9 +5,15 @@ from typing import List, Optional
 from slupy.core import checks
 
 
+DIGITS = set(string.digits)
 ALPHABETS_LOWER_CASED = set(string.ascii_lowercase)
 ALPHABETS_UPPER_CASED = set(string.ascii_uppercase)
 ALPHABETS = ALPHABETS_LOWER_CASED.union(ALPHABETS_UPPER_CASED)
+ALPHABETS_AND_DIGITS = ALPHABETS.union(DIGITS)
+CHARSET_LOWER_SNAKE_CASE = ALPHABETS_LOWER_CASED.union(DIGITS).union(["_"])
+CHARSET_UPPER_SNAKE_CASE = ALPHABETS_UPPER_CASED.union(DIGITS).union(["_"])
+CHARSET_LOWER_KEBAB_CASE = ALPHABETS_LOWER_CASED.union(DIGITS).union(["-"])
+CHARSET_UPPER_KEBAB_CASE = ALPHABETS_UPPER_CASED.union(DIGITS).union(["-"])
 
 
 def make_message(
@@ -27,6 +33,49 @@ def make_message(
     if suffix:
         components.append(suffix)
     return f"{sep}".join(components)
+
+
+def is_part_of_charset(*, text: str, charset: set[str]) -> bool:
+    """Checks if the given `text` is part of the given `charset`"""
+    assert isinstance(text, str) and bool(text), "Param `text` must be a non-empty string"
+    assert isinstance(charset, set) and bool(charset), "Param `charset` must be a non-empty set of strings"
+    return all((char in charset for char in text))
+
+
+def is_snake_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
+    charset = CHARSET_UPPER_SNAKE_CASE if as_uppercase else CHARSET_LOWER_SNAKE_CASE
+    return (
+        is_part_of_charset(text=s, charset=charset)
+        and not s.startswith("_")
+        and not s.endswith("_")
+        and "__" not in s  # cannot have successive underscores
+    )
+
+
+def is_kebab_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
+    charset = CHARSET_UPPER_KEBAB_CASE if as_uppercase else CHARSET_LOWER_KEBAB_CASE
+    return (
+        is_part_of_charset(text=s, charset=charset)
+        and not s.startswith("-")
+        and not s.endswith("-")
+        and "--" not in s  # cannot have successive hyphens
+    )
+
+
+def is_camel_case(s: str, /) -> bool:
+    return (
+        is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
+        and s[0].islower()
+        and not s[0].isdigit()
+    )
+
+
+def is_pascal_case(s: str, /) -> bool:
+    return (
+        is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
+        and s[0].isupper()
+        and not s[0].isdigit()
+    )
 
 
 def camel_to_pascal(string: str) -> str:
