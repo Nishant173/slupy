@@ -11,6 +11,10 @@ class TestStrings(unittest.TestCase):
             "HelloAndGoodMorning",
         )
         self.assertEqual(
+            strings.camel_to_snake("helloAndGoodMorning"),
+            "hello_and_good_morning",
+        )
+        self.assertEqual(
             strings.pascal_to_camel("HelloAndGoodMorning"),
             "helloAndGoodMorning",
         )
@@ -21,10 +25,6 @@ class TestStrings(unittest.TestCase):
         self.assertEqual(
             strings.snake_to_pascal("hello_and_good_morning"),
             "HelloAndGoodMorning",
-        )
-        self.assertEqual(
-            strings.camel_to_snake("helloAndGoodMorning"),
-            "hello_and_good_morning",
         )
         self.assertEqual(
             strings.snake_to_camel("hello_and_good_morning"),

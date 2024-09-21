@@ -78,59 +78,65 @@ def is_pascal_case(s: str, /) -> bool:
     )
 
 
-def camel_to_pascal(string: str) -> str:
+def camel_to_pascal(string: str, /) -> str:
     """
     Converts camel-case to pascal-case.
-    >>> camel_to_pascal(string="helloAndGoodMorning") # Returns "HelloAndGoodMorning"
+    >>> camel_to_pascal("helloAndGoodMorning") # Returns "HelloAndGoodMorning"
     """
+    assert is_camel_case(string), "Given string is not in camel case"
     return string[0].upper() + string[1:]
 
 
-def pascal_to_camel(string: str) -> str:
+def camel_to_snake(string: str, /) -> str:
+    """
+    Converts camel-case to snake-case.
+    >>> camel_to_snake("helloAndGoodMorning") # Returns "hello_and_good_morning"
+    """
+    assert is_camel_case(string), "Given string is not in camel case"
+    string_in_pascal = camel_to_pascal(string)
+    string_in_snake = pascal_to_snake(string_in_pascal)
+    return string_in_snake
+
+
+def pascal_to_camel(string: str, /) -> str:
     """
     Converts pascal-case to camel-case.
-    >>> pascal_to_camel(string="HelloAndGoodMorning") # Returns "helloAndGoodMorning"
+    >>> pascal_to_camel("HelloAndGoodMorning") # Returns "helloAndGoodMorning"
     """
+    assert is_pascal_case(string), "Given string is not in pascal case"
     return string[0].lower() + string[1:]
 
 
-def pascal_to_snake(string: str) -> str:
+def pascal_to_snake(string: str, /) -> str:
     """
     Converts pascal-case to snake-case.
-    >>> pascal_to_snake(string="HelloAndGoodMorning") # Returns "hello_and_good_morning"
+    >>> pascal_to_snake("HelloAndGoodMorning") # Returns "hello_and_good_morning"
     """
+    assert is_pascal_case(string), "Given string is not in pascal case"
     words = re.findall(pattern="[A-Z][^A-Z]*", string=string)
     words_lower_cased = list(map(str.lower, words))
     return "_".join(words_lower_cased)
 
 
-def camel_to_snake(string: str) -> str:
-    """
-    Converts camel-case to snake-case.
-    >>> camel_to_snake(string="helloAndGoodMorning") # Returns "hello_and_good_morning"
-    """
-    string_in_pascal = camel_to_pascal(string=string)
-    string_in_snake = pascal_to_snake(string=string_in_pascal)
-    return string_in_snake
-
-
-def snake_to_pascal(string: str) -> str:
+def snake_to_pascal(string: str, /) -> str:
     """
     Converts snake-case to pascal-case.
-    >>> snake_to_pascal(string="hello_and_good_morning") # Returns "HelloAndGoodMorning"
+    >>> snake_to_pascal("hello_and_good_morning") # Returns "HelloAndGoodMorning"
     """
+    assert is_snake_case(string), "Given string is not in snake case"
     words = string.split('_')
     words_capitalized = list(map(str.capitalize, words))
     return "".join(words_capitalized)
 
 
-def snake_to_camel(string: str) -> str:
+def snake_to_camel(string: str, /) -> str:
     """
     Converts snake-case to camel-case.
-    >>> snake_to_camel(string="hello_and_good_morning") # Returns "helloAndGoodMorning"
+    >>> snake_to_camel("hello_and_good_morning") # Returns "helloAndGoodMorning"
     """
-    string_in_pascal = snake_to_pascal(string=string)
-    string_in_camel = pascal_to_camel(string=string_in_pascal)
+    assert is_snake_case(string), "Given string is not in snake case"
+    string_in_pascal = snake_to_pascal(string)
+    string_in_camel = pascal_to_camel(string_in_pascal)
     return string_in_camel
 
 
