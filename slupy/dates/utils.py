@@ -28,7 +28,7 @@ def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Uni
     >>> get_timetaken_dictionary(num_seconds=3725.4292)
     >>> get_timetaken_dictionary(num_seconds=885354.128129)
     """
-    assert checks.is_non_negative_number(num_seconds), "Param `num_seconds` must be a non-negative number"
+    assert checks.is_positive_number(num_seconds), "Param `num_seconds` must be a positive number"
     weeks, remainder = divmod(num_seconds, TimeUnitConverter.SECONDS_PER_WEEK)
     days, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_DAY)
     hours, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_HOUR)
