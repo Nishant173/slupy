@@ -1,6 +1,19 @@
-from typing import Any, Dict, Optional, Union
+import copy
+from typing import Any, Callable, Dict, Optional, Union
+
+from slupy.core import checks
 
 Sliceable = Union[list, tuple, str]
+
+
+def make_deep_copy(obj: Any, /) -> Any:
+    """Returns deep-copy of the given object"""
+    return copy.deepcopy(obj)
+
+
+def make_shallow_copy(obj: Any, /) -> Any:
+    """Returns shallow-copy of the given object"""
+    return copy.copy(obj)
 
 
 def slice_by_position(
@@ -90,4 +103,81 @@ def print_docstring(obj: Any) -> None:
     """Prints the doc-string (if available). Usually of a class, method or function."""
     if hasattr(obj, "__doc__"):
         print(obj.__doc__)
+
+
+def rename_dict_keys(
+        dict_: Dict[str, Any],
+        /,
+        *,
+        update_func: Callable[[str], str],
+        deep: Optional[bool] = False,
+    ) -> Dict[str, Any]:
+    """
+    Renames the keys of the given dictionary, based on the given `update_func`.
+    Returns a new dictionary having the updated keys. The original dictionary will remain unchanged.
+
+    Parameters:
+        - dict_: The dictionary.
+        - update_func (Callable): The function that takes in the current key and returns the new key.
+        - deep (bool): If `deep=True`, it also renames the dictionary keys of all the nested dictionaries.
+    """
+    assert checks.is_valid_object_of_type(dict_, type_=dict, allow_empty=False), (
+        "Param `dict_` must be of type 'dict' and must be non-empty"
+    )
+    return _rename_dict_keys(
+        dict_original=dict_,
+        dict_copy=make_deep_copy(dict_),
+        update_func=update_func,
+        deep=deep,
+    )
+
+
+def _rename_dict_keys(
+        *,
+        dict_original: Dict[str, Any],
+        dict_copy: Dict[str, Any],
+        update_func: Callable[[str], str],
+        deep: Optional[bool] = False,
+    ) -> Dict[str, Any]:
+    for key in dict_original:
+        new_key = update_func(key)
+        if new_key in dict_original:
+            raise ValueError(
+                " || ".join([
+                    "The new key obtained from the `update_func` is already present in the given dictionary",
+                    f"New key: `{new_key}`",
+                    f"Keys present in dictionary: `{list(dict_original.keys())}`",
+                ])
+            )
+        dict_copy[new_key] = dict_copy.pop(key)
+
+        if not deep:
+            continue
+
+        value_original = dict_original[key]
+        value_copy = dict_copy[new_key]
+
+        if isinstance(value_copy, dict):
+            value_copy = _rename_dict_keys(
+                dict_original=value_original,
+                dict_copy=value_copy,
+                update_func=update_func,
+                deep=deep,
+            )
+            dict_copy[new_key] = value_copy
+        elif isinstance(value_copy, (list, tuple)):
+            is_tuple = isinstance(value_copy, tuple)
+            value_copy = list(value_copy) if is_tuple else value_copy
+            for idx, item in enumerate(value_copy):
+                if isinstance(item, dict):
+                    item = _rename_dict_keys(
+                        dict_original=value_original[idx],
+                        dict_copy=item,
+                        update_func=update_func,
+                        deep=deep,
+                    )
+                    value_copy[idx] = item
+                    dict_copy[new_key] = tuple(value_copy) if is_tuple else value_copy
+
+    return dict_copy
 
