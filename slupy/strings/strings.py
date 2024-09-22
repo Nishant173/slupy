@@ -45,7 +45,9 @@ def is_part_of_charset(*, text: str, charset: set[str]) -> bool:
 def is_snake_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
     charset = CHARSET_UPPER_SNAKE_CASE if as_uppercase else CHARSET_LOWER_SNAKE_CASE
     return (
-        is_part_of_charset(text=s, charset=charset)
+        bool(s)
+        and is_part_of_charset(text=s, charset=charset)
+        and not s[0].isdigit()
         and not s.startswith("_")
         and not s.endswith("_")
         and "__" not in s  # cannot have successive underscores
@@ -55,7 +57,9 @@ def is_snake_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
 def is_kebab_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
     charset = CHARSET_UPPER_KEBAB_CASE if as_uppercase else CHARSET_LOWER_KEBAB_CASE
     return (
-        is_part_of_charset(text=s, charset=charset)
+        bool(s)
+        and is_part_of_charset(text=s, charset=charset)
+        and not s[0].isdigit()
         and not s.startswith("-")
         and not s.endswith("-")
         and "--" not in s  # cannot have successive hyphens
@@ -209,8 +213,8 @@ def remove_characters_at_indices(*, text: str, indices: List[int]) -> str:
             f"Accepted index-range for the given text is ({lowest_possible_index}, {highest_possible_index})."
             " Cannot remove character at an index outside of this range."
         )
-    list_of_chars = list(text)
+    chars = list(text)
     for index in indices:
-        list_of_chars.pop(index)
-    return "".join(list_of_chars)
+        chars.pop(index)
+    return "".join(chars)
 

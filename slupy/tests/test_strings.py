@@ -92,10 +92,13 @@ class TestStrings(unittest.TestCase):
 
     def test_is_snake_case(self):
         self.assertTrue(
-            strings.is_kebab_case("hello123"),
+            strings.is_snake_case("hello123"),
         )
         self.assertTrue(
             strings.is_snake_case("hello1_world1"),
+        )
+        self.assertTrue(
+            not strings.is_snake_case("123_hello1_world1"),
         )
         self.assertTrue(
             not strings.is_snake_case("hello-world"),
@@ -116,7 +119,7 @@ class TestStrings(unittest.TestCase):
             not strings.is_snake_case("hello_world", as_uppercase=True),
         )
         self.assertTrue(
-            strings.is_kebab_case("HELLO123", as_uppercase=True),
+            strings.is_snake_case("HELLO123", as_uppercase=True),
         )
 
     def test_is_kebab_case(self):
@@ -125,6 +128,9 @@ class TestStrings(unittest.TestCase):
         )
         self.assertTrue(
             strings.is_kebab_case("hello1-world1-123-yes-000"),
+        )
+        self.assertTrue(
+            not strings.is_kebab_case("123-hello1-world1-123-yes-000"),
         )
         self.assertTrue(
             not strings.is_kebab_case("hello_world"),
@@ -156,6 +162,9 @@ class TestStrings(unittest.TestCase):
             strings.is_camel_case("helloWorld"),
         )
         self.assertTrue(
+            not strings.is_camel_case("0helloWorld"),
+        )
+        self.assertTrue(
             not strings.is_camel_case("hello-world"),
         )
         self.assertTrue(
@@ -174,6 +183,9 @@ class TestStrings(unittest.TestCase):
         )
         self.assertTrue(
             strings.is_pascal_case("HelloWorld"),
+        )
+        self.assertTrue(
+            not strings.is_pascal_case("0HelloWorld"),
         )
         self.assertTrue(
             not strings.is_pascal_case("Hello-world"),
