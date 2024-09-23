@@ -103,4 +103,3 @@ def send_email(
     )
     server.quit()
 
-
