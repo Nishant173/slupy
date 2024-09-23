@@ -69,6 +69,18 @@ class TestStrings(unittest.TestCase):
         with self.assertRaises(IndexError):
             strings.remove_characters_at_indices(text="hello and good morning", indices=[100])
 
+    def test_remove_characters_at_positions(self):
+        self.assertEqual(
+            strings.remove_characters_at_positions(text="hello and good morning", positions=[]),
+            "hello and good morning",
+        )
+        self.assertEqual(
+            strings.remove_characters_at_positions(text="hello and good morning", positions=[7, 9, 12, 22]),
+            "hello n god mornin",
+        )
+        with self.assertRaises(IndexError):
+            strings.remove_characters_at_positions(text="hello and good morning", positions=[101])
+
     def test_to_dumbo_text(self):
         self.assertEqual(
             strings.to_dumbo_text("Hello, and good morning!"),
@@ -121,6 +133,9 @@ class TestStrings(unittest.TestCase):
         self.assertTrue(
             strings.is_snake_case("HELLO123", as_uppercase=True),
         )
+        self.assertTrue(
+            not strings.is_snake_case(""),
+        )
 
     def test_is_kebab_case(self):
         self.assertTrue(
@@ -153,6 +168,9 @@ class TestStrings(unittest.TestCase):
         self.assertTrue(
             strings.is_kebab_case("HELLO", as_uppercase=True),
         )
+        self.assertTrue(
+            not strings.is_kebab_case(""),
+        )
 
     def test_is_camel_case(self):
         self.assertTrue(
@@ -176,6 +194,9 @@ class TestStrings(unittest.TestCase):
         self.assertTrue(
             not strings.is_camel_case("HELLOWORLD"),
         )
+        self.assertTrue(
+            not strings.is_camel_case(""),
+        )
 
     def test_is_pascal_case(self):
         self.assertTrue(
@@ -195,5 +216,8 @@ class TestStrings(unittest.TestCase):
         )
         self.assertTrue(
             strings.is_pascal_case("HELLOWORLD"),
+        )
+        self.assertTrue(
+            not strings.is_pascal_case(""),
         )
 
