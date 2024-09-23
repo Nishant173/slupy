@@ -67,6 +67,10 @@ class TestStrings(unittest.TestCase):
             "hello n god mornin",
         )
         with self.assertRaises(IndexError):
+            strings.remove_characters_at_indices(text="hello and good morning", indices=[-1])
+        with self.assertRaises(IndexError):
+            strings.remove_characters_at_indices(text="hello and good morning", indices=[22])
+        with self.assertRaises(IndexError):
             strings.remove_characters_at_indices(text="hello and good morning", indices=[100])
 
     def test_remove_characters_at_positions(self):
@@ -78,6 +82,10 @@ class TestStrings(unittest.TestCase):
             strings.remove_characters_at_positions(text="hello and good morning", positions=[7, 9, 12, 22]),
             "hello n god mornin",
         )
+        with self.assertRaises(IndexError):
+            strings.remove_characters_at_positions(text="hello and good morning", positions=[0])
+        with self.assertRaises(IndexError):
+            strings.remove_characters_at_positions(text="hello and good morning", positions=[23])
         with self.assertRaises(IndexError):
             strings.remove_characters_at_positions(text="hello and good morning", positions=[101])
 
