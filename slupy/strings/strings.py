@@ -68,7 +68,8 @@ def is_kebab_case(s: str, /, *, as_uppercase: Optional[bool] = False) -> bool:
 
 def is_camel_case(s: str, /) -> bool:
     return (
-        is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
+        bool(s)
+        and is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
         and s[0].islower()
         and not s[0].isdigit()
     )
@@ -76,7 +77,8 @@ def is_camel_case(s: str, /) -> bool:
 
 def is_pascal_case(s: str, /) -> bool:
     return (
-        is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
+        bool(s)
+        and is_part_of_charset(text=s, charset=ALPHABETS_AND_DIGITS)
         and s[0].isupper()
         and not s[0].isdigit()
     )
@@ -211,10 +213,20 @@ def remove_characters_at_indices(*, text: str, indices: List[int]) -> str:
     if indices[-1] < lowest_possible_index or indices[0] > highest_possible_index:
         raise IndexError(
             f"Accepted index-range for the given text is ({lowest_possible_index}, {highest_possible_index})."
-            " Cannot remove character at an index outside of this range."
+            f" i.e; position-range ({lowest_possible_index + 1}, {highest_possible_index + 1})."
+            " Cannot remove character at an index/position outside of this range."
         )
     chars = list(text)
     for index in indices:
         chars.pop(index)
     return "".join(chars)
+
+
+def remove_characters_at_positions(*, text: str, positions: List[int]) -> str:
+    """
+    Removes characters present at the given `positions` in the `text`.
+    Expects `positions` to be in range (1, n) where n is the length of the `text`.
+    Raises an IndexError if any of the given `positions` are out of bounds.
+    """
+    return remove_characters_at_indices(text=text, indices=[position - 1 for position in positions])
 
