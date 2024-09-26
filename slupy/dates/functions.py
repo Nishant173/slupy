@@ -138,3 +138,45 @@ def get_datetime_buckets(
         buckets = [(x.strftime(format_), y.strftime(format_)) for x, y in buckets]
     return buckets
 
+
+def update_year(date_obj: date, /, *, to_year: int) -> date:
+    """Returns new date object with the updated year"""
+    year_delta = to_year - date_obj.year
+    if year_delta == 0:
+        return date_obj.replace()
+    time_travel = TimeTravel(date_obj)
+    if year_delta > 0:
+        time_travel.add(years=year_delta)
+    else:
+        time_travel.subtract(years=abs(year_delta))
+    return time_travel.value
+
+
+def compute_date_difference_in_years(a: date, b: date, /) -> float:
+    """Computes the date-difference as `a - b`, and returns a float"""
+    if a == b:
+        return 0.0
+    small, big = utils.get_small_and_big_dates(a, b)
+    years, days = utils.compute_absolute_date_difference(small, big)
+    if days == 0:
+        diff = float(years)
+        diff = diff * -1 if a < b else diff
+        return diff
+    days_remainder = (update_year(small, to_year=small.year + years + 1) - big).days
+    diff = float(years + (days / (days + days_remainder)))
+    diff = diff * -1 if a < b else diff
+    return diff
+
+
+def compute_date_difference_in_weeks_and_days(a: date, b: date, /) -> Tuple[int, int]:
+    """Computes the date-difference as `a - b`, and returns tuple of (weeks, days)"""
+    if a == b:
+        return (0, 0)
+    small, big = utils.get_small_and_big_dates(a, b)
+    diff = (big - small).days
+    weeks, days = divmod(diff, constants.NUM_DAYS_PER_WEEK)
+    if a < b:
+        weeks *= -1
+        days *= -1
+    return (weeks, days)
+

@@ -120,6 +120,17 @@ def is_february_29th(x: Union[datetime, date], /) -> bool:
     return x.month == 2 and x.day == 29
 
 
+def get_small_and_big_dates(x: date, y: date, /) -> Tuple[date, date]:
+    """Returns tuple having `(small_date, big_date)` after comparing `x` and `y`. Returns new instances of the date objects."""
+    a = x.replace()
+    b = y.replace()
+    if a > b:
+        return (b, a)
+    if a < b:
+        return (a, b)
+    return (a, b)
+
+
 def compare_day_and_month(a: date, b: date, /) -> Literal["<", ">", "=="]:
     """
     Compares only the day and month of the given date objects.
@@ -148,20 +159,23 @@ def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
         d1_copy, d2_copy = d2_copy, d1_copy  # ensure that d2_copy > d1_copy
     year_difference = d2_copy.year - d1_copy.year
     operator = compare_day_and_month(d2_copy, d1_copy)
+    d1_is_on_leap_day = is_february_29th(d1_copy)
     if operator == ">":
-        if is_february_29th(d1_copy):
+        if d1_is_on_leap_day:
             d1_copy = d1_copy.replace(year=d2_copy.year, month=2, day=28)
         else:
             d1_copy = d1_copy.replace(year=d2_copy.year)
     elif operator == "<":
         year_difference -= 1
-        if is_february_29th(d1_copy):
+        if d1_is_on_leap_day:
             d1_copy = d1_copy.replace(year=d2_copy.year - 1, month=2, day=28)
         else:
             d1_copy = d1_copy.replace(year=d2_copy.year - 1)
     elif operator == "==":
         return (year_difference, 0)
     day_difference = (d2_copy - d1_copy).days
+    if d1_is_on_leap_day:
+        day_difference -= 1
     return (year_difference, day_difference)
 
 
@@ -169,7 +183,8 @@ def compute_date_difference(a: date, b: date, /) -> Tuple[int, int]:
     """Computes the date-difference as `a - b`, and returns a tuple of (years, days)"""
     years, days = compute_absolute_date_difference(a, b)
     if a < b:
-        return (years * -1, days * -1)
+        years *= -1
+        days *= -1
     return (years, days)
 
 
