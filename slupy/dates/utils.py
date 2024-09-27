@@ -121,7 +121,10 @@ def is_february_29th(x: Union[datetime, date], /) -> bool:
 
 
 def get_small_and_big_dates(x: date, y: date, /) -> Tuple[date, date]:
-    """Returns tuple having `(small_date, big_date)` after comparing `x` and `y`. Returns new instances of the date objects."""
+    """
+    Returns tuple having `(small_date, big_date)` after comparing `x` and `y`. Ensures that `small_date` <= `big_date`.
+    Returns new instances of the date objects.
+    """
     a = x.replace()
     b = y.replace()
     if a > b:
@@ -147,6 +150,16 @@ def compare_day_and_month(a: date, b: date, /) -> Literal["<", ">", "=="]:
     if a.day > b.day:
         return ">"
     return "=="
+
+
+def update_year(date_obj: date, /, *, to_year: int, leap_forward: Optional[bool] = True) -> date:
+    """Returns new date object with the updated year"""
+    if is_february_29th(date_obj) and not is_leap_year(to_year):
+        kwargs = dict(month=3, day=1) if leap_forward else dict(month=2, day=28)
+        new_date = date_obj.replace(year=to_year, **kwargs)
+    else:
+        new_date = date_obj.replace(year=to_year)
+    return new_date
 
 
 def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:

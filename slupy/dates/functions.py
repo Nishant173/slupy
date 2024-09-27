@@ -139,19 +139,6 @@ def get_datetime_buckets(
     return buckets
 
 
-def update_year(date_obj: date, /, *, to_year: int) -> date:
-    """Returns new date object with the updated year"""
-    year_delta = to_year - date_obj.year
-    if year_delta == 0:
-        return date_obj.replace()
-    time_travel = TimeTravel(date_obj)
-    if year_delta > 0:
-        time_travel.add(years=year_delta)
-    else:
-        time_travel.subtract(years=abs(year_delta))
-    return time_travel.value
-
-
 def compute_date_difference_in_years(a: date, b: date, /) -> float:
     """Computes the date-difference as `a - b`, and returns a float"""
     if a == b:
@@ -162,7 +149,7 @@ def compute_date_difference_in_years(a: date, b: date, /) -> float:
         diff = float(years)
         diff = diff * -1 if a < b else diff
         return diff
-    days_remainder = (update_year(small, to_year=small.year + years + 1) - big).days
+    days_remainder = (utils.update_year(small, to_year=small.year + years + 1) - big).days
     diff = float(years + (days / (days + days_remainder)))
     diff = diff * -1 if a < b else diff
     return diff
