@@ -74,18 +74,12 @@ class TimeTravel:
 
     def _add_years(self, *, years: int = 0) -> TimeTravel:
         updated_year = self.value.year + years
-        if utils.is_february_29th(self.value) and not utils.is_leap_year(updated_year):
-            self.value = self.value.replace(year=updated_year, month=3, day=1)
-        else:
-            self.value = self.value.replace(year=updated_year)
+        self.value = utils.update_year(self.value, to_year=updated_year, leap_forward=True)
         return self
 
     def _subtract_years(self, *, years: int = 0) -> TimeTravel:
         updated_year = self.value.year - years
-        if utils.is_february_29th(self.value) and not utils.is_leap_year(updated_year):
-            self.value = self.value.replace(year=updated_year, month=3, day=1)
-        else:
-            self.value = self.value.replace(year=updated_year)
+        self.value = utils.update_year(self.value, to_year=updated_year, leap_forward=False)
         return self
 
     def _compute_day_of_month_after_travelling(self, *, to_year: int, to_month: int, day_of_month: int) -> int:

@@ -35,7 +35,7 @@ def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Uni
     minutes, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_MINUTE)
     seconds = math.floor(remainder)
     milliseconds = (remainder - seconds) * TimeUnitConverter.MILLISECONDS_PER_SECOND
-    milliseconds = round(milliseconds, 5)
+    milliseconds = round(milliseconds, 6)
 
     dictionary_time_taken = {
         "weeks": conversions.integerify_if_possible(weeks),
@@ -120,6 +120,20 @@ def is_february_29th(x: Union[datetime, date], /) -> bool:
     return x.month == 2 and x.day == 29
 
 
+def get_small_and_big_dates(x: date, y: date, /) -> Tuple[date, date]:
+    """
+    Returns tuple having `(small_date, big_date)` after comparing `x` and `y`. Ensures that `small_date` <= `big_date`.
+    Returns new instances of the date objects.
+    """
+    a = x.replace()
+    b = y.replace()
+    if a > b:
+        return (b, a)
+    if a < b:
+        return (a, b)
+    return (a, b)
+
+
 def compare_day_and_month(a: date, b: date, /) -> Literal["<", ">", "=="]:
     """
     Compares only the day and month of the given date objects.
@@ -138,6 +152,52 @@ def compare_day_and_month(a: date, b: date, /) -> Literal["<", ">", "=="]:
     return "=="
 
 
+def update_year(date_obj: date, /, *, to_year: int, leap_forward: Optional[bool] = True) -> date:
+    """
+    Returns new date object with the updated year.
+
+    Parameters:
+        - date_obj: The date object.
+        - to_year (int): The year to jump to.
+        - leap_forward (bool): This is for cases where the `date_obj` given falls on February 29th and `to_year` is
+        not a leap year. If set to `True` - will update date to March 1st; if `False` - will update date to February 28th.
+    """
+    if is_february_29th(date_obj) and not is_leap_year(to_year):
+        kwargs = dict(month=3, day=1) if leap_forward else dict(month=2, day=28)
+        new_date = date_obj.replace(year=to_year, **kwargs)
+    else:
+        new_date = date_obj.replace(year=to_year)
+    return new_date
+
+
+def update_month(date_obj: date, /, *, to_month: int, jump_to_end: Optional[bool] = False) -> date:
+    """
+    Returns new date object with the updated month.
+
+    Parameters:
+        - date_obj: The date object.
+        - to_month (int): The month to jump to.
+        - jump_to_end (bool): Used for cases where the day of month is one of: [29, 30, 31]. If set to `True`, jumps
+        to the last day of the month.
+    """
+    day_of_month = date_obj.day
+    if 1 <= day_of_month <= 28:
+        return date_obj.replace(month=to_month)
+
+    # For cases where `day_of_month` is one of: [29, 30, 31]
+    if to_month in constants.MONTHS_HAVING_30_DAYS:
+        day_of_month_computed = day_of_month if day_of_month < 30 else 30
+    elif to_month in constants.MONTHS_HAVING_31_DAYS:
+        day_of_month_computed = day_of_month
+    else:
+        day_of_month_computed = 29 if is_leap_year(date_obj.year) else 28
+
+    new_date = date_obj.replace(month=to_month, day=day_of_month_computed)
+    if jump_to_end:
+        new_date = get_last_day_of_current_month(new_date)
+    return new_date
+
+
 def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
     """Computes the absolute date-difference, and returns a tuple of (years, days)"""
     if d1 == d2:
@@ -148,20 +208,17 @@ def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
         d1_copy, d2_copy = d2_copy, d1_copy  # ensure that d2_copy > d1_copy
     year_difference = d2_copy.year - d1_copy.year
     operator = compare_day_and_month(d2_copy, d1_copy)
+    d1_is_on_leap_day = is_february_29th(d1_copy)
     if operator == ">":
-        if is_february_29th(d1_copy):
-            d1_copy = d1_copy.replace(year=d2_copy.year, month=2, day=28)
-        else:
-            d1_copy = d1_copy.replace(year=d2_copy.year)
+        d1_copy = update_year(d1_copy, to_year=d2_copy.year, leap_forward=False)
     elif operator == "<":
         year_difference -= 1
-        if is_february_29th(d1_copy):
-            d1_copy = d1_copy.replace(year=d2_copy.year - 1, month=2, day=28)
-        else:
-            d1_copy = d1_copy.replace(year=d2_copy.year - 1)
+        d1_copy = update_year(d1_copy, to_year=d2_copy.year - 1, leap_forward=False)
     elif operator == "==":
         return (year_difference, 0)
     day_difference = (d2_copy - d1_copy).days
+    if d1_is_on_leap_day:
+        day_difference -= 1
     return (year_difference, day_difference)
 
 
@@ -169,7 +226,8 @@ def compute_date_difference(a: date, b: date, /) -> Tuple[int, int]:
     """Computes the date-difference as `a - b`, and returns a tuple of (years, days)"""
     years, days = compute_absolute_date_difference(a, b)
     if a < b:
-        return (years * -1, days * -1)
+        years *= -1
+        days *= -1
     return (years, days)
 
 

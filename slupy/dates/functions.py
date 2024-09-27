@@ -138,3 +138,32 @@ def get_datetime_buckets(
         buckets = [(x.strftime(format_), y.strftime(format_)) for x, y in buckets]
     return buckets
 
+
+def compute_date_difference_in_years(a: date, b: date, /) -> float:
+    """Computes the date-difference as `a - b`, and returns a float"""
+    if a == b:
+        return 0.0
+    small, big = utils.get_small_and_big_dates(a, b)
+    years, days = utils.compute_absolute_date_difference(small, big)
+    if days == 0:
+        diff = float(years)
+        diff = diff * -1 if a < b else diff
+        return diff
+    days_remainder = (utils.update_year(small, to_year=small.year + years + 1) - big).days
+    diff = float(years + (days / (days + days_remainder)))
+    diff = diff * -1 if a < b else diff
+    return diff
+
+
+def compute_date_difference_in_weeks_and_days(a: date, b: date, /) -> Tuple[int, int]:
+    """Computes the date-difference as `a - b`, and returns tuple of (weeks, days)"""
+    if a == b:
+        return (0, 0)
+    small, big = utils.get_small_and_big_dates(a, b)
+    diff = (big - small).days
+    weeks, days = divmod(diff, constants.NUM_DAYS_PER_WEEK)
+    if a < b:
+        weeks *= -1
+        days *= -1
+    return (weeks, days)
+
