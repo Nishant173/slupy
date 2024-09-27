@@ -174,6 +174,20 @@ class TestDateUtils(unittest.TestCase):
         )
         self.assertEqual(
             utils.compute_absolute_date_difference(
+                date(year=2021, month=6, day=28),
+                date(year=2020, month=1, day=11),
+            ),
+            (1, 168),
+        )
+        self.assertEqual(
+            utils.compute_absolute_date_difference(
+                date(year=2020, month=6, day=28),
+                date(year=2021, month=1, day=11),
+            ),
+            (0, 197),
+        )
+        self.assertEqual(
+            utils.compute_absolute_date_difference(
                 date(year=2019, month=1, day=11),
                 date(year=2020, month=6, day=28),
             ),

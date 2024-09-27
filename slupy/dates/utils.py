@@ -182,16 +182,10 @@ def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
     operator = compare_day_and_month(d2_copy, d1_copy)
     d1_is_on_leap_day = is_february_29th(d1_copy)
     if operator == ">":
-        if d1_is_on_leap_day:
-            d1_copy = d1_copy.replace(year=d2_copy.year, month=2, day=28)
-        else:
-            d1_copy = d1_copy.replace(year=d2_copy.year)
+        d1_copy = update_year(d1_copy, to_year=d2_copy.year, leap_forward=False)
     elif operator == "<":
         year_difference -= 1
-        if d1_is_on_leap_day:
-            d1_copy = d1_copy.replace(year=d2_copy.year - 1, month=2, day=28)
-        else:
-            d1_copy = d1_copy.replace(year=d2_copy.year - 1)
+        d1_copy = update_year(d1_copy, to_year=d2_copy.year - 1, leap_forward=False)
     elif operator == "==":
         return (year_difference, 0)
     day_difference = (d2_copy - d1_copy).days

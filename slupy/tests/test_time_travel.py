@@ -358,3 +358,100 @@ class TestTimeTravel(unittest.TestCase):
         with self.assertRaises(AssertionError):
             time_travel.subtract(microseconds=10)
 
+    def test_yearly_corner_cases_for_date(self):
+        # adding/subtracting by `years` from February 29th
+        date_obj = date(year=2020, month=2, day=29)
+
+        time_travel_1 = TimeTravel(date_obj)
+        time_travel_1.add(years=1)
+        self.assertEqual(
+            time_travel_1.value,
+            date(year=2021, month=3, day=1),
+        )
+        time_travel_1.subtract(years=1)
+        self.assertEqual(
+            time_travel_1.value,
+            date(year=2020, month=3, day=1),
+        )
+
+        time_travel_2 = TimeTravel(date_obj)
+        time_travel_2.subtract(years=1)
+        self.assertEqual(
+            time_travel_2.value,
+            date(year=2019, month=2, day=28),
+        )
+        time_travel_2.add(years=1)
+        self.assertEqual(
+            time_travel_2.value,
+            date(year=2020, month=2, day=28),
+        )
+
+    def test_monthly_corner_cases_for_date(self):
+        # case 1 - adding/subtracting by `months` from February 29th
+        date_obj_1 = date(year=2020, month=2, day=29)
+
+        time_travel_1 = TimeTravel(date_obj_1)
+        time_travel_1.add(months=1)
+        self.assertEqual(
+            time_travel_1.value,
+            date(year=2020, month=3, day=29),
+        )
+        time_travel_1.subtract(months=1)
+        self.assertEqual(
+            time_travel_1.value,
+            date(year=2020, month=2, day=29),
+        )
+
+        time_travel_2 = TimeTravel(date_obj_1)
+        time_travel_2.subtract(months=1)
+        self.assertEqual(
+            time_travel_2.value,
+            date(year=2020, month=1, day=29),
+        )
+        time_travel_2.add(months=1)
+        self.assertEqual(
+            time_travel_2.value,
+            date(year=2020, month=2, day=29),
+        )
+
+        # case 2 - adding/subtracting by `months` across February 29th
+        date_obj_2 = date(year=2020, month=1, day=31)
+
+        time_travel_3 = TimeTravel(date_obj_2)
+        time_travel_3.add(months=1)
+        self.assertEqual(
+            time_travel_3.value,
+            date(year=2020, month=2, day=29),
+        )
+        time_travel_3.add(months=1)
+        self.assertEqual(
+            time_travel_3.value,
+            date(year=2020, month=3, day=29),
+        )
+
+        # case 3 - adding/subtracting by `months` jumping over February 29th
+        date_obj_3 = date(year=2020, month=1, day=31)
+        time_travel_4 = TimeTravel(date_obj_3)
+        time_travel_4.add(months=2)
+        self.assertEqual(
+            time_travel_4.value,
+            date(year=2020, month=3, day=31),
+        )
+        time_travel_4.add(months=1)
+        self.assertEqual(
+            time_travel_4.value,
+            date(year=2020, month=4, day=30),
+        )
+
+        # case 4 - adding/subtracting by `months` onto February 28th/29th
+        time_travel_4.subtract(months=2)
+        self.assertEqual(
+            time_travel_4.value,
+            date(year=2020, month=2, day=29),
+        )
+        time_travel_4.subtract(months=12)
+        self.assertEqual(
+            time_travel_4.value,
+            date(year=2019, month=2, day=28),
+        )
+
