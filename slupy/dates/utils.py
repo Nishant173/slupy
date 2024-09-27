@@ -170,6 +170,34 @@ def update_year(date_obj: date, /, *, to_year: int, leap_forward: Optional[bool]
     return new_date
 
 
+def update_month(date_obj: date, /, *, to_month: int, jump_to_end: Optional[bool] = False) -> date:
+    """
+    Returns new date object with the updated month.
+
+    Parameters:
+        - date_obj: The date object.
+        - to_month (int): The month to jump to.
+        - jump_to_end (bool): Used for cases where the day of month is one of: [29, 30, 31]. If set to `True`, jumps
+        to the last day of the month.
+    """
+    day_of_month = date_obj.day
+    if 1 <= day_of_month <= 28:
+        return date_obj.replace(month=to_month)
+
+    # For cases where `day_of_month` is one of: [29, 30, 31]
+    if to_month in constants.MONTHS_HAVING_30_DAYS:
+        day_of_month_computed = day_of_month if day_of_month < 30 else 30
+    elif to_month in constants.MONTHS_HAVING_31_DAYS:
+        day_of_month_computed = day_of_month
+    else:
+        day_of_month_computed = 29 if is_leap_year(date_obj.year) else 28
+
+    new_date = date_obj.replace(month=to_month, day=day_of_month_computed)
+    if jump_to_end:
+        new_date = get_last_day_of_current_month(new_date)
+    return new_date
+
+
 def compute_absolute_date_difference(d1: date, d2: date, /) -> Tuple[int, int]:
     """Computes the absolute date-difference, and returns a tuple of (years, days)"""
     if d1 == d2:

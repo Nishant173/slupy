@@ -164,6 +164,69 @@ class TestDateUtils(unittest.TestCase):
             date(year=2025, month=3, day=1)
         )
 
+    def test_update_month(self):
+        date_1 = date(year=2020, month=2, day=20)
+        self.assertEqual(
+            utils.update_month(date_1, to_month=6),
+            date(year=2020, month=6, day=20),
+        )
+        self.assertEqual(
+            utils.update_month(date_1, to_month=12),
+            date(year=2020, month=12, day=20),
+        )
+
+        date_2 = date(year=2020, month=2, day=29)
+        self.assertEqual(
+            utils.update_month(date_2, to_month=12),
+            date(year=2020, month=12, day=29),
+        )
+        self.assertEqual(
+            utils.update_month(date_2, to_month=3),
+            date(year=2020, month=3, day=29),
+        )
+        self.assertEqual(
+            utils.update_month(date_2, to_month=4),
+            date(year=2020, month=4, day=29),
+        )
+
+        date_3 = date(year=2020, month=3, day=31)
+        self.assertEqual(
+            utils.update_month(date_3, to_month=12),
+            date(year=2020, month=12, day=31),
+        )
+        self.assertEqual(
+            utils.update_month(date_3, to_month=2),
+            date(year=2020, month=2, day=29),
+        )
+        self.assertEqual(
+            utils.update_month(date_3, to_month=4),
+            date(year=2020, month=4, day=30),
+        )
+
+        date_4 = date(year=2019, month=3, day=31)
+        self.assertEqual(
+            utils.update_month(date_4, to_month=2),
+            date(year=2019, month=2, day=28),
+        )
+
+        date_5 = date(year=2019, month=1, day=29)
+        self.assertEqual(
+            utils.update_month(date_5, to_month=3),
+            date(year=2019, month=3, day=29),
+        )
+        self.assertEqual(
+            utils.update_month(date_5, to_month=3, jump_to_end=True),
+            date(year=2019, month=3, day=31),
+        )
+        self.assertEqual(
+            utils.update_month(date_5, to_month=4),
+            date(year=2019, month=4, day=29),
+        )
+        self.assertEqual(
+            utils.update_month(date_5, to_month=4, jump_to_end=True),
+            date(year=2019, month=4, day=30),
+        )
+
     def test_compute_absolute_date_difference(self):
         self.assertEqual(
             utils.compute_absolute_date_difference(
