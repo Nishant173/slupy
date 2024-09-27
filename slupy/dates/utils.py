@@ -153,7 +153,15 @@ def compare_day_and_month(a: date, b: date, /) -> Literal["<", ">", "=="]:
 
 
 def update_year(date_obj: date, /, *, to_year: int, leap_forward: Optional[bool] = True) -> date:
-    """Returns new date object with the updated year"""
+    """
+    Returns new date object with the updated year.
+
+    Parameters:
+        - date_obj: The date object.
+        - to_year (int): The year to jump to.
+        - leap_forward (bool): This is for cases where the `date_obj` given falls on February 29th and `to_year` is
+        not a leap year. If set to `True` - will update date to March 1st; if `False` - will update date to February 28th.
+    """
     if is_february_29th(date_obj) and not is_leap_year(to_year):
         kwargs = dict(month=3, day=1) if leap_forward else dict(month=2, day=28)
         new_date = date_obj.replace(year=to_year, **kwargs)
