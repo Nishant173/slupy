@@ -35,7 +35,7 @@ def get_timetaken_dictionary(*, num_seconds: Union[int, float]) -> Dict[str, Uni
     minutes, remainder = divmod(remainder, TimeUnitConverter.SECONDS_PER_MINUTE)
     seconds = math.floor(remainder)
     milliseconds = (remainder - seconds) * TimeUnitConverter.MILLISECONDS_PER_SECOND
-    milliseconds = round(milliseconds, 5)
+    milliseconds = round(milliseconds, 6)
 
     dictionary_time_taken = {
         "weeks": conversions.integerify_if_possible(weeks),
