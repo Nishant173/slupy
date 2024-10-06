@@ -1,5 +1,6 @@
 import copy
-from typing import Any, Callable, Dict, Optional, Union
+import math
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from slupy.core import checks
 
@@ -20,17 +21,62 @@ def slice_by_position(
         sliceable: Sliceable,
         /,
         *,
-        start: int,
-        end: int,
+        start: Optional[int] = None,
+        end: Optional[int] = None,
     ) -> Sliceable:
     """
     Slice the given sliceable object by position (not by index).
     The position can range from 1-n (where `n` is the length of the sliceable).
     """
-    length = len(sliceable)
-    assert start >= 1, "Position `start` is out of bounds"
-    assert end <= length, "Position `end` is out of bounds"
+    if start is None and end is None:
+        return sliceable[:]
+    if start is not None and end is None:
+        assert start >= 1, "Position `start` must be >= 1"
+        return sliceable[start - 1 : ]
+    if start is None and end is not None:
+        assert end >= 1, "Position `end` must be >= 1"
+        return sliceable[ : end]
+    assert end >= start >= 1, "Position `end` must be >= `start`; and `start` must be >= 1"
     return sliceable[start - 1 : end]
+
+
+def compute_partitions(
+        *,
+        length: int,
+        zero_based: Optional[bool] = True,
+        num_partitions: Optional[int] = None,
+        partition_size: Optional[int] = None,
+    ) -> List[Tuple[int, int]]:
+    """
+    Returns list of tuples having (start, end) indices.
+
+    Parameters:
+        - length (int): Length of the data to be partitioned.
+        - zero_based (bool): Indexing type of the partitions. If `zero_based=True`, will be 0-based; otherwise will be 1-based.
+        - num_partitions (int): Number of partitions.
+        - partition_size (int): Size of each partition.
+    """
+    assert length >= 1, "Param `length` must be >= 1"
+    assert isinstance(zero_based, bool), "Param `zero_based` must be of type 'bool'"
+    assert num_partitions is None or num_partitions >= 1, "Param `num_partitions` must be >= 1"
+    assert partition_size is None or partition_size >= 1, "Param `partition_size` must be >= 1"
+    assert sum([
+        num_partitions is not None,
+        partition_size is not None,
+    ]) == 1, "Expected exactly one of the following params: ['num_partitions', 'partition_size']"
+    if num_partitions is not None:
+        partition_size = math.ceil(length / num_partitions)
+    partitions = []
+    for i in range(1, length + 1, partition_size):
+        start = i
+        end = i + partition_size - 1
+        if end > length:
+            end = length
+        if zero_based:
+            start -= 1
+            end -= 1
+        partitions.append((start, end))
+    return partitions
 
 
 def _get_kwarg_as_string(key: Any, value: Any) -> str:
