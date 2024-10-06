@@ -193,3 +193,4 @@ class TestCore(unittest.TestCase):
                 ),
             },
         )
+
