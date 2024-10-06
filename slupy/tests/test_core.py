@@ -26,6 +26,10 @@ class TestCore(unittest.TestCase):
         sliceable_string = "hello world"
 
         self.assertEqual(
+            helpers.slice_by_position(sliceable_list),
+            sliceable_list,
+        )
+        self.assertEqual(
             helpers.slice_by_position(sliceable_list, start=5, end=12),
             list(range(5, 12+1)),
         )
@@ -37,6 +41,30 @@ class TestCore(unittest.TestCase):
             helpers.slice_by_position(sliceable_string, start=2, end=8),
             "ello wo",
         )
+
+    def test_compute_partitions(self):
+        self.assertEqual(
+            helpers.compute_partitions(length=100, zero_based=True, num_partitions=6),
+            [(0, 16), (17, 33), (34, 50), (51, 67), (68, 84), (85, 99)],
+        )
+        self.assertEqual(
+            helpers.compute_partitions(length=100, zero_based=False, num_partitions=6),
+            [(1, 17), (18, 34), (35, 51), (52, 68), (69, 85), (86, 100)],
+        )
+        self.assertEqual(
+            helpers.compute_partitions(length=100, zero_based=True, partition_size=17),
+            [(0, 16), (17, 33), (34, 50), (51, 67), (68, 84), (85, 99)],
+        )
+        self.assertEqual(
+            helpers.compute_partitions(length=100, zero_based=False, partition_size=17),
+            [(1, 17), (18, 34), (35, 51), (52, 68), (69, 85), (86, 100)],
+        )
+        with self.assertRaises(AssertionError):
+            helpers.compute_partitions(length=100, num_partitions=6, partition_size=17)
+        with self.assertRaises(AssertionError):
+            helpers.compute_partitions(length=0, num_partitions=6)
+        with self.assertRaises(AssertionError):
+            helpers.compute_partitions(length=0, partition_size=17)
 
     def test_rename_dict_keys(self):
         dictionary = {
