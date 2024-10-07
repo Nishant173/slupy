@@ -226,4 +226,3 @@ def _rename_dict_keys(
                     dict_copy[new_key] = value_copy if class_type is list else class_type(value_copy)  # convert back to original `class_type`
 
     return dict_copy
-
