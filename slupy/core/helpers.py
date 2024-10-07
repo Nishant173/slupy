@@ -187,7 +187,7 @@ def _rename_dict_keys(
     ) -> Dict[str, Any]:
     for key in dict_original:
         new_key = update_func(key)
-        if new_key in dict_original:
+        if new_key != key and new_key in dict_original:
             raise ValueError(
                 " || ".join([
                     "The new key obtained from the `update_func` is already present in the given dictionary",
@@ -212,8 +212,8 @@ def _rename_dict_keys(
             )
             dict_copy[new_key] = value_copy
         elif isinstance(value_copy, (list, tuple)):
-            is_tuple = isinstance(value_copy, tuple)
-            value_copy = list(value_copy) if is_tuple else value_copy
+            class_type = type(value_copy)
+            value_copy = value_copy if class_type is list else list(value_copy)  # convert to list as it's mutable
             for idx, item in enumerate(value_copy):
                 if isinstance(item, dict):
                     item = _rename_dict_keys(
@@ -223,7 +223,6 @@ def _rename_dict_keys(
                         deep=deep,
                     )
                     value_copy[idx] = item
-                    dict_copy[new_key] = tuple(value_copy) if is_tuple else value_copy
+                    dict_copy[new_key] = value_copy if class_type is list else class_type(value_copy)  # convert back to original `class_type`
 
     return dict_copy
-

@@ -103,6 +103,7 @@ class TestCore(unittest.TestCase):
                     "e-k3": 300,
                 },
             ),
+            "FFF": "hello",
         }
         original_dictionary_id = id(dictionary)
         self.assertNotEqual(
@@ -151,6 +152,7 @@ class TestCore(unittest.TestCase):
                         "e-k3": 300,
                     },
                 ),
+                "FFF": "hello",
             },
         )
         self.assertEqual(
@@ -191,6 +193,7 @@ class TestCore(unittest.TestCase):
                         "E-K3": 300,
                     },
                 ),
+                "FFF": "hello",
             },
         )
 
