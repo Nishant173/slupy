@@ -54,6 +54,12 @@ hljs.highlightAll();
 <dd>
 <div class="desc"><p>Computes the date-difference as <code>a - b</code>, and returns a tuple of (years, days)</p></div>
 </dd>
+<dt id="slupy.dates.utils.get_day_of_month_suffix"><code class="name flex">
+<span>def <span class="ident">get_day_of_month_suffix</span></span>(<span>day_of_month: int, /) ‑> Literal['st', 'nd', 'rd', 'th']</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the suffix of the given <code>day_of_month</code></p></div>
+</dd>
 <dt id="slupy.dates.utils.get_day_of_week"><code class="name flex">
 <span>def <span class="ident">get_day_of_week</span></span>(<span>dt_obj: Union[datetime, date], /, *, shorten: Optional[bool] = False) ‑> str</span>
 </code></dt>
@@ -202,6 +208,7 @@ not a leap year. If set to <code>True</code> - will update date to March 1st; if
 <li><code><a title="slupy.dates.utils.compare_day_and_month" href="#slupy.dates.utils.compare_day_and_month">compare_day_and_month</a></code></li>
 <li><code><a title="slupy.dates.utils.compute_absolute_date_difference" href="#slupy.dates.utils.compute_absolute_date_difference">compute_absolute_date_difference</a></code></li>
 <li><code><a title="slupy.dates.utils.compute_date_difference" href="#slupy.dates.utils.compute_date_difference">compute_date_difference</a></code></li>
+<li><code><a title="slupy.dates.utils.get_day_of_month_suffix" href="#slupy.dates.utils.get_day_of_month_suffix">get_day_of_month_suffix</a></code></li>
 <li><code><a title="slupy.dates.utils.get_day_of_week" href="#slupy.dates.utils.get_day_of_week">get_day_of_week</a></code></li>
 <li><code><a title="slupy.dates.utils.get_first_day_of_current_month" href="#slupy.dates.utils.get_first_day_of_current_month">get_first_day_of_current_month</a></code></li>
 <li><code><a title="slupy.dates.utils.get_first_day_of_next_month" href="#slupy.dates.utils.get_first_day_of_next_month">get_first_day_of_next_month</a></code></li>
