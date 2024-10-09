@@ -120,6 +120,22 @@ def is_february_29th(x: Union[datetime, date], /) -> bool:
     return x.month == 2 and x.day == 29
 
 
+def get_day_of_month_suffix(day_of_month: int, /) -> Literal["st", "nd", "rd", "th"]:
+    """Returns the suffix of the given `day_of_month`"""
+    assert checks.is_integer(day_of_month) and 1 <= day_of_month <= 31, "Param `day_of_month` must be between [1, 31]"
+    mapper: Dict[int, Literal["st", "nd", "rd", "th"]] = {
+        1: "st",
+        2: "nd",
+        3: "rd",
+        21: "st",
+        22: "nd",
+        23: "rd",
+        31: "st",
+    }
+    suffix = mapper.get(day_of_month, "th")
+    return suffix
+
+
 def get_small_and_big_dates(x: date, y: date, /) -> Tuple[date, date]:
     """
     Returns tuple having `(small_date, big_date)` after comparing `x` and `y`. Ensures that `small_date` <= `big_date`.

@@ -103,6 +103,34 @@ class TestDateUtils(unittest.TestCase):
             not utils.is_february_29th(date(year=2020, month=2, day=28)),
         )
 
+    def test_get_day_of_month_suffix(self):
+        # cases whose suffix should not be 'th'
+        io = [
+            (1, "st"),
+            (2, "nd"),
+            (3, "rd"),
+            (21, "st"),
+            (22, "nd"),
+            (23, "rd"),
+            (31, "st"),
+        ]
+        for input_, output in io:
+            self.assertEqual(
+                utils.get_day_of_month_suffix(input_),
+                output,
+            )
+
+        # cases whose suffix should be 'th'
+        suffix_should_be_th = sorted(
+            list(set(range(1, 31 + 1)).difference(set([day_of_month for day_of_month, _ in io]))),
+            reverse=False,
+        )
+        for day_of_month in suffix_should_be_th:
+            self.assertEqual(
+                utils.get_day_of_month_suffix(day_of_month),
+                "th",
+            )
+
     def test_get_small_and_big_dates(self):
         small = date(year=2020, month=1, day=25)
         big = date(year=2020, month=1, day=26)

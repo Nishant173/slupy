@@ -171,6 +171,34 @@ not have a method with the specified name.</p></div>
             not utils.is_february_29th(date(year=2020, month=2, day=28)),
         )
 
+    def test_get_day_of_month_suffix(self):
+        # cases whose suffix should not be &#39;th&#39;
+        io = [
+            (1, &#34;st&#34;),
+            (2, &#34;nd&#34;),
+            (3, &#34;rd&#34;),
+            (21, &#34;st&#34;),
+            (22, &#34;nd&#34;),
+            (23, &#34;rd&#34;),
+            (31, &#34;st&#34;),
+        ]
+        for input_, output in io:
+            self.assertEqual(
+                utils.get_day_of_month_suffix(input_),
+                output,
+            )
+
+        # cases whose suffix should be &#39;th&#39;
+        suffix_should_be_th = sorted(
+            list(set(range(1, 31 + 1)).difference(set([day_of_month for day_of_month, _ in io]))),
+            reverse=False,
+        )
+        for day_of_month in suffix_should_be_th:
+            self.assertEqual(
+                utils.get_day_of_month_suffix(day_of_month),
+                &#34;th&#34;,
+            )
+
     def test_get_small_and_big_dates(self):
         small = date(year=2020, month=1, day=25)
         big = date(year=2020, month=1, day=26)
@@ -580,6 +608,12 @@ not have a method with the specified name.</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="slupy.tests.test_date_utils.TestDateUtils.test_get_day_of_month_suffix"><code class="name flex">
+<span>def <span class="ident">test_get_day_of_month_suffix</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="slupy.tests.test_date_utils.TestDateUtils.test_get_day_of_week"><code class="name flex">
 <span>def <span class="ident">test_get_day_of_week</span></span>(<span>self)</span>
 </code></dt>
@@ -691,6 +725,7 @@ not have a method with the specified name.</p></div>
 <li><code><a title="slupy.tests.test_date_utils.TestDateUtils.test_compute_date_difference_in_weeks_and_days" href="#slupy.tests.test_date_utils.TestDateUtils.test_compute_date_difference_in_weeks_and_days">test_compute_date_difference_in_weeks_and_days</a></code></li>
 <li><code><a title="slupy.tests.test_date_utils.TestDateUtils.test_compute_date_difference_in_years" href="#slupy.tests.test_date_utils.TestDateUtils.test_compute_date_difference_in_years">test_compute_date_difference_in_years</a></code></li>
 <li><code><a title="slupy.tests.test_date_utils.TestDateUtils.test_get_datetime_buckets" href="#slupy.tests.test_date_utils.TestDateUtils.test_get_datetime_buckets">test_get_datetime_buckets</a></code></li>
+<li><code><a title="slupy.tests.test_date_utils.TestDateUtils.test_get_day_of_month_suffix" href="#slupy.tests.test_date_utils.TestDateUtils.test_get_day_of_month_suffix">test_get_day_of_month_suffix</a></code></li>
 <li><code><a title="slupy.tests.test_date_utils.TestDateUtils.test_get_day_of_week" href="#slupy.tests.test_date_utils.TestDateUtils.test_get_day_of_week">test_get_day_of_week</a></code></li>
 <li><code><a title="slupy.tests.test_date_utils.TestDateUtils.test_get_first_day_of_current_month" href="#slupy.tests.test_date_utils.TestDateUtils.test_get_first_day_of_current_month">test_get_first_day_of_current_month</a></code></li>
 <li><code><a title="slupy.tests.test_date_utils.TestDateUtils.test_get_first_day_of_next_month" href="#slupy.tests.test_date_utils.TestDateUtils.test_get_first_day_of_next_month">test_get_first_day_of_next_month</a></code></li>
