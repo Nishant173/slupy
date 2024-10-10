@@ -46,13 +46,13 @@ def repeat(*, num_times: int) -> Callable:
     return repeat_decorator
 
 
-def functionility_injector(
+def functionality_injector(
         *,
         before: Optional[Callable] = None,
         after: Optional[Callable] = None,
     ) -> Callable:
     """
-    Decorator that injects some functionility which gets executed before/after the decorated function.
+    Decorator that injects some functionality which gets executed before/after the decorated function.
 
     Parameters:
         - before (callable): Executes just before calling the decorated function.
