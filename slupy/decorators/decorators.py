@@ -69,4 +69,3 @@ def functionality_injector(
             return result
         return inner_func
     return outer_func
-
