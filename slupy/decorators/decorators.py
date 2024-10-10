@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Any, Callable, Optional
 import functools
 import random
 import time
@@ -45,3 +45,27 @@ def repeat(*, num_times: int) -> Callable:
         return wrapper
     return repeat_decorator
 
+
+def functionality_injector(
+        *,
+        before: Optional[Callable] = None,
+        after: Optional[Callable] = None,
+    ) -> Callable:
+    """
+    Decorator that injects some functionality which gets executed before/after the decorated function.
+
+    Parameters:
+        - before (callable): Executes just before calling the decorated function.
+        - after (callable): Executes just after calling the decorated function.
+    """
+    def outer_func(func: Callable) -> Callable:
+        @functools.wraps(func)
+        def inner_func(*args: Any, **kwargs: Any) -> Any:
+            if before:
+                before()
+            result = func(*args, **kwargs)
+            if after:
+                after()
+            return result
+        return inner_func
+    return outer_func

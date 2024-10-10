@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>slupy API documentation</title>
+<title>slupy.decorators.decorators API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
@@ -22,54 +22,48 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>slupy</code></h1>
+<h1 class="title">Module <code>slupy.decorators.decorators</code></h1>
 </header>
 <section id="section-intro">
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="slupy.core" href="core/index.html">slupy.core</a></code></dt>
+<dt id="slupy.decorators.decorators.functionality_injector"><code class="name flex">
+<span>def <span class="ident">functionality_injector</span></span>(<span>*, before: Optional[Callable] = None, after: Optional[Callable] = None) ‑> Callable</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Decorator that injects some functionality which gets executed before/after the decorated function.</p>
+<h2 id="parameters">Parameters</h2>
+<ul>
+<li>before (callable): Executes just before calling the decorated function.</li>
+<li>after (callable): Executes just after calling the decorated function.</li>
+</ul></div>
 </dd>
-<dt><code class="name"><a title="slupy.dates" href="dates/index.html">slupy.dates</a></code></dt>
+<dt id="slupy.decorators.decorators.repeat"><code class="name flex">
+<span>def <span class="ident">repeat</span></span>(<span>*, num_times: int) ‑> Callable</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Decorator that executes the decorated function <code>num_times</code> times</p></div>
 </dd>
-<dt><code class="name"><a title="slupy.decorators" href="decorators/index.html">slupy.decorators</a></code></dt>
+<dt id="slupy.decorators.decorators.slow_down"><code class="name flex">
+<span>def <span class="ident">slow_down</span></span>(<span>func: Callable) ‑> Callable</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Decorator that slows down the execution of the decorated function.
+Slows down the execution by 10-20 minutes.</p></div>
 </dd>
-<dt><code class="name"><a title="slupy.email_ops" href="email_ops/index.html">slupy.email_ops</a></code></dt>
+<dt id="slupy.decorators.decorators.timer"><code class="name flex">
+<span>def <span class="ident">timer</span></span>(<span>func: Callable) ‑> Callable</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.file_ops" href="file_ops/index.html">slupy.file_ops</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.mathematics" href="mathematics/index.html">slupy.mathematics</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.randomizer" href="randomizer/index.html">slupy.randomizer</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.strings" href="strings/index.html">slupy.strings</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.tests" href="tests/index.html">slupy.tests</a></code></dt>
-<dd>
-<div class="desc"></div>
+<div class="desc"><p>Decorator that prints the runtime of the decorated function</p></div>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -79,17 +73,17 @@ hljs.highlightAll();
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="slupy.core" href="core/index.html">slupy.core</a></code></li>
-<li><code><a title="slupy.dates" href="dates/index.html">slupy.dates</a></code></li>
-<li><code><a title="slupy.decorators" href="decorators/index.html">slupy.decorators</a></code></li>
-<li><code><a title="slupy.email_ops" href="email_ops/index.html">slupy.email_ops</a></code></li>
-<li><code><a title="slupy.file_ops" href="file_ops/index.html">slupy.file_ops</a></code></li>
-<li><code><a title="slupy.mathematics" href="mathematics/index.html">slupy.mathematics</a></code></li>
-<li><code><a title="slupy.randomizer" href="randomizer/index.html">slupy.randomizer</a></code></li>
-<li><code><a title="slupy.strings" href="strings/index.html">slupy.strings</a></code></li>
-<li><code><a title="slupy.tests" href="tests/index.html">slupy.tests</a></code></li>
+<li><code><a title="slupy.decorators" href="index.html">slupy.decorators</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="slupy.decorators.decorators.functionality_injector" href="#slupy.decorators.decorators.functionality_injector">functionality_injector</a></code></li>
+<li><code><a title="slupy.decorators.decorators.repeat" href="#slupy.decorators.decorators.repeat">repeat</a></code></li>
+<li><code><a title="slupy.decorators.decorators.slow_down" href="#slupy.decorators.decorators.slow_down">slow_down</a></code></li>
+<li><code><a title="slupy.decorators.decorators.timer" href="#slupy.decorators.decorators.timer">timer</a></code></li>
 </ul>
 </li>
 </ul>
