@@ -33,7 +33,7 @@ class DataWrangler:
         self._list_of_dicts = value
 
     def data_copy(self) -> List[Dict[str, Any]]:
-        """Returns deep-copy of `self._list_of_dicts`"""
+        """Returns deep-copy of `self.data`"""
         return make_deep_copy(self._list_of_dicts)
 
     def _identify_duplicate_indices(
