@@ -12,8 +12,10 @@ class DataWrangler:
             self,
             list_of_dicts: List[Dict[str, Any]],
             /,
+            *,
+            deep_copy: Optional[bool] = False,
         ) -> None:
-        self._list_of_dicts = list_of_dicts
+        self._list_of_dicts = make_deep_copy(list_of_dicts) if deep_copy else list_of_dicts
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}()"
@@ -25,6 +27,10 @@ class DataWrangler:
     @property
     def data(self) -> List[Dict[str, Any]]:
         return self._list_of_dicts
+
+    @data.setter
+    def data(self, value: List[Dict[str, Any]]) -> None:
+        self._list_of_dicts = value
 
     def data_copy(self) -> List[Dict[str, Any]]:
         """Returns deep-copy of `self._list_of_dicts`"""
@@ -103,12 +109,13 @@ class DataWrangler:
             *,
             keep: Optional[Literal["first", "last"]] = "first",
             subset: Optional[List[str]] = None,
-        ) -> List[Dict[str, Any]]:
-        """Returns new copy of list of dictionaries with the duplicates dropped"""
-        list_copy = self.data_copy()
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """Drops the duplicate rows"""
+        list_obj = self.data if inplace else self.data_copy()
         indices = self._identify_duplicate_indices(subset=subset)
         if not indices:
-            return list_copy
+            return self if inplace else DataWrangler(list_obj)
         indices_to_drop = []
         for sub_indices in indices:
             if keep == "first":
@@ -118,24 +125,18 @@ class DataWrangler:
                 temp = list(set(sub_indices).difference(set([max(sub_indices)])))
                 indices_to_drop.extend(temp)
         for idx in sorted(indices_to_drop, reverse=True):
-            list_copy.pop(idx)
-        return list_copy
+            list_obj.pop(idx)
+        return self if inplace else DataWrangler(list_obj)
 
-    def apply(self, *, func: Callable) -> List[Any]:
-        """Applies the given function (`func`) to each dictionary in the list"""
-        return [
-            func(item) for item in self.data_copy()
-        ]
-
-    def apply_to_field(self, *, field: str, func: Callable) -> List[Any]:
+    def apply_to_field(self, *, field: str, func: Callable, inplace: Optional[bool] = False) -> DataWrangler:
         """Applies the given function (`func`) to the field (`field`) in each dictionary in the list"""
-        result = self.data_copy()
-        for idx, item in enumerate(result):
+        list_obj = self.data if inplace else self.data_copy()
+        for idx, dict_obj in enumerate(list_obj):
             try:
-                value = item[field]
+                value = dict_obj[field]
             except KeyError:
                 raise KeyError(f"Field '{field}' not found on row number {idx + 1}")
             new_value = func(value)
-            item[field] = new_value
-        return result
+            dict_obj[field] = new_value
+        return self if inplace else DataWrangler(list_obj)
 
