@@ -48,11 +48,11 @@ class DataWrangler:
         """
         indices = []
         indices_involved_in_duplicates = set()
-        for idx, dict_obj in enumerate(self._list_of_dicts):
+        for idx, dict_obj in enumerate(self.data):
             if idx in indices_involved_in_duplicates:
                 continue
             sub_indices = []
-            list_remainder = self._list_of_dicts[idx + 1 : ]
+            list_remainder = self.data[idx + 1 : ]
             for idx_inner, dict_obj_inner in enumerate(list_remainder):
                 overall_idx = idx + idx_inner + 1
                 if self._is_equal(dict_obj, dict_obj_inner, subset=subset):
@@ -77,6 +77,7 @@ class DataWrangler:
             *,
             subset: Optional[List[str]] = None,
         ) -> bool:
+        """Compares the given 2 dictionaries based on the subset of keys"""
         if not subset:
             return d1 == d2
         for key in subset:
