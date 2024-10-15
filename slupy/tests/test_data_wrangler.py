@@ -150,9 +150,9 @@ class TestDataWrangler(unittest.TestCase):
         )
         self.assertEqual(len(self.list_of_dicts), 9)
 
-    def test_apply_to_field(self):
+    def test_compute_field(self):
         dw = DataWrangler(self.list_of_dicts)
-        result = dw.apply_to_field(field="index", func=lambda value: value + 100).data
+        result = dw.compute_field(field="index", func=lambda d: d["index"] + 100).data
 
         result_expected = []
         for item in DataWrangler(self.list_of_dicts).data_copy():
@@ -162,13 +162,13 @@ class TestDataWrangler(unittest.TestCase):
         self.assertEqual(result, result_expected)
 
         with self.assertRaises(KeyError):
-            dw.apply_to_field(field="--index--", func=lambda value: value + 100)
-        
+            dw.compute_field(field="index", func=lambda d: d["--index--"] + 100)
+
         self.assertEqual(len(self.list_of_dicts), 9)
 
-    def test_apply_to_field_inplace(self):
+    def test_compute_field_inplace(self):
         dw = DataWrangler(self.list_of_dicts, deep_copy=True)
-        dw.apply_to_field(field="index", func=lambda value: value + 100, inplace=True)
+        dw.compute_field(field="index", func=lambda d: d["index"] + 100, inplace=True)
         result = dw.data
 
         result_expected = []
@@ -179,7 +179,7 @@ class TestDataWrangler(unittest.TestCase):
         self.assertEqual(result, result_expected)
 
         with self.assertRaises(KeyError):
-            dw.apply_to_field(field="--index--", func=lambda value: value + 100, inplace=True)
+            dw.compute_field(field="index", func=lambda d: d["--index--"] + 100, inplace=True)
 
         self.assertEqual(len(self.list_of_dicts), 9)
 
