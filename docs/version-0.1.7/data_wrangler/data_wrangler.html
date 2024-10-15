@@ -168,16 +168,57 @@ hljs.highlightAll();
             list_obj.pop(idx)
         return self if inplace else DataWrangler(list_obj)
 
-    def apply_to_field(self, *, field: str, func: Callable, inplace: Optional[bool] = False) -&gt; DataWrangler:
-        &#34;&#34;&#34;Applies the given function (`func`) to the field (`field`) in each dictionary in the list&#34;&#34;&#34;
+    def compute_field(
+            self,
+            *,
+            field: str,
+            func: Callable,
+            inplace: Optional[bool] = False,
+        ) -&gt; DataWrangler:
+        &#34;&#34;&#34;
+        Applies the given function `func` to each dictionary in the list, and stores the result of `func` in the key `field` of each dictionary.
+        The `func` takes in the dictionary (row) as a parameter.
+        &#34;&#34;&#34;
         list_obj = self.data if inplace else self.data_copy()
-        for idx, dict_obj in enumerate(list_obj):
-            try:
-                value = dict_obj[field]
-            except KeyError:
-                raise KeyError(f&#34;Field &#39;{field}&#39; not found on row number {idx + 1}&#34;)
-            new_value = func(value)
-            dict_obj[field] = new_value
+        for dict_obj in list_obj:
+            computed_value = func(dict_obj)
+            dict_obj[field] = computed_value
+        return self if inplace else DataWrangler(list_obj)
+
+    def drop_keys(
+            self,
+            *,
+            keys: List[str],
+            inplace: Optional[bool] = False,
+        ) -&gt; DataWrangler:
+        &#34;&#34;&#34;Drops the given keys&#34;&#34;&#34;
+        assert checks.is_list_of_instances_of_type(keys, type_=str, allow_empty=False), (
+            &#34;Param `keys` must be a non-empty list&#34;
+        )
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            for key in keys:
+                dict_obj.pop(key, None)
+        return self if inplace else DataWrangler(list_obj)
+
+    def fill_nulls(
+            self,
+            *,
+            value: Any,
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -&gt; DataWrangler:
+        &#34;&#34;&#34;Fills all values that are `None` with `value`&#34;&#34;&#34;
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            keys = subset if subset else list(dict_obj.keys())
+            for key in keys:
+                try:
+                    existing_value = dict_obj[key]
+                except KeyError:
+                    raise KeyError(f&#34;Key &#39;{key}&#39; from subset is not found&#34;)
+                if existing_value is None:
+                    dict_obj[key] = value
         return self if inplace else DataWrangler(list_obj)</code></pre>
 </details>
 <h3>Instance variables</h3>
@@ -197,11 +238,12 @@ def data(self) -&gt; List[Dict[str, Any]]:
 </dl>
 <h3>Methods</h3>
 <dl>
-<dt id="slupy.data_wrangler.data_wrangler.DataWrangler.apply_to_field"><code class="name flex">
-<span>def <span class="ident">apply_to_field</span></span>(<span>self, *, field: str, func: Callable, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.data_wrangler.DataWrangler" href="#slupy.data_wrangler.data_wrangler.DataWrangler">DataWrangler</a></span>
+<dt id="slupy.data_wrangler.data_wrangler.DataWrangler.compute_field"><code class="name flex">
+<span>def <span class="ident">compute_field</span></span>(<span>self, *, field: str, func: Callable, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.data_wrangler.DataWrangler" href="#slupy.data_wrangler.data_wrangler.DataWrangler">DataWrangler</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Applies the given function (<code>func</code>) to the field (<code>field</code>) in each dictionary in the list</p></div>
+<div class="desc"><p>Applies the given function <code>func</code> to each dictionary in the list, and stores the result of <code>func</code> in the key <code>field</code> of each dictionary.
+The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 </dd>
 <dt id="slupy.data_wrangler.data_wrangler.DataWrangler.copy"><code class="name flex">
 <span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="slupy.data_wrangler.data_wrangler.DataWrangler" href="#slupy.data_wrangler.data_wrangler.DataWrangler">DataWrangler</a></span>
@@ -220,6 +262,18 @@ def data(self) -&gt; List[Dict[str, Any]]:
 </code></dt>
 <dd>
 <div class="desc"><p>Drops the duplicate rows</p></div>
+</dd>
+<dt id="slupy.data_wrangler.data_wrangler.DataWrangler.drop_keys"><code class="name flex">
+<span>def <span class="ident">drop_keys</span></span>(<span>self, *, keys: List[str], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.data_wrangler.DataWrangler" href="#slupy.data_wrangler.data_wrangler.DataWrangler">DataWrangler</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Drops the given keys</p></div>
+</dd>
+<dt id="slupy.data_wrangler.data_wrangler.DataWrangler.fill_nulls"><code class="name flex">
+<span>def <span class="ident">fill_nulls</span></span>(<span>self, *, value: Any, subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.data_wrangler.DataWrangler" href="#slupy.data_wrangler.data_wrangler.DataWrangler">DataWrangler</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fills all values that are <code>None</code> with <code>value</code></p></div>
 </dd>
 <dt id="slupy.data_wrangler.data_wrangler.DataWrangler.has_duplicates"><code class="name flex">
 <span>def <span class="ident">has_duplicates</span></span>(<span>self, *, subset: Optional[List[str]] = None) ‑> bool</span>
@@ -247,11 +301,13 @@ def data(self) -&gt; List[Dict[str, Any]]:
 <li>
 <h4><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler" href="#slupy.data_wrangler.data_wrangler.DataWrangler">DataWrangler</a></code></h4>
 <ul class="two-column">
-<li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.apply_to_field" href="#slupy.data_wrangler.data_wrangler.DataWrangler.apply_to_field">apply_to_field</a></code></li>
+<li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.compute_field" href="#slupy.data_wrangler.data_wrangler.DataWrangler.compute_field">compute_field</a></code></li>
 <li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.copy" href="#slupy.data_wrangler.data_wrangler.DataWrangler.copy">copy</a></code></li>
 <li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.data" href="#slupy.data_wrangler.data_wrangler.DataWrangler.data">data</a></code></li>
 <li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.data_copy" href="#slupy.data_wrangler.data_wrangler.DataWrangler.data_copy">data_copy</a></code></li>
 <li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.drop_duplicates" href="#slupy.data_wrangler.data_wrangler.DataWrangler.drop_duplicates">drop_duplicates</a></code></li>
+<li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.drop_keys" href="#slupy.data_wrangler.data_wrangler.DataWrangler.drop_keys">drop_keys</a></code></li>
+<li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.fill_nulls" href="#slupy.data_wrangler.data_wrangler.DataWrangler.fill_nulls">fill_nulls</a></code></li>
 <li><code><a title="slupy.data_wrangler.data_wrangler.DataWrangler.has_duplicates" href="#slupy.data_wrangler.data_wrangler.DataWrangler.has_duplicates">has_duplicates</a></code></li>
 </ul>
 </li>
