@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict, List, Literal, Optional
 
+from slupy.core import checks
 from slupy.core.helpers import make_deep_copy
 
 
@@ -128,15 +129,57 @@ class DataWrangler:
             list_obj.pop(idx)
         return self if inplace else DataWrangler(list_obj)
 
-    def apply_to_field(self, *, field: str, func: Callable, inplace: Optional[bool] = False) -> DataWrangler:
-        """Applies the given function (`func`) to the field (`field`) in each dictionary in the list"""
+    def compute_field(
+            self,
+            *,
+            field: str,
+            func: Callable,
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """
+        Applies the given function `func` to each dictionary in the list, and stores the result of `func` in the key `field` of each dictionary.
+        The `func` takes in the dictionary (row) as a parameter.
+        """
         list_obj = self.data if inplace else self.data_copy()
-        for idx, dict_obj in enumerate(list_obj):
-            try:
-                value = dict_obj[field]
-            except KeyError:
-                raise KeyError(f"Field '{field}' not found on row number {idx + 1}")
-            new_value = func(value)
-            dict_obj[field] = new_value
+        for dict_obj in list_obj:
+            computed_value = func(dict_obj)
+            dict_obj[field] = computed_value
         return self if inplace else DataWrangler(list_obj)
+
+    def drop_keys(
+            self,
+            *,
+            keys: List[str],
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """Drops the given keys"""
+        assert checks.is_list_of_instances_of_type(keys, type_=str, allow_empty=False), (
+            "Param `keys` must be a non-empty list"
+        )
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            for key in keys:
+                dict_obj.pop(key, None)
+        return self if inplace else DataWrangler(list_obj)
+
+    def fill_nulls(
+            self,
+            *,
+            value: Any,
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """Fills all values that are `None` with `value`"""
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            keys = subset if subset else list(dict_obj.keys())
+            for key in keys:
+                try:
+                    existing_value = dict_obj[key]
+                except KeyError:
+                    raise KeyError(f"Key '{key}' from subset is not found")
+                if existing_value is None:
+                    dict_obj[key] = value
+        return self if inplace else DataWrangler(list_obj)
+
 
