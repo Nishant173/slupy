@@ -1,10 +1,10 @@
 import unittest
 
 from slupy.core.helpers import make_deep_copy
-from slupy.data_wrangler.data_wrangler import DataWrangler
+from slupy.data_wrangler.dataset import Dataset
 
 
-class TestDataWrangler(unittest.TestCase):
+class TestDataset(unittest.TestCase):
 
     def setUp(self) -> None:
         self.list_data_1 = [
@@ -190,43 +190,43 @@ class TestDataWrangler(unittest.TestCase):
         )
 
     def test_len(self):
-        dw = DataWrangler(self.list_data_1)
-        self.assertEqual(len(dw), len(dw.data))
+        dataset = Dataset(self.list_data_1)
+        self.assertEqual(len(dataset), len(dataset.data))
         self._assert_list_data_is_unchanged()
 
     def test_getitem(self):
-        dw = DataWrangler(self.list_data_1)
+        dataset = Dataset(self.list_data_1)
 
-        self.assertEqual(dw[0], dw.data[0])
-        self.assertEqual(dw[-1], dw.data[-1])
+        self.assertEqual(dataset[0], dataset.data[0])
+        self.assertEqual(dataset[-1], dataset.data[-1])
 
         with self.assertRaises(IndexError):
-            dw[len(dw)]  # Should always raise IndexError since len(dw) will always be > it's last index
+            dataset[len(dataset)]  # Should always raise IndexError since len(dataset) will always be > it's last index
 
         self._assert_list_data_is_unchanged()
 
     def test_has_duplicates(self):
-        dw = DataWrangler(self.list_data_1)
+        dataset = Dataset(self.list_data_1)
 
-        self.assertTrue(not dw.has_duplicates())
-        self.assertTrue(dw.has_duplicates(subset=["text"]))
-        self.assertTrue(dw.has_duplicates(subset=["text", "number"]))
-
-        with self.assertRaises(KeyError):
-            dw.has_duplicates(subset=["text", "number", "key-that-does-not-exist"])
+        self.assertTrue(not dataset.has_duplicates())
+        self.assertTrue(dataset.has_duplicates(subset=["text"]))
+        self.assertTrue(dataset.has_duplicates(subset=["text", "number"]))
 
         with self.assertRaises(KeyError):
-            dw.has_duplicates(subset=["key-that-does-not-exist"])
+            dataset.has_duplicates(subset=["text", "number", "key-that-does-not-exist"])
+
+        with self.assertRaises(KeyError):
+            dataset.has_duplicates(subset=["key-that-does-not-exist"])
 
         self._assert_list_data_is_unchanged()
 
     def test_drop_duplicates(self):
-        dw = DataWrangler(self.list_data_1)
+        dataset = Dataset(self.list_data_1)
 
-        result_1 = dw.drop_duplicates(keep="first", subset=["text", "number"]).data
+        result_1 = dataset.drop_duplicates(keep="first", subset=["text", "number"]).data
         self.assertEqual(len(result_1), 7)
 
-        result_2 = dw.drop_duplicates(keep="first", subset=["text"]).data
+        result_2 = dataset.drop_duplicates(keep="first", subset=["text"]).data
         self.assertEqual(len(result_2), 3)
         self.assertEqual(
             result_2,
@@ -249,7 +249,7 @@ class TestDataWrangler(unittest.TestCase):
             ],
         )
 
-        result_3 = dw.drop_duplicates(keep="last", subset=["text"]).data
+        result_3 = dataset.drop_duplicates(keep="last", subset=["text"]).data
         self.assertEqual(len(result_3), 3)
         self.assertEqual(
             result_3,
@@ -275,9 +275,9 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_drop_duplicates_inplace(self):
-        dw = DataWrangler(self.list_data_1, deep_copy=True)
-        dw.drop_duplicates(keep="last", subset=["text"], inplace=True)
-        result = dw.data
+        dataset = Dataset(self.list_data_1, deep_copy=True)
+        dataset.drop_duplicates(keep="last", subset=["text"], inplace=True)
+        result = dataset.data
         self.assertEqual(len(result), 3)
         self.assertEqual(
             result,
@@ -302,40 +302,40 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_get_values_by_field(self):
-        dw = DataWrangler(self.list_data_4)
+        dataset = Dataset(self.list_data_4)
 
         self.assertEqual(
-            dw.get_values_by_field(field="a"),
+            dataset.get_values_by_field(field="a"),
             [1, 10, 100],
         )
         self.assertEqual(
-            dw.get_values_by_field(field="b"),
+            dataset.get_values_by_field(field="b"),
             [2, 20, 200],
         )
 
         with self.assertRaises(KeyError):
-            dw.get_values_by_field(field="c")
+            dataset.get_values_by_field(field="c")
 
         self._assert_list_data_is_unchanged()
 
     def test_get_unique_fields(self):
-        dw = DataWrangler(self.list_data_1, deep_copy=True)
+        dataset = Dataset(self.list_data_1, deep_copy=True)
         self.assertEqual(
-            dw.get_unique_fields(),
+            dataset.get_unique_fields(),
             ["index", "number", "text"],
         )
         self._assert_list_data_is_unchanged()
 
-        dw.compute_field(field="new_field", func=lambda d: None, inplace=True)
+        dataset.compute_field(field="new_field", func=lambda d: None, inplace=True)
         self.assertEqual(
-            dw.get_unique_fields(),
+            dataset.get_unique_fields(),
             ["index", "new_field", "number", "text"],
         )
         self._assert_list_data_is_unchanged()
 
     def test_set_defaults_for_fields(self):
-        dw = DataWrangler(self.list_data_4)
-        result = dw.set_defaults_for_fields(fields=["c", "d"]).data
+        dataset = Dataset(self.list_data_4)
+        result = dataset.set_defaults_for_fields(fields=["c", "d"]).data
         result_expected = [
             {
                 "a": 1,
@@ -360,9 +360,9 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_set_defaults_for_fields_inplace(self):
-        dw = DataWrangler(self.list_data_4, deep_copy=True)
-        dw.set_defaults_for_fields(fields=["c", "d"], inplace=True)
-        result = dw.data
+        dataset = Dataset(self.list_data_4, deep_copy=True)
+        dataset.set_defaults_for_fields(fields=["c", "d"], inplace=True)
+        result = dataset.data
         result_expected = [
             {
                 "a": 1,
@@ -387,41 +387,41 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_compute_field(self):
-        dw = DataWrangler(self.list_data_1)
-        result = dw.compute_field(field="index", func=lambda d: d["index"] + 100).data
+        dataset = Dataset(self.list_data_1)
+        result = dataset.compute_field(field="index", func=lambda d: d["index"] + 100).data
 
         result_expected = []
-        for item in DataWrangler(self.list_data_1).data_copy():
+        for item in Dataset(self.list_data_1).data_copy():
             item["index"] += 100
             result_expected.append(item)
 
         self.assertEqual(result, result_expected)
 
         with self.assertRaises(KeyError):
-            dw.compute_field(field="index", func=lambda d: d["--index--"] + 100)
+            dataset.compute_field(field="index", func=lambda d: d["--index--"] + 100)
 
         self._assert_list_data_is_unchanged()
 
     def test_compute_field_inplace(self):
-        dw = DataWrangler(self.list_data_1, deep_copy=True)
-        dw.compute_field(field="index", func=lambda d: d["index"] + 100, inplace=True)
-        result = dw.data
+        dataset = Dataset(self.list_data_1, deep_copy=True)
+        dataset.compute_field(field="index", func=lambda d: d["index"] + 100, inplace=True)
+        result = dataset.data
 
         result_expected = []
-        for item in DataWrangler(self.list_data_1).data_copy():
+        for item in Dataset(self.list_data_1).data_copy():
             item["index"] += 100
             result_expected.append(item)
 
         self.assertEqual(result, result_expected)
 
         with self.assertRaises(KeyError):
-            dw.compute_field(field="index", func=lambda d: d["--index--"] + 100, inplace=True)
+            dataset.compute_field(field="index", func=lambda d: d["--index--"] + 100, inplace=True)
 
         self._assert_list_data_is_unchanged()
 
     def test_drop_fields(self):
-        dw = DataWrangler(self.list_data_2)
-        result = dw.drop_fields(fields=["number", "key-that-does-not-exist"]).data
+        dataset = Dataset(self.list_data_2)
+        result = dataset.drop_fields(fields=["number", "key-that-does-not-exist"]).data
         result_expected = [
             {
                 "index": 1,
@@ -442,9 +442,9 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_drop_fields_inplace(self):
-        dw = DataWrangler(self.list_data_2, deep_copy=True)
-        dw.drop_fields(fields=["number", "key-that-does-not-exist"], inplace=True)
-        result = dw.data
+        dataset = Dataset(self.list_data_2, deep_copy=True)
+        dataset.drop_fields(fields=["number", "key-that-does-not-exist"], inplace=True)
+        result = dataset.data
         result_expected = [
             {
                 "index": 1,
@@ -465,10 +465,10 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_fill_nulls(self):
-        dw = DataWrangler(self.list_data_3)
+        dataset = Dataset(self.list_data_3)
 
         self.assertEqual(
-            dw.fill_nulls(value="<HELLO>").data,
+            dataset.fill_nulls(value="<HELLO>").data,
             [
                 {
                     "index": 1,
@@ -491,7 +491,7 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
         self.assertEqual(
-            dw.fill_nulls(value="<HELLO>", subset=["text"]).data,
+            dataset.fill_nulls(value="<HELLO>", subset=["text"]).data,
             [
                 {
                     "index": 1,
@@ -514,9 +514,9 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_fill_nulls_inplace(self):
-        dw_1 = DataWrangler(self.list_data_3, deep_copy=True)
+        dataset_1 = Dataset(self.list_data_3, deep_copy=True)
         self.assertEqual(
-            dw_1.fill_nulls(value="<HELLO>", inplace=True).data,
+            dataset_1.fill_nulls(value="<HELLO>", inplace=True).data,
             [
                 {
                     "index": 1,
@@ -538,9 +538,9 @@ class TestDataWrangler(unittest.TestCase):
         )
         self._assert_list_data_is_unchanged()
 
-        dw_2 = DataWrangler(self.list_data_3, deep_copy=True)
+        dataset_2 = Dataset(self.list_data_3, deep_copy=True)
         self.assertEqual(
-            dw_2.fill_nulls(value="<HELLO>", subset=["text"], inplace=True).data,
+            dataset_2.fill_nulls(value="<HELLO>", subset=["text"], inplace=True).data,
             [
                 {
                     "index": 1,
@@ -563,8 +563,8 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_autofill_from_init(self):
-        dw = DataWrangler(self.list_data_4, deep_copy=True, autofill=True)
-        result = dw.data
+        dataset = Dataset(self.list_data_4, deep_copy=True, autofill=True)
+        result = dataset.data
         result_expected = [
             {
                 "a": 1,
@@ -586,8 +586,8 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_autofill_missing_fields(self):
-        dw = DataWrangler(self.list_data_4)
-        result = dw.autofill_missing_fields().data
+        dataset = Dataset(self.list_data_4)
+        result = dataset.autofill_missing_fields().data
         result_expected = [
             {
                 "a": 1,
@@ -609,9 +609,9 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_autofill_missing_fields_inplace(self):
-        dw = DataWrangler(self.list_data_4, deep_copy=True)
-        dw.autofill_missing_fields(inplace=True)
-        result = dw.data
+        dataset = Dataset(self.list_data_4, deep_copy=True)
+        dataset.autofill_missing_fields(inplace=True)
+        result = dataset.data
         result_expected = [
             {
                 "a": 1,
@@ -633,9 +633,9 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_drop_nulls(self):
-        dw = DataWrangler(self.list_data_3)
+        dataset = Dataset(self.list_data_3)
 
-        result_1 = dw.drop_nulls().data
+        result_1 = dataset.drop_nulls().data
         result_expected_1 = [
             {
                 "index": 2,
@@ -649,7 +649,7 @@ class TestDataWrangler(unittest.TestCase):
         self.assertEqual(result_1, result_expected_1)
         self._assert_list_data_is_unchanged()
 
-        result_2 = dw.drop_nulls(subset=["index"]).data
+        result_2 = dataset.drop_nulls(subset=["index"]).data
         result_expected_2 = [
             {
                 "index": 1,
@@ -668,9 +668,9 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_drop_nulls_inplace(self):
-        dw_1 = DataWrangler(self.list_data_3, deep_copy=True)
-        dw_1.drop_nulls(inplace=True)
-        result_1 = dw_1.data
+        dataset_1 = Dataset(self.list_data_3, deep_copy=True)
+        dataset_1.drop_nulls(inplace=True)
+        result_1 = dataset_1.data
         result_expected_1 = [
             {
                 "index": 2,
@@ -684,9 +684,9 @@ class TestDataWrangler(unittest.TestCase):
         self.assertEqual(result_1, result_expected_1)
         self._assert_list_data_is_unchanged()
 
-        dw_2 = DataWrangler(self.list_data_3, deep_copy=True)
-        dw_2.drop_nulls(subset=["index"], inplace=True)
-        result_2 = dw_2.data
+        dataset_2 = Dataset(self.list_data_3, deep_copy=True)
+        dataset_2.drop_nulls(subset=["index"], inplace=True)
+        result_2 = dataset_2.data
         result_expected_2 = [
             {
                 "index": 1,
@@ -705,12 +705,12 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_filter_rows(self):
-        dw = DataWrangler(self.list_data_1)
+        dataset = Dataset(self.list_data_1)
         
         with self.assertRaises(AssertionError):
-            dw.filter_rows(func=lambda d: d)
+            dataset.filter_rows(func=lambda d: d)
         
-        result = dw.filter_rows(func=lambda d: d["text"] == "AAA" and d["index"] % 2 != 0).data
+        result = dataset.filter_rows(func=lambda d: d["text"] == "AAA" and d["index"] % 2 != 0).data
         result_expected = [
             {
                 "index": 1,
@@ -727,13 +727,13 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_filter_rows_inplace(self):
-        dw = DataWrangler(self.list_data_1, deep_copy=True)
+        dataset = Dataset(self.list_data_1, deep_copy=True)
         
         with self.assertRaises(AssertionError):
-            dw.filter_rows(func=lambda d: d, inplace=True)
+            dataset.filter_rows(func=lambda d: d, inplace=True)
 
-        dw.filter_rows(func=lambda d: d["text"] == "AAA" and d["index"] % 2 != 0, inplace=True)
-        result = dw.data
+        dataset.filter_rows(func=lambda d: d["text"] == "AAA" and d["index"] % 2 != 0, inplace=True)
+        result = dataset.data
         result_expected = [
             {
                 "index": 1,
@@ -750,13 +750,13 @@ class TestDataWrangler(unittest.TestCase):
         self._assert_list_data_is_unchanged()
 
     def test_order_by(self):
-        dw = DataWrangler(self.list_data_5)
-        dw_ordered = dw.order_by(fields=["number", "text"], ascending=[False, False])
+        dataset = Dataset(self.list_data_5)
+        dataset_ordered = dataset.order_by(fields=["number", "text"], ascending=[False, False])
         self.assertNotEqual(
-            id(dw),
-            id(dw_ordered),
+            id(dataset),
+            id(dataset_ordered),
         )
-        result = dw_ordered.data
+        result = dataset_ordered.data
         result_expected = [
             {
                 "text": "BBB",

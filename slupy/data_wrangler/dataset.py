@@ -7,7 +7,7 @@ from slupy.core.helpers import make_deep_copy
 from slupy.data_wrangler.utils import multi_key_sort
 
 
-class DataWrangler:
+class Dataset:
     """Class that represents a data wrangler"""
 
     def __init__(
@@ -42,7 +42,7 @@ class DataWrangler:
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         return self.data[idx]
 
-    def copy(self) -> DataWrangler:
+    def copy(self) -> Dataset:
         """Returns deep-copy of `self`"""
         return make_deep_copy(self)
 
@@ -132,12 +132,12 @@ class DataWrangler:
             keep: Optional[Literal["first", "last"]] = "first",
             subset: Optional[List[str]] = None,
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """Drops the duplicate rows"""
         list_obj = self.data if inplace else self.data_copy()
         indices = self._identify_duplicate_indices(subset=subset)
         if not indices:
-            return self if inplace else DataWrangler(list_obj)
+            return self if inplace else Dataset(list_obj)
         indices_to_drop = []
         for sub_indices in indices:
             if keep == "first":
@@ -148,7 +148,7 @@ class DataWrangler:
                 indices_to_drop.extend(temp)
         for idx in sorted(indices_to_drop, reverse=True):
             list_obj.pop(idx)
-        return self if inplace else DataWrangler(list_obj)
+        return self if inplace else Dataset(list_obj)
 
     def get_values_by_field(self, *, field: str) -> List[Any]:
         """Returns a list of values for the given field"""
@@ -173,7 +173,7 @@ class DataWrangler:
             *,
             fields: List[str],
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """
         Checks if the given fields are present in each dictionary in the list.
         If not present, sets their default value to `None`.
@@ -185,7 +185,7 @@ class DataWrangler:
         for dict_obj in list_obj:
             for field in fields:
                 dict_obj.setdefault(field, None)
-        return self if inplace else DataWrangler(list_obj)
+        return self if inplace else Dataset(list_obj)
 
     def compute_field(
             self,
@@ -193,7 +193,7 @@ class DataWrangler:
             field: str,
             func: Callable[[Dict[str, Any]], Any],
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """
         Applies the given function `func` to each dictionary in the list, and stores the result of `func` in the key `field` of each dictionary.
         The `func` takes in the dictionary (row) as a parameter.
@@ -202,14 +202,14 @@ class DataWrangler:
         for dict_obj in list_obj:
             computed_value = func(dict_obj)
             dict_obj[field] = computed_value
-        return self if inplace else DataWrangler(list_obj)
+        return self if inplace else Dataset(list_obj)
 
     def drop_fields(
             self,
             *,
             fields: List[str],
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """Drops the given fields"""
         assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
             "Param `fields` must be a non-empty list of strings"
@@ -218,7 +218,7 @@ class DataWrangler:
         for dict_obj in list_obj:
             for field in fields:
                 dict_obj.pop(field, None)
-        return self if inplace else DataWrangler(list_obj)
+        return self if inplace else Dataset(list_obj)
 
     def fill_nulls(
             self,
@@ -226,7 +226,7 @@ class DataWrangler:
             value: Any,
             subset: Optional[List[str]] = None,
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """Fills all values that are `None` with `value`"""
         list_obj = self.data if inplace else self.data_copy()
         for dict_obj in list_obj:
@@ -238,13 +238,13 @@ class DataWrangler:
                     raise KeyError(f"Key '{key}' from subset is not found")
                 if existing_value is None:
                     dict_obj[key] = value
-        return self if inplace else DataWrangler(list_obj)
+        return self if inplace else Dataset(list_obj)
 
     def autofill_missing_fields(
             self,
             *,
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """
         Checks if the existing unique fields are present in each dictionary in the list.
         If not present, sets their default value to `None`.
@@ -275,7 +275,7 @@ class DataWrangler:
             *,
             subset: Optional[List[str]] = None,
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """Drops rows having value as `None` in any of the given `subset` of fields"""
         instance = self.filter_rows(
             func=lambda dict_obj: not self._has_nulls(dict_obj=dict_obj, subset=subset),
@@ -288,7 +288,7 @@ class DataWrangler:
             *,
             func: Callable[[Dict[str, Any]], bool],
             inplace: Optional[bool] = False,
-        ) -> DataWrangler:
+        ) -> Dataset:
         """
         Applies the given function `func` to each dictionary (row) in the list, and expects the `func` to return a boolean.
         If the result is `True` then keeps the row; otherwise removes the row.
@@ -307,14 +307,14 @@ class DataWrangler:
         else:
             list_obj = list_obj_filtered
 
-        return self if inplace else DataWrangler(list_obj)
+        return self if inplace else Dataset(list_obj)
 
     def order_by(
             self,
             *,
             fields: List[str],
             ascending: List[bool],
-        ) -> DataWrangler:
+        ) -> Dataset:
         """Orders by the given fields in the desired order. Returns a new instance having the ordered data."""
         assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
             "Param `fields` must be a non-empty list of strings"
@@ -328,5 +328,5 @@ class DataWrangler:
             columns=fields,
             ascending=ascending,
         )
-        return DataWrangler(list_obj)
+        return Dataset(list_obj)
 
