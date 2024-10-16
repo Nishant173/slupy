@@ -11,18 +11,21 @@ class DataWrangler:
 
     def __init__(
             self,
-            list_of_dicts: List[Dict[str, Any]],
+            data: List[Dict[str, Any]],
             /,
             *,
             deep_copy: Optional[bool] = False,
         ) -> None:
         """
         Parameters:
-            - list_of_dicts (list): List of dictionaries.
-            - deep_copy (bool): If `deep_copy=True`, creates a deep-copy of the given `list_of_dicts` and
+            - data (list): List of dictionaries.
+            - deep_copy (bool): If `deep_copy=True`, creates a deep-copy of the given `data` and
             ensures that the original is never modified.
         """
-        self._list_of_dicts = make_deep_copy(list_of_dicts) if deep_copy else list_of_dicts
+        assert checks.is_list_of_instances_of_type(data, type_=dict, allow_empty=True), (
+            "Param `data` must be a list of dictionaries"
+        )
+        self._data = make_deep_copy(data) if deep_copy else data
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}()"
@@ -39,15 +42,15 @@ class DataWrangler:
 
     @property
     def data(self) -> List[Dict[str, Any]]:
-        return self._list_of_dicts
+        return self._data
 
     @data.setter
     def data(self, value: List[Dict[str, Any]]) -> None:
-        self._list_of_dicts = value
+        self._data = value
 
     def data_copy(self) -> List[Dict[str, Any]]:
         """Returns deep-copy of `self.data`"""
-        return make_deep_copy(self._list_of_dicts)
+        return make_deep_copy(self.data)
 
     def _identify_duplicate_indices(
             self,
