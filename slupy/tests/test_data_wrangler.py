@@ -1,12 +1,13 @@
 import unittest
 
+from slupy.core.helpers import make_deep_copy
 from slupy.data_wrangler.data_wrangler import DataWrangler
 
 
 class TestDataWrangler(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.list_of_dicts_1 = [
+        self.list_data_1 = [
             {
                 "index": 1,
                 "text": "AAA",
@@ -53,7 +54,7 @@ class TestDataWrangler(unittest.TestCase):
                 "number": 50,
             },
         ]
-        self.list_of_dicts_2 = [
+        self.list_data_2 = [
             {
                 "index": 1,
                 "text": "AAA",
@@ -70,7 +71,7 @@ class TestDataWrangler(unittest.TestCase):
                 "number": 45,
             },
         ]
-        self.list_of_dicts_3 = [
+        self.list_data_3 = [
             {
                 "index": 1,
                 "text": None,
@@ -90,7 +91,7 @@ class TestDataWrangler(unittest.TestCase):
         ]
 
     def test_has_duplicates(self):
-        dw = DataWrangler(self.list_of_dicts_1)
+        dw = DataWrangler(self.list_data_1)
 
         self.assertTrue(not dw.has_duplicates())
         self.assertTrue(dw.has_duplicates(subset=["text"]))
@@ -102,10 +103,10 @@ class TestDataWrangler(unittest.TestCase):
         with self.assertRaises(KeyError):
             dw.has_duplicates(subset=["key-that-does-not-exist"])
 
-        self.assertEqual(len(self.list_of_dicts_1), 9)
+        self.assertEqual(len(self.list_data_1), 9)
 
     def test_drop_duplicates(self):
-        dw = DataWrangler(self.list_of_dicts_1)
+        dw = DataWrangler(self.list_data_1)
 
         result_1 = dw.drop_duplicates(keep="first", subset=["text", "number"]).data
         self.assertEqual(len(result_1), 7)
@@ -156,10 +157,10 @@ class TestDataWrangler(unittest.TestCase):
             ],
         )
 
-        self.assertEqual(len(self.list_of_dicts_1), 9)
+        self.assertEqual(len(self.list_data_1), 9)
 
     def test_drop_duplicates_inplace(self):
-        dw = DataWrangler(self.list_of_dicts_1, deep_copy=True)
+        dw = DataWrangler(self.list_data_1, deep_copy=True)
         dw.drop_duplicates(keep="last", subset=["text"], inplace=True)
         result = dw.data
         self.assertEqual(len(result), 3)
@@ -183,14 +184,14 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_of_dicts_1), 9)
+        self.assertEqual(len(self.list_data_1), 9)
 
     def test_compute_field(self):
-        dw = DataWrangler(self.list_of_dicts_1)
+        dw = DataWrangler(self.list_data_1)
         result = dw.compute_field(field="index", func=lambda d: d["index"] + 100).data
 
         result_expected = []
-        for item in DataWrangler(self.list_of_dicts_1).data_copy():
+        for item in DataWrangler(self.list_data_1).data_copy():
             item["index"] += 100
             result_expected.append(item)
 
@@ -199,15 +200,15 @@ class TestDataWrangler(unittest.TestCase):
         with self.assertRaises(KeyError):
             dw.compute_field(field="index", func=lambda d: d["--index--"] + 100)
 
-        self.assertEqual(len(self.list_of_dicts_1), 9)
+        self.assertEqual(len(self.list_data_1), 9)
 
     def test_compute_field_inplace(self):
-        dw = DataWrangler(self.list_of_dicts_1, deep_copy=True)
+        dw = DataWrangler(self.list_data_1, deep_copy=True)
         dw.compute_field(field="index", func=lambda d: d["index"] + 100, inplace=True)
         result = dw.data
 
         result_expected = []
-        for item in DataWrangler(self.list_of_dicts_1).data_copy():
+        for item in DataWrangler(self.list_data_1).data_copy():
             item["index"] += 100
             result_expected.append(item)
 
@@ -216,10 +217,10 @@ class TestDataWrangler(unittest.TestCase):
         with self.assertRaises(KeyError):
             dw.compute_field(field="index", func=lambda d: d["--index--"] + 100, inplace=True)
 
-        self.assertEqual(len(self.list_of_dicts_1), 9)
+        self.assertEqual(len(self.list_data_1), 9)
 
     def test_drop_keys(self):
-        dw = DataWrangler(self.list_of_dicts_2)
+        dw = DataWrangler(self.list_data_2)
         result = dw.drop_keys(keys=["number", "key-that-does-not-exist"]).data
         result_expected = [
             {
@@ -238,14 +239,14 @@ class TestDataWrangler(unittest.TestCase):
             },
         ]
         self.assertEqual(result, result_expected)
-        self.assertEqual(len(self.list_of_dicts_2), 3)
+        self.assertEqual(len(self.list_data_2), 3)
         self.assertTrue(
-            bool(self.list_of_dicts_2)
-            and all(["number" in dict_obj for dict_obj in self.list_of_dicts_2]),
+            bool(self.list_data_2)
+            and all(["number" in dict_obj for dict_obj in self.list_data_2]),
         )
 
     def test_drop_keys_inplace(self):
-        dw = DataWrangler(self.list_of_dicts_2, deep_copy=True)
+        dw = DataWrangler(self.list_data_2, deep_copy=True)
         dw.drop_keys(keys=["number", "key-that-does-not-exist"], inplace=True)
         result = dw.data
         result_expected = [
@@ -265,14 +266,14 @@ class TestDataWrangler(unittest.TestCase):
             },
         ]
         self.assertEqual(result, result_expected)
-        self.assertEqual(len(self.list_of_dicts_2), 3)
+        self.assertEqual(len(self.list_data_2), 3)
         self.assertTrue(
-            bool(self.list_of_dicts_2)
-            and all(["number" in dict_obj for dict_obj in self.list_of_dicts_2]),
+            bool(self.list_data_2)
+            and all(["number" in dict_obj for dict_obj in self.list_data_2]),
         )
 
     def test_fill_nulls(self):
-        dw = DataWrangler(self.list_of_dicts_3)
+        dw = DataWrangler(self.list_data_3)
 
         self.assertEqual(
             dw.fill_nulls(value="<HELLO>").data,
@@ -295,7 +296,7 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_of_dicts_3), 4)
+        self.assertEqual(len(self.list_data_3), 4)
 
         self.assertEqual(
             dw.fill_nulls(value="<HELLO>", subset=["text"]).data,
@@ -318,10 +319,10 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_of_dicts_3), 4)
+        self.assertEqual(len(self.list_data_3), 4)
 
     def test_fill_nulls_inplace(self):
-        dw_1 = DataWrangler(self.list_of_dicts_3, deep_copy=True)
+        dw_1 = DataWrangler(self.list_data_3, deep_copy=True)
         self.assertEqual(
             dw_1.fill_nulls(value="<HELLO>", inplace=True).data,
             [
@@ -343,9 +344,9 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_of_dicts_3), 4)
+        self.assertEqual(len(self.list_data_3), 4)
 
-        dw_2 = DataWrangler(self.list_of_dicts_3, deep_copy=True)
+        dw_2 = DataWrangler(self.list_data_3, deep_copy=True)
         self.assertEqual(
             dw_2.fill_nulls(value="<HELLO>", subset=["text"], inplace=True).data,
             [
@@ -367,5 +368,5 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_of_dicts_3), 4)
+        self.assertEqual(len(self.list_data_3), 4)
 
