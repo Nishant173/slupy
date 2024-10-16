@@ -152,6 +152,18 @@ class TestDataWrangler(unittest.TestCase):
             id(self.list_data_4_copy),
         )
 
+    def test_basic_functionality(self):
+        dw = DataWrangler(self.list_data_1)
+
+        self.assertEqual(len(dw), len(dw.data))
+        self.assertEqual(dw[0], dw.data[0])
+        self.assertEqual(dw[-1], dw.data[-1])
+
+        with self.assertRaises(IndexError):
+            dw[len(dw) + 100]
+
+        self._assert_list_data_is_unchanged()
+
     def test_has_duplicates(self):
         dw = DataWrangler(self.list_data_1)
 
