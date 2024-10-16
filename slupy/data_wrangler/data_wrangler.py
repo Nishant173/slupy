@@ -15,17 +15,22 @@ class DataWrangler:
             /,
             *,
             deep_copy: Optional[bool] = False,
+            autofill: Optional[bool] = False,
         ) -> None:
         """
         Parameters:
             - data (list): List of dictionaries.
             - deep_copy (bool): If `deep_copy=True`, creates a deep-copy of the given `data` and
             ensures that the original is never modified.
+            - autofill (bool): If `autofill=True`, checks if the existing unique fields are present in each dictionary
+            in the list. If not present, sets their default value to `None`. Does this operation inplace.
         """
         assert checks.is_list_of_instances_of_type(data, type_=dict, allow_empty=True), (
             "Param `data` must be a list of dictionaries"
         )
         self._data = make_deep_copy(data) if deep_copy else data
+        if autofill:
+            self = self.autofill_missing_fields(inplace=True)
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}()"
@@ -233,6 +238,49 @@ class DataWrangler:
                 if existing_value is None:
                     dict_obj[key] = value
         return self if inplace else DataWrangler(list_obj)
+
+    def autofill_missing_fields(
+            self,
+            *,
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """
+        Checks if the existing unique fields are present in each dictionary in the list.
+        If not present, sets their default value to `None`.
+        """
+        fields = self.get_unique_fields()
+        instance = self.set_defaults_for_fields(fields=fields, inplace=inplace)
+        return instance
+
+    def _has_nulls(
+            self,
+            *,
+            dict_obj: Dict[str, Any],
+            subset: Optional[List[str]] = None,
+        ) -> bool:
+        """Checks if the given dictionary has value as `None` for any of the given `subset` of keys"""
+        keys = subset if subset else list(dict_obj.keys())
+        for key in keys:
+            try:
+                value = dict_obj[key]
+            except KeyError:
+                raise KeyError(f"Key '{key}' from subset is not found")
+            if value is None:
+                return True
+        return False
+
+    def drop_nulls(
+            self,
+            *,
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """Drops rows having value as `None` in any of the given `subset` of fields"""
+        instance = self.filter_rows(
+            func=lambda dict_obj: not self._has_nulls(dict_obj=dict_obj, subset=subset),
+            inplace=inplace,
+        )
+        return instance
 
     def filter_rows(
             self,

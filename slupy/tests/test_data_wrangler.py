@@ -525,6 +525,148 @@ class TestDataWrangler(unittest.TestCase):
         )
         self._assert_list_data_is_unchanged()
 
+    def test_autofill_from_init(self):
+        dw = DataWrangler(self.list_data_4, deep_copy=True, autofill=True)
+        result = dw.data
+        result_expected = [
+            {
+                "a": 1,
+                "b": 2,
+                "c": 3,
+            },
+            {
+                "a": 10,
+                "b": 20,
+                "c": None,
+            },
+            {
+                "a": 100,
+                "b": 200,
+                "c": None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_autofill_missing_fields(self):
+        dw = DataWrangler(self.list_data_4)
+        result = dw.autofill_missing_fields().data
+        result_expected = [
+            {
+                "a": 1,
+                "b": 2,
+                "c": 3,
+            },
+            {
+                "a": 10,
+                "b": 20,
+                "c": None,
+            },
+            {
+                "a": 100,
+                "b": 200,
+                "c": None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_autofill_missing_fields_inplace(self):
+        dw = DataWrangler(self.list_data_4, deep_copy=True)
+        dw.autofill_missing_fields(inplace=True)
+        result = dw.data
+        result_expected = [
+            {
+                "a": 1,
+                "b": 2,
+                "c": 3,
+            },
+            {
+                "a": 10,
+                "b": 20,
+                "c": None,
+            },
+            {
+                "a": 100,
+                "b": 200,
+                "c": None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_nulls(self):
+        dw = DataWrangler(self.list_data_3)
+
+        result_1 = dw.drop_nulls().data
+        result_expected_1 = [
+            {
+                "index": 2,
+                "text": "BBB",
+            },
+            {
+                "index": 4,
+                "text": "DDD",
+            },
+        ]
+        self.assertEqual(result_1, result_expected_1)
+        self._assert_list_data_is_unchanged()
+
+        result_2 = dw.drop_nulls(subset=["index"]).data
+        result_expected_2 = [
+            {
+                "index": 1,
+                "text": None,
+            },
+            {
+                "index": 2,
+                "text": "BBB",
+            },
+            {
+                "index": 4,
+                "text": "DDD",
+            },
+        ]
+        self.assertEqual(result_2, result_expected_2)
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_nulls_inplace(self):
+        dw_1 = DataWrangler(self.list_data_3, deep_copy=True)
+        dw_1.drop_nulls(inplace=True)
+        result_1 = dw_1.data
+        result_expected_1 = [
+            {
+                "index": 2,
+                "text": "BBB",
+            },
+            {
+                "index": 4,
+                "text": "DDD",
+            },
+        ]
+        self.assertEqual(result_1, result_expected_1)
+        self._assert_list_data_is_unchanged()
+
+        dw_2 = DataWrangler(self.list_data_3, deep_copy=True)
+        dw_2.drop_nulls(subset=["index"], inplace=True)
+        result_2 = dw_2.data
+        result_expected_2 = [
+            {
+                "index": 1,
+                "text": None,
+            },
+            {
+                "index": 2,
+                "text": "BBB",
+            },
+            {
+                "index": 4,
+                "text": "DDD",
+            },
+        ]
+        self.assertEqual(result_2, result_expected_2)
+        self._assert_list_data_is_unchanged()
+
     def test_filter_rows(self):
         dw = DataWrangler(self.list_data_1)
         
