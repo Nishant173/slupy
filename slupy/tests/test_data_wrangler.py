@@ -54,6 +54,7 @@ class TestDataWrangler(unittest.TestCase):
                 "number": 50,
             },
         ]
+        self.list_data_1_copy = make_deep_copy(self.list_data_1)
         self.list_data_2 = [
             {
                 "index": 1,
@@ -71,6 +72,7 @@ class TestDataWrangler(unittest.TestCase):
                 "number": 45,
             },
         ]
+        self.list_data_2_copy = make_deep_copy(self.list_data_2)
         self.list_data_3 = [
             {
                 "index": 1,
@@ -89,6 +91,40 @@ class TestDataWrangler(unittest.TestCase):
                 "text": "DDD",
             },
         ]
+        self.list_data_3_copy = make_deep_copy(self.list_data_3)
+
+    def _assert_list_data_is_unchanged(self):
+        msg = "The value of list data should not be modified in-place"
+
+        self.assertEqual(
+            self.list_data_1,
+            self.list_data_1_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_1),
+            id(self.list_data_1_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_2,
+            self.list_data_2_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_2),
+            id(self.list_data_2_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_3,
+            self.list_data_3_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_3),
+            id(self.list_data_3_copy),
+        )
 
     def test_has_duplicates(self):
         dw = DataWrangler(self.list_data_1)
@@ -103,7 +139,7 @@ class TestDataWrangler(unittest.TestCase):
         with self.assertRaises(KeyError):
             dw.has_duplicates(subset=["key-that-does-not-exist"])
 
-        self.assertEqual(len(self.list_data_1), 9)
+        self._assert_list_data_is_unchanged()
 
     def test_drop_duplicates(self):
         dw = DataWrangler(self.list_data_1)
@@ -157,7 +193,7 @@ class TestDataWrangler(unittest.TestCase):
             ],
         )
 
-        self.assertEqual(len(self.list_data_1), 9)
+        self._assert_list_data_is_unchanged()
 
     def test_drop_duplicates_inplace(self):
         dw = DataWrangler(self.list_data_1, deep_copy=True)
@@ -184,7 +220,7 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_data_1), 9)
+        self._assert_list_data_is_unchanged()
 
     def test_compute_field(self):
         dw = DataWrangler(self.list_data_1)
@@ -200,7 +236,7 @@ class TestDataWrangler(unittest.TestCase):
         with self.assertRaises(KeyError):
             dw.compute_field(field="index", func=lambda d: d["--index--"] + 100)
 
-        self.assertEqual(len(self.list_data_1), 9)
+        self._assert_list_data_is_unchanged()
 
     def test_compute_field_inplace(self):
         dw = DataWrangler(self.list_data_1, deep_copy=True)
@@ -217,7 +253,7 @@ class TestDataWrangler(unittest.TestCase):
         with self.assertRaises(KeyError):
             dw.compute_field(field="index", func=lambda d: d["--index--"] + 100, inplace=True)
 
-        self.assertEqual(len(self.list_data_1), 9)
+        self._assert_list_data_is_unchanged()
 
     def test_drop_keys(self):
         dw = DataWrangler(self.list_data_2)
@@ -239,11 +275,7 @@ class TestDataWrangler(unittest.TestCase):
             },
         ]
         self.assertEqual(result, result_expected)
-        self.assertEqual(len(self.list_data_2), 3)
-        self.assertTrue(
-            bool(self.list_data_2)
-            and all(["number" in dict_obj for dict_obj in self.list_data_2]),
-        )
+        self._assert_list_data_is_unchanged()
 
     def test_drop_keys_inplace(self):
         dw = DataWrangler(self.list_data_2, deep_copy=True)
@@ -266,11 +298,7 @@ class TestDataWrangler(unittest.TestCase):
             },
         ]
         self.assertEqual(result, result_expected)
-        self.assertEqual(len(self.list_data_2), 3)
-        self.assertTrue(
-            bool(self.list_data_2)
-            and all(["number" in dict_obj for dict_obj in self.list_data_2]),
-        )
+        self._assert_list_data_is_unchanged()
 
     def test_fill_nulls(self):
         dw = DataWrangler(self.list_data_3)
@@ -296,7 +324,7 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_data_3), 4)
+        self._assert_list_data_is_unchanged()
 
         self.assertEqual(
             dw.fill_nulls(value="<HELLO>", subset=["text"]).data,
@@ -319,7 +347,7 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_data_3), 4)
+        self._assert_list_data_is_unchanged()
 
     def test_fill_nulls_inplace(self):
         dw_1 = DataWrangler(self.list_data_3, deep_copy=True)
@@ -344,7 +372,7 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_data_3), 4)
+        self._assert_list_data_is_unchanged()
 
         dw_2 = DataWrangler(self.list_data_3, deep_copy=True)
         self.assertEqual(
@@ -368,5 +396,5 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
-        self.assertEqual(len(self.list_data_3), 4)
+        self._assert_list_data_is_unchanged()
 
