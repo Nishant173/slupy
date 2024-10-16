@@ -108,6 +108,33 @@ class TestDataWrangler(unittest.TestCase):
             },
         ]
         self.list_data_4_copy = make_deep_copy(self.list_data_4)
+        self.list_data_5 = [
+            {
+                "text": "AAA",
+                "number": -1,
+            },
+            {
+                "text": "BBB",
+                "number": -1,
+            },
+            {
+                "text": "AAA",
+                "number": 50,
+            },
+            {
+                "text": "BBB",
+                "number": 50,
+            },
+            {
+                "text": "BBB",
+                "number": 20,
+            },
+            {
+                "text": "AAA",
+                "number": 5,
+            },
+        ]
+        self.list_data_5_copy = make_deep_copy(self.list_data_5)
 
     def _assert_list_data_is_unchanged(self):
         msg = "The value of list data should not be modified in-place"
@@ -150,6 +177,16 @@ class TestDataWrangler(unittest.TestCase):
         self.assertNotEqual(
             id(self.list_data_4),
             id(self.list_data_4_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_5,
+            self.list_data_5_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_5),
+            id(self.list_data_5_copy),
         )
 
     def test_len(self):
@@ -707,6 +744,43 @@ class TestDataWrangler(unittest.TestCase):
                 "index": 3,
                 "text": "AAA",
                 "number": 30,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_order_by(self):
+        dw = DataWrangler(self.list_data_5)
+        dw_ordered = dw.order_by(fields=["number", "text"], ascending=[False, False])
+        self.assertNotEqual(
+            id(dw),
+            id(dw_ordered),
+        )
+        result = dw_ordered.data
+        result_expected = [
+            {
+                "text": "BBB",
+                "number": 50,
+            },
+            {
+                "text": "AAA",
+                "number": 50,
+            },
+            {
+                "text": "BBB",
+                "number": 20,
+            },
+            {
+                "text": "AAA",
+                "number": 5,
+            },
+            {
+                "text": "BBB",
+                "number": -1,
+            },
+            {
+                "text": "AAA",
+                "number": -1,
             },
         ]
         self.assertEqual(result, result_expected)

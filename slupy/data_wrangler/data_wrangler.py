@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict, List, Literal, Optional
 
 from slupy.core import checks
 from slupy.core.helpers import make_deep_copy
+from slupy.data_wrangler.utils import multi_key_sort
 
 
 class DataWrangler:
@@ -307,4 +308,25 @@ class DataWrangler:
             list_obj = list_obj_filtered
 
         return self if inplace else DataWrangler(list_obj)
+
+    def order_by(
+            self,
+            *,
+            fields: List[str],
+            ascending: List[bool],
+        ) -> DataWrangler:
+        """Orders by the given fields in the desired order. Returns a new instance having the ordered data."""
+        assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
+            "Param `fields` must be a non-empty list of strings"
+        )
+        assert checks.is_list_of_instances_of_type(ascending, type_=bool, allow_empty=False), (
+            "Param `ascending` must be a non-empty list of booleans"
+        )
+        assert len(fields) == len(ascending), "Params `fields` and `ascending` must be of same length"
+        list_obj: List[Dict[str, Any]] = multi_key_sort(
+            self.data,
+            columns=fields,
+            ascending=ascending,
+        )
+        return DataWrangler(list_obj)
 

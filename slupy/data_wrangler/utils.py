@@ -1,0 +1,47 @@
+from operator import itemgetter
+from functools import cmp_to_key
+from typing import Any, List
+
+
+def cmp(x, y):
+    """
+    Replacement for built-in function cmp that was removed in Python 3.
+
+    Compare the two objects x and y and return an integer according to
+    the outcome. The return value is negative if x < y, zero if x == y
+    and strictly positive if x > y.
+
+    Reference: https://portingguide.readthedocs.io/en/latest/comparisons.html#the-cmp-function
+    """
+    return (x > y) - (x < y)
+
+
+def multi_key_sort(
+        iterable: List[Any],
+        /,
+        *,
+        columns: List[str],
+        ascending: List[bool],
+    ) -> List[Any]:
+    """Returns a new list with the sorted iterable"""
+    comparers = [
+        (
+            (itemgetter(column.strip()), 1)
+            if ascending_ else
+            (itemgetter(column.strip()), -1)
+        )
+        for column, ascending_ in zip(columns, ascending)
+    ]
+
+    def comparer(left, right):
+        comparer_iter = (
+            cmp(fn(left), fn(right)) * mult
+            for fn, mult in comparers
+        )
+        return next((result for result in comparer_iter if result), 0)
+
+    return sorted(
+        iterable,
+        key=cmp_to_key(comparer),
+    )
+
