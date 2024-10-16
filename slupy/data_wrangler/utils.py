@@ -3,7 +3,7 @@ from functools import cmp_to_key
 from typing import Any, List
 
 
-def cmp(x, y):
+def cmp(x: Any, y: Any) -> int:
     """
     Replacement for built-in function cmp that was removed in Python 3.
 
