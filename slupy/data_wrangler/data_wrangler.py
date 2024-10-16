@@ -141,6 +141,17 @@ class DataWrangler:
             list_obj.pop(idx)
         return self if inplace else DataWrangler(list_obj)
 
+    def get_values_by_field(self, *, field: str) -> List[Any]:
+        """Returns a list of values for the given field"""
+        values = []
+        for idx, dict_obj in enumerate(self.data):
+            try:
+                value = dict_obj[field]
+            except KeyError:
+                raise KeyError(f"Field '{field}' is not found on row number {idx + 1}")
+            values.append(value)
+        return values
+
     def get_unique_fields(self) -> List[str]:
         """Returns list of all the unique fields that are present"""
         unique_fields = set()
@@ -171,7 +182,7 @@ class DataWrangler:
             self,
             *,
             field: str,
-            func: Callable,
+            func: Callable[..., Any],
             inplace: Optional[bool] = False,
         ) -> DataWrangler:
         """
@@ -220,4 +231,29 @@ class DataWrangler:
                     dict_obj[key] = value
         return self if inplace else DataWrangler(list_obj)
 
+    def filter_rows(
+            self,
+            *,
+            func: Callable[..., bool],
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """
+        Applies the given function `func` to each dictionary (row) in the list, and expects the `func` to return a boolean.
+        If the result is `True` then keeps the row; otherwise removes the row.
+        The `func` takes in the dictionary (row) as a parameter.
+        """
+        list_obj = self.data if inplace else self.data_copy()
+        list_obj_filtered: List[Dict[str, Any]] = []
+        for dict_obj in list_obj:
+            should_keep_row: bool = func(dict_obj)
+            assert isinstance(should_keep_row, bool), f"Result of `func` must be of type boolean"
+            if should_keep_row:
+                list_obj_filtered.append(dict_obj)
+
+        if inplace:
+            self.data = list_obj_filtered
+        else:
+            list_obj = list_obj_filtered
+
+        return self if inplace else DataWrangler(list_obj)
 

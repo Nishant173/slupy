@@ -260,6 +260,23 @@ class TestDataWrangler(unittest.TestCase):
         )
         self._assert_list_data_is_unchanged()
 
+    def test_get_values_by_field(self):
+        dw = DataWrangler(self.list_data_4)
+
+        self.assertEqual(
+            dw.get_values_by_field(field="a"),
+            [1, 10, 100],
+        )
+        self.assertEqual(
+            dw.get_values_by_field(field="b"),
+            [2, 20, 200],
+        )
+
+        with self.assertRaises(KeyError):
+            dw.get_values_by_field(field="c")
+
+        self._assert_list_data_is_unchanged()
+
     def test_get_unique_fields(self):
         dw = DataWrangler(self.list_data_1, deep_copy=True)
         self.assertEqual(
@@ -502,5 +519,50 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
+        self._assert_list_data_is_unchanged()
+
+    def test_filter_rows(self):
+        dw = DataWrangler(self.list_data_1)
+        
+        with self.assertRaises(AssertionError):
+            dw.filter_rows(func=lambda d: d)
+        
+        result = dw.filter_rows(func=lambda d: d["text"] == "AAA" and d["index"] % 2 != 0).data
+        result_expected = [
+            {
+                "index": 1,
+                "text": "AAA",
+                "number": 10,
+            },
+            {
+                "index": 3,
+                "text": "AAA",
+                "number": 30,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_filter_rows_inplace(self):
+        dw = DataWrangler(self.list_data_1, deep_copy=True)
+        
+        with self.assertRaises(AssertionError):
+            dw.filter_rows(func=lambda d: d, inplace=True)
+
+        dw.filter_rows(func=lambda d: d["text"] == "AAA" and d["index"] % 2 != 0, inplace=True)
+        result = dw.data
+        result_expected = [
+            {
+                "index": 1,
+                "text": "AAA",
+                "number": 10,
+            },
+            {
+                "index": 3,
+                "text": "AAA",
+                "number": 30,
+            },
+        ]
+        self.assertEqual(result, result_expected)
         self._assert_list_data_is_unchanged()
 
