@@ -16,10 +16,22 @@ class DataWrangler:
             *,
             deep_copy: Optional[bool] = False,
         ) -> None:
+        """
+        Parameters:
+            - list_of_dicts (list): List of dictionaries.
+            - deep_copy (bool): If `deep_copy=True`, creates a deep-copy of the given `list_of_dicts` and
+            ensures that the original is never modified.
+        """
         self._list_of_dicts = make_deep_copy(list_of_dicts) if deep_copy else list_of_dicts
 
     def __str__(self) -> str:
         return f"{self.__class__.__name__}()"
+
+    def __len__(self) -> int:
+        return len(self.data)
+
+    def __getitem__(self, idx: int) -> Dict[str, Any]:
+        return self.data[idx]
 
     def copy(self) -> DataWrangler:
         """Returns deep-copy of `self`"""
