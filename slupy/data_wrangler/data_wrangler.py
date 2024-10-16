@@ -146,20 +146,20 @@ class DataWrangler:
             dict_obj[field] = computed_value
         return self if inplace else DataWrangler(list_obj)
 
-    def drop_keys(
+    def drop_fields(
             self,
             *,
-            keys: List[str],
+            fields: List[str],
             inplace: Optional[bool] = False,
         ) -> DataWrangler:
-        """Drops the given keys"""
-        assert checks.is_list_of_instances_of_type(keys, type_=str, allow_empty=False), (
-            "Param `keys` must be a non-empty list"
+        """Drops the given fields"""
+        assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
+            "Param `fields` must be a non-empty list of strings"
         )
         list_obj = self.data if inplace else self.data_copy()
         for dict_obj in list_obj:
-            for key in keys:
-                dict_obj.pop(key, None)
+            for field in fields:
+                dict_obj.pop(field, None)
         return self if inplace else DataWrangler(list_obj)
 
     def fill_nulls(

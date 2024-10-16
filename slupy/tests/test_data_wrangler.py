@@ -255,9 +255,9 @@ class TestDataWrangler(unittest.TestCase):
 
         self._assert_list_data_is_unchanged()
 
-    def test_drop_keys(self):
+    def test_drop_fields(self):
         dw = DataWrangler(self.list_data_2)
-        result = dw.drop_keys(keys=["number", "key-that-does-not-exist"]).data
+        result = dw.drop_fields(fields=["number", "key-that-does-not-exist"]).data
         result_expected = [
             {
                 "index": 1,
@@ -277,9 +277,9 @@ class TestDataWrangler(unittest.TestCase):
         self.assertEqual(result, result_expected)
         self._assert_list_data_is_unchanged()
 
-    def test_drop_keys_inplace(self):
+    def test_drop_fields_inplace(self):
         dw = DataWrangler(self.list_data_2, deep_copy=True)
-        dw.drop_keys(keys=["number", "key-that-does-not-exist"], inplace=True)
+        dw.drop_fields(fields=["number", "key-that-does-not-exist"], inplace=True)
         result = dw.data
         result_expected = [
             {
