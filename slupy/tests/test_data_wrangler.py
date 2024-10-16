@@ -152,15 +152,19 @@ class TestDataWrangler(unittest.TestCase):
             id(self.list_data_4_copy),
         )
 
-    def test_basic_functionality(self):
+    def test_len(self):
+        dw = DataWrangler(self.list_data_1)
+        self.assertEqual(len(dw), len(dw.data))
+        self._assert_list_data_is_unchanged()
+
+    def test_getitem(self):
         dw = DataWrangler(self.list_data_1)
 
-        self.assertEqual(len(dw), len(dw.data))
         self.assertEqual(dw[0], dw.data[0])
         self.assertEqual(dw[-1], dw.data[-1])
 
         with self.assertRaises(IndexError):
-            dw[len(dw) + 100]
+            dw[len(dw)]  # Should always raise IndexError since len(dw) will always be > it's last index
 
         self._assert_list_data_is_unchanged()
 
