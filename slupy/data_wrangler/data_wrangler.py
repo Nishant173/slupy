@@ -182,7 +182,7 @@ class DataWrangler:
             self,
             *,
             field: str,
-            func: Callable[..., Any],
+            func: Callable[[Dict[str, Any]], Any],
             inplace: Optional[bool] = False,
         ) -> DataWrangler:
         """
@@ -234,7 +234,7 @@ class DataWrangler:
     def filter_rows(
             self,
             *,
-            func: Callable[..., bool],
+            func: Callable[[Dict[str, Any]], bool],
             inplace: Optional[bool] = False,
         ) -> DataWrangler:
         """
