@@ -129,6 +129,32 @@ class DataWrangler:
             list_obj.pop(idx)
         return self if inplace else DataWrangler(list_obj)
 
+    def get_unique_fields(self) -> List[str]:
+        """Returns list of all the unique fields that are present"""
+        unique_fields = set()
+        for dict_obj in self.data:
+            unique_fields = unique_fields.union(set(dict_obj.keys()))
+        return list(sorted(unique_fields, reverse=False))
+
+    def set_defaults_for_fields(
+            self,
+            *,
+            fields: List[str],
+            inplace: Optional[bool] = False,
+        ) -> DataWrangler:
+        """
+        Checks if the given fields are present in each dictionary in the list.
+        If not present, sets their default value to `None`.
+        """
+        assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
+            "Param `fields` must be a non-empty list of strings"
+        )
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            for field in fields:
+                dict_obj.setdefault(field, None)
+        return self if inplace else DataWrangler(list_obj)
+
     def compute_field(
             self,
             *,

@@ -92,6 +92,22 @@ class TestDataWrangler(unittest.TestCase):
             },
         ]
         self.list_data_3_copy = make_deep_copy(self.list_data_3)
+        self.list_data_4 = [
+            {
+                "a": 1,
+                "b": 2,
+                "c": 3,
+            },
+            {
+                "a": 10,
+                "b": 20,
+            },
+            {
+                "a": 100,
+                "b": 200,
+            },
+        ]
+        self.list_data_4_copy = make_deep_copy(self.list_data_4)
 
     def _assert_list_data_is_unchanged(self):
         msg = "The value of list data should not be modified in-place"
@@ -124,6 +140,16 @@ class TestDataWrangler(unittest.TestCase):
         self.assertNotEqual(
             id(self.list_data_3),
             id(self.list_data_3_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_4,
+            self.list_data_4_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_4),
+            id(self.list_data_4_copy),
         )
 
     def test_has_duplicates(self):
@@ -220,6 +246,74 @@ class TestDataWrangler(unittest.TestCase):
                 },
             ],
         )
+        self._assert_list_data_is_unchanged()
+
+    def test_get_unique_fields(self):
+        dw = DataWrangler(self.list_data_1, deep_copy=True)
+        self.assertEqual(
+            dw.get_unique_fields(),
+            ["index", "number", "text"],
+        )
+        self._assert_list_data_is_unchanged()
+
+        dw.compute_field(field="new_field", func=lambda d: None, inplace=True)
+        self.assertEqual(
+            dw.get_unique_fields(),
+            ["index", "new_field", "number", "text"],
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_set_defaults_for_fields(self):
+        dw = DataWrangler(self.list_data_4)
+        result = dw.set_defaults_for_fields(fields=["c", "d"]).data
+        result_expected = [
+            {
+                "a": 1,
+                "b": 2,
+                "c": 3,
+                "d": None,
+            },
+            {
+                "a": 10,
+                "b": 20,
+                "c": None,
+                "d": None,
+            },
+            {
+                "a": 100,
+                "b": 200,
+                "c": None,
+                "d": None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_set_defaults_for_fields_inplace(self):
+        dw = DataWrangler(self.list_data_4, deep_copy=True)
+        dw.set_defaults_for_fields(fields=["c", "d"], inplace=True)
+        result = dw.data
+        result_expected = [
+            {
+                "a": 1,
+                "b": 2,
+                "c": 3,
+                "d": None,
+            },
+            {
+                "a": 10,
+                "b": 20,
+                "c": None,
+                "d": None,
+            },
+            {
+                "a": 100,
+                "b": 200,
+                "c": None,
+                "d": None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
         self._assert_list_data_is_unchanged()
 
     def test_compute_field(self):
