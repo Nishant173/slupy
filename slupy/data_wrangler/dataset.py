@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections import Counter
 from pprint import pprint
 from typing import Any, Callable, Dict, List, Literal, Optional, Type
 
@@ -126,6 +127,7 @@ class Dataset:
             *,
             subset: Optional[List[str]] = None,
         ) -> bool:
+        """Checks if the dataset has duplicate rows over the given `subset` of fields"""
         return bool(
             self._identify_duplicate_indices(break_at="first", subset=subset)
         )
@@ -413,6 +415,21 @@ class Dataset:
             self.data = list_obj
 
         return self if inplace else Dataset(list_obj)
+
+    def value_counts(self) -> Dict[str, Counter]:
+        """
+        Returns dictionary having keys = fields, and values = `collections.Counter` objects having the value-counts
+        of all the values in said field.
+        """
+        result: Dict[str, Counter] = {}
+        dataset_copy = self.copy()
+        dataset_copy.autofill_missing_fields(inplace=True)
+        existing_fields = dataset_copy.get_unique_fields()
+        for field in existing_fields:
+            values = dataset_copy.get_values_by_field(field=field)
+            counter = Counter(values)
+            result[field] = counter
+        return result
 
     def pretty_print(self) -> None:
         """Pretty prints the value of `self.data`"""
