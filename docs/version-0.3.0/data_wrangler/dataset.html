@@ -40,7 +40,7 @@ hljs.highlightAll();
 <span>(</span><span>data: List[Dict[str, Any]], /, *, deep_copy: Optional[bool] = False, autofill: Optional[bool] = False)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Class that represents a data wrangler</p>
+<div class="desc"><p>Class that represents a dataset (collection of data as a list of dictionaries)</p>
 <h2 id="parameters">Parameters</h2>
 <ul>
 <li>data (list): List of dictionaries.</li>
@@ -54,7 +54,7 @@ in the list. If not present, sets their default value to <code>None</code>. Does
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Dataset:
-    &#34;&#34;&#34;Class that represents a data wrangler&#34;&#34;&#34;
+    &#34;&#34;&#34;Class that represents a dataset (collection of data as a list of dictionaries)&#34;&#34;&#34;
 
     def __init__(
             self,
@@ -98,6 +98,9 @@ in the list. If not present, sets their default value to <code>None</code>. Does
 
     @data.setter
     def data(self, value: List[Dict[str, Any]]) -&gt; None:
+        assert checks.is_list_of_instances_of_type(value, type_=dict, allow_empty=True), (
+            &#34;Param `data` must be a list of dictionaries&#34;
+        )
         self._data = value
 
     def data_copy(self) -&gt; List[Dict[str, Any]]:
