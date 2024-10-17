@@ -1,0 +1,1148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.1">
+<title>slupy.tests.test_dataset_class API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>slupy.tests.test_dataset_class</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="slupy.tests.test_dataset_class.TestDataset"><code class="flex name class">
+<span>class <span class="ident">TestDataset</span></span>
+<span>(</span><span>methodName='runTest')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class whose instances are single test cases.</p>
+<p>By default, the test code itself should be placed in a method named
+'runTest'.</p>
+<p>If the fixture may be used for many test cases, create as
+many test methods as are needed. When instantiating such a TestCase
+subclass, specify in the constructor arguments the name of the test method
+that the instance is to execute.</p>
+<p>Test authors should subclass TestCase for their own tests. Construction
+and deconstruction of the test's environment ('fixture') can be
+implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
+<p>If it is necessary to override the <strong>init</strong> method, the base class
+<strong>init</strong> method must always be called. It is important that subclasses
+should not change the signature of their <strong>init</strong> method, since instances
+of the classes are instantiated automatically by parts of the framework
+in order to be run.</p>
+<p>When subclassing TestCase, you can set these attributes:
+* failureException: determines which exception will be raised when
+the instance's assertion methods fail; test methods raising this
+exception will be deemed to have 'failed' rather than 'errored'.
+* longMessage: determines whether long messages (including repr of
+objects used in assert methods) will be printed on failure in <em>addition</em>
+to any explicit message passed.
+* maxDiff: sets the maximum length of a diff in failure messages
+by assert methods using difflib. It is looked up as an instance
+attribute so can be configured by individual tests if required.</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TestDataset(unittest.TestCase):
+
+    def setUp(self) -&gt; None:
+        self.list_data_1 = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 10,
+            },
+            {
+                &#34;index&#34;: 2,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 20,
+            },
+            {
+                &#34;index&#34;: 3,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 30,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;index&#34;: 5,
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;index&#34;: 6,
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -5,
+            },
+            {
+                &#34;index&#34;: 7,
+                &#34;text&#34;: &#34;CCC&#34;,
+                &#34;number&#34;: 45,
+            },
+            {
+                &#34;index&#34;: 8,
+                &#34;text&#34;: &#34;CCC&#34;,
+                &#34;number&#34;: 50,
+            },
+            {
+                &#34;index&#34;: 9,
+                &#34;text&#34;: &#34;CCC&#34;,
+                &#34;number&#34;: 50,
+            },
+        ]
+        self.list_data_1_copy = make_deep_copy(self.list_data_1)
+        self.list_data_2 = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 10,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;index&#34;: 7,
+                &#34;text&#34;: &#34;CCC&#34;,
+                &#34;number&#34;: 45,
+            },
+        ]
+        self.list_data_2_copy = make_deep_copy(self.list_data_2)
+        self.list_data_3 = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: None,
+            },
+            {
+                &#34;index&#34;: 2,
+                &#34;text&#34;: &#34;BBB&#34;,
+            },
+            {
+                &#34;index&#34;: None,
+                &#34;text&#34;: None,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+        ]
+        self.list_data_3_copy = make_deep_copy(self.list_data_3)
+        self.list_data_4 = [
+            {
+                &#34;a&#34;: 1,
+                &#34;b&#34;: 2,
+                &#34;c&#34;: 3,
+            },
+            {
+                &#34;a&#34;: 10,
+                &#34;b&#34;: 20,
+            },
+            {
+                &#34;a&#34;: 100,
+                &#34;b&#34;: 200,
+            },
+        ]
+        self.list_data_4_copy = make_deep_copy(self.list_data_4)
+        self.list_data_5 = [
+            {
+                &#34;text&#34;: None,
+                &#34;number&#34;: 50,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: None,
+            },
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;text&#34;: None,
+                &#34;number&#34;: None,
+            },
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 50,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: 50,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: 20,
+            },
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 5,
+            },
+        ]
+        self.list_data_5_copy = make_deep_copy(self.list_data_5)
+        self.list_data_6 = [
+            {
+                &#34;a&#34;: &#34;aaa&#34;,
+                &#34;b&#34;: 123,
+                &#34;c&#34;: uuid.uuid4(),
+            },
+            {
+                &#34;a&#34;: b&#34;aaa&#34;,
+                &#34;b&#34;: 1.23,
+                &#34;c&#34;: datetime.now(),
+            },
+            {
+                &#34;a&#34;: uuid.uuid4(),
+                &#34;b&#34;: None,
+                &#34;c&#34;: 1.23,
+            },
+            {
+                &#34;a&#34;: datetime.now(),
+                &#34;b&#34;: &#34;bbb&#34;,
+                &#34;c&#34;: None,
+            },
+        ]
+        self.list_data_6_copy = make_deep_copy(self.list_data_6)
+
+    def _assert_list_data_is_unchanged(self):
+        msg = &#34;The value of list data should not be modified in-place&#34;
+
+        self.assertEqual(
+            self.list_data_1,
+            self.list_data_1_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_1),
+            id(self.list_data_1_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_2,
+            self.list_data_2_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_2),
+            id(self.list_data_2_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_3,
+            self.list_data_3_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_3),
+            id(self.list_data_3_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_4,
+            self.list_data_4_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_4),
+            id(self.list_data_4_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_5,
+            self.list_data_5_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_5),
+            id(self.list_data_5_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_6,
+            self.list_data_6_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_6),
+            id(self.list_data_6_copy),
+        )
+
+    def test_len(self):
+        dataset = Dataset(self.list_data_1)
+        self.assertEqual(len(dataset), len(dataset.data))
+        self._assert_list_data_is_unchanged()
+
+    def test_getitem(self):
+        dataset = Dataset(self.list_data_1)
+
+        self.assertEqual(dataset[0], dataset.data[0])
+        self.assertEqual(dataset[-1], dataset.data[-1])
+
+        with self.assertRaises(IndexError):
+            dataset[len(dataset)]  # Should always raise IndexError since len(dataset) will always be &gt; it&#39;s last index
+
+        self._assert_list_data_is_unchanged()
+
+    def test_has_duplicates(self):
+        dataset = Dataset(self.list_data_1)
+
+        self.assertTrue(not dataset.has_duplicates())
+        self.assertTrue(dataset.has_duplicates(subset=[&#34;text&#34;]))
+        self.assertTrue(dataset.has_duplicates(subset=[&#34;text&#34;, &#34;number&#34;]))
+
+        with self.assertRaises(KeyError):
+            dataset.has_duplicates(subset=[&#34;text&#34;, &#34;number&#34;, &#34;key-that-does-not-exist&#34;])
+
+        with self.assertRaises(KeyError):
+            dataset.has_duplicates(subset=[&#34;key-that-does-not-exist&#34;])
+
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_duplicates(self):
+        dataset = Dataset(self.list_data_1)
+
+        result_1 = dataset.drop_duplicates(keep=&#34;first&#34;, subset=[&#34;text&#34;, &#34;number&#34;]).data
+        self.assertEqual(len(result_1), 7)
+
+        result_2 = dataset.drop_duplicates(keep=&#34;first&#34;, subset=[&#34;text&#34;]).data
+        self.assertEqual(len(result_2), 3)
+        self.assertEqual(
+            result_2,
+            [
+                {
+                    &#34;index&#34;: 1,
+                    &#34;text&#34;: &#34;AAA&#34;,
+                    &#34;number&#34;: 10,
+                },
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 7,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 45,
+                },
+            ],
+        )
+
+        result_3 = dataset.drop_duplicates(keep=&#34;last&#34;, subset=[&#34;text&#34;]).data
+        self.assertEqual(len(result_3), 3)
+        self.assertEqual(
+            result_3,
+            [
+                {
+                    &#34;index&#34;: 3,
+                    &#34;text&#34;: &#34;AAA&#34;,
+                    &#34;number&#34;: 30,
+                },
+                {
+                    &#34;index&#34;: 6,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -5,
+                },
+                {
+                    &#34;index&#34;: 9,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_duplicates_inplace(self):
+        dataset = Dataset(self.list_data_1, deep_copy=True)
+        dataset.drop_duplicates(keep=&#34;last&#34;, subset=[&#34;text&#34;], inplace=True)
+        result = dataset.data
+        self.assertEqual(len(result), 3)
+        self.assertEqual(
+            result,
+            [
+                {
+                    &#34;index&#34;: 3,
+                    &#34;text&#34;: &#34;AAA&#34;,
+                    &#34;number&#34;: 30,
+                },
+                {
+                    &#34;index&#34;: 6,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -5,
+                },
+                {
+                    &#34;index&#34;: 9,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_get_values_by_field(self):
+        dataset = Dataset(self.list_data_4)
+
+        self.assertEqual(
+            dataset.get_values_by_field(field=&#34;a&#34;),
+            [1, 10, 100],
+        )
+        self.assertEqual(
+            dataset.get_values_by_field(field=&#34;b&#34;),
+            [2, 20, 200],
+        )
+
+        with self.assertRaises(KeyError):
+            dataset.get_values_by_field(field=&#34;c&#34;)
+
+        self._assert_list_data_is_unchanged()
+
+    def test_get_datatypes_by_field(self):
+        dataset = Dataset(self.list_data_6)
+        datatypes_by_field = dataset.get_datatypes_by_field()
+        types_of_field_a = datatypes_by_field.get(&#34;a&#34;, set())
+        types_of_field_b = datatypes_by_field.get(&#34;b&#34;, set())
+        types_of_field_c = datatypes_by_field.get(&#34;c&#34;, set())
+        self.assertIsInstance(types_of_field_a, set)
+        self.assertIsInstance(types_of_field_b, set)
+        self.assertIsInstance(types_of_field_c, set)
+        self.assertEqual(len(types_of_field_a), 4)
+        self.assertEqual(len(types_of_field_b), 4)
+        self.assertEqual(len(types_of_field_c), 4)
+        self.assertTrue(
+            all([dtype in types_of_field_a for dtype in [uuid.UUID, bytes, str, datetime]])
+        )
+        self.assertTrue(
+            all([dtype in types_of_field_b for dtype in [int, str, float, type(None)]])
+        )
+        self.assertTrue(
+            all([dtype in types_of_field_c for dtype in [uuid.UUID, type(None), float, datetime]])
+        )
+
+    def test_get_unique_fields(self):
+        dataset = Dataset(self.list_data_1, deep_copy=True)
+        self.assertEqual(
+            dataset.get_unique_fields(),
+            [&#34;index&#34;, &#34;number&#34;, &#34;text&#34;],
+        )
+        self._assert_list_data_is_unchanged()
+
+        dataset.compute_field(field=&#34;new_field&#34;, func=lambda d: None, inplace=True)
+        self.assertEqual(
+            dataset.get_unique_fields(),
+            [&#34;index&#34;, &#34;new_field&#34;, &#34;number&#34;, &#34;text&#34;],
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_set_defaults_for_fields(self):
+        dataset = Dataset(self.list_data_4)
+        result = dataset.set_defaults_for_fields(fields=[&#34;c&#34;, &#34;d&#34;]).data
+        result_expected = [
+            {
+                &#34;a&#34;: 1,
+                &#34;b&#34;: 2,
+                &#34;c&#34;: 3,
+                &#34;d&#34;: None,
+            },
+            {
+                &#34;a&#34;: 10,
+                &#34;b&#34;: 20,
+                &#34;c&#34;: None,
+                &#34;d&#34;: None,
+            },
+            {
+                &#34;a&#34;: 100,
+                &#34;b&#34;: 200,
+                &#34;c&#34;: None,
+                &#34;d&#34;: None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_set_defaults_for_fields_inplace(self):
+        dataset = Dataset(self.list_data_4, deep_copy=True)
+        dataset.set_defaults_for_fields(fields=[&#34;c&#34;, &#34;d&#34;], inplace=True)
+        result = dataset.data
+        result_expected = [
+            {
+                &#34;a&#34;: 1,
+                &#34;b&#34;: 2,
+                &#34;c&#34;: 3,
+                &#34;d&#34;: None,
+            },
+            {
+                &#34;a&#34;: 10,
+                &#34;b&#34;: 20,
+                &#34;c&#34;: None,
+                &#34;d&#34;: None,
+            },
+            {
+                &#34;a&#34;: 100,
+                &#34;b&#34;: 200,
+                &#34;c&#34;: None,
+                &#34;d&#34;: None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_compute_field(self):
+        dataset = Dataset(self.list_data_1)
+        result = dataset.compute_field(field=&#34;index&#34;, func=lambda d: d[&#34;index&#34;] + 100).data
+
+        result_expected = []
+        for item in Dataset(self.list_data_1).data_copy():
+            item[&#34;index&#34;] += 100
+            result_expected.append(item)
+
+        self.assertEqual(result, result_expected)
+
+        with self.assertRaises(KeyError):
+            dataset.compute_field(field=&#34;index&#34;, func=lambda d: d[&#34;--index--&#34;] + 100)
+
+        self._assert_list_data_is_unchanged()
+
+    def test_compute_field_inplace(self):
+        dataset = Dataset(self.list_data_1, deep_copy=True)
+        dataset.compute_field(field=&#34;index&#34;, func=lambda d: d[&#34;index&#34;] + 100, inplace=True)
+        result = dataset.data
+
+        result_expected = []
+        for item in Dataset(self.list_data_1).data_copy():
+            item[&#34;index&#34;] += 100
+            result_expected.append(item)
+
+        self.assertEqual(result, result_expected)
+
+        with self.assertRaises(KeyError):
+            dataset.compute_field(field=&#34;index&#34;, func=lambda d: d[&#34;--index--&#34;] + 100, inplace=True)
+
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_fields(self):
+        dataset = Dataset(self.list_data_2)
+        result = dataset.drop_fields(fields=[&#34;number&#34;, &#34;key-that-does-not-exist&#34;]).data
+        result_expected = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;BBB&#34;,
+            
+            },
+            {
+                &#34;index&#34;: 7,
+                &#34;text&#34;: &#34;CCC&#34;,
+            
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_fields_inplace(self):
+        dataset = Dataset(self.list_data_2, deep_copy=True)
+        dataset.drop_fields(fields=[&#34;number&#34;, &#34;key-that-does-not-exist&#34;], inplace=True)
+        result = dataset.data
+        result_expected = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;BBB&#34;,
+            
+            },
+            {
+                &#34;index&#34;: 7,
+                &#34;text&#34;: &#34;CCC&#34;,
+            
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_fill_nulls(self):
+        dataset = Dataset(self.list_data_3)
+
+        self.assertEqual(
+            dataset.fill_nulls(value=&#34;&lt;HELLO&gt;&#34;).data,
+            [
+                {
+                    &#34;index&#34;: 1,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 2,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                },
+                {
+                    &#34;index&#34;: &#34;&lt;HELLO&gt;&#34;,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;DDD&#34;,
+                },
+            ],
+        )
+        self._assert_list_data_is_unchanged()
+
+        self.assertEqual(
+            dataset.fill_nulls(value=&#34;&lt;HELLO&gt;&#34;, subset=[&#34;text&#34;]).data,
+            [
+                {
+                    &#34;index&#34;: 1,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 2,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                },
+                {
+                    &#34;index&#34;: None,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;DDD&#34;,
+                },
+            ],
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_fill_nulls_inplace(self):
+        dataset_1 = Dataset(self.list_data_3, deep_copy=True)
+        self.assertEqual(
+            dataset_1.fill_nulls(value=&#34;&lt;HELLO&gt;&#34;, inplace=True).data,
+            [
+                {
+                    &#34;index&#34;: 1,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 2,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                },
+                {
+                    &#34;index&#34;: &#34;&lt;HELLO&gt;&#34;,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;DDD&#34;,
+                },
+            ],
+        )
+        self._assert_list_data_is_unchanged()
+
+        dataset_2 = Dataset(self.list_data_3, deep_copy=True)
+        self.assertEqual(
+            dataset_2.fill_nulls(value=&#34;&lt;HELLO&gt;&#34;, subset=[&#34;text&#34;], inplace=True).data,
+            [
+                {
+                    &#34;index&#34;: 1,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 2,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                },
+                {
+                    &#34;index&#34;: None,
+                    &#34;text&#34;: &#34;&lt;HELLO&gt;&#34;,
+                },
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;DDD&#34;,
+                },
+            ],
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_autofill_from_init(self):
+        dataset = Dataset(self.list_data_4, deep_copy=True, autofill=True)
+        result = dataset.data
+        result_expected = [
+            {
+                &#34;a&#34;: 1,
+                &#34;b&#34;: 2,
+                &#34;c&#34;: 3,
+            },
+            {
+                &#34;a&#34;: 10,
+                &#34;b&#34;: 20,
+                &#34;c&#34;: None,
+            },
+            {
+                &#34;a&#34;: 100,
+                &#34;b&#34;: 200,
+                &#34;c&#34;: None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_autofill_missing_fields(self):
+        dataset = Dataset(self.list_data_4)
+        result = dataset.autofill_missing_fields().data
+        result_expected = [
+            {
+                &#34;a&#34;: 1,
+                &#34;b&#34;: 2,
+                &#34;c&#34;: 3,
+            },
+            {
+                &#34;a&#34;: 10,
+                &#34;b&#34;: 20,
+                &#34;c&#34;: None,
+            },
+            {
+                &#34;a&#34;: 100,
+                &#34;b&#34;: 200,
+                &#34;c&#34;: None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_autofill_missing_fields_inplace(self):
+        dataset = Dataset(self.list_data_4, deep_copy=True)
+        dataset.autofill_missing_fields(inplace=True)
+        result = dataset.data
+        result_expected = [
+            {
+                &#34;a&#34;: 1,
+                &#34;b&#34;: 2,
+                &#34;c&#34;: 3,
+            },
+            {
+                &#34;a&#34;: 10,
+                &#34;b&#34;: 20,
+                &#34;c&#34;: None,
+            },
+            {
+                &#34;a&#34;: 100,
+                &#34;b&#34;: 200,
+                &#34;c&#34;: None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_nulls(self):
+        dataset = Dataset(self.list_data_3)
+
+        result_1 = dataset.drop_nulls().data
+        result_expected_1 = [
+            {
+                &#34;index&#34;: 2,
+                &#34;text&#34;: &#34;BBB&#34;,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+        ]
+        self.assertEqual(result_1, result_expected_1)
+        self._assert_list_data_is_unchanged()
+
+        result_2 = dataset.drop_nulls(subset=[&#34;index&#34;]).data
+        result_expected_2 = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: None,
+            },
+            {
+                &#34;index&#34;: 2,
+                &#34;text&#34;: &#34;BBB&#34;,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+        ]
+        self.assertEqual(result_2, result_expected_2)
+        self._assert_list_data_is_unchanged()
+
+    def test_drop_nulls_inplace(self):
+        dataset_1 = Dataset(self.list_data_3, deep_copy=True)
+        dataset_1.drop_nulls(inplace=True)
+        result_1 = dataset_1.data
+        result_expected_1 = [
+            {
+                &#34;index&#34;: 2,
+                &#34;text&#34;: &#34;BBB&#34;,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+        ]
+        self.assertEqual(result_1, result_expected_1)
+        self._assert_list_data_is_unchanged()
+
+        dataset_2 = Dataset(self.list_data_3, deep_copy=True)
+        dataset_2.drop_nulls(subset=[&#34;index&#34;], inplace=True)
+        result_2 = dataset_2.data
+        result_expected_2 = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: None,
+            },
+            {
+                &#34;index&#34;: 2,
+                &#34;text&#34;: &#34;BBB&#34;,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+        ]
+        self.assertEqual(result_2, result_expected_2)
+        self._assert_list_data_is_unchanged()
+
+    def test_filter_rows(self):
+        dataset = Dataset(self.list_data_1)
+        
+        with self.assertRaises(AssertionError):
+            dataset.filter_rows(func=lambda d: d)
+        
+        result = dataset.filter_rows(func=lambda d: d[&#34;text&#34;] == &#34;AAA&#34; and d[&#34;index&#34;] % 2 != 0).data
+        result_expected = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 10,
+            },
+            {
+                &#34;index&#34;: 3,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 30,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_filter_rows_inplace(self):
+        dataset = Dataset(self.list_data_1, deep_copy=True)
+        
+        with self.assertRaises(AssertionError):
+            dataset.filter_rows(func=lambda d: d, inplace=True)
+
+        dataset.filter_rows(func=lambda d: d[&#34;text&#34;] == &#34;AAA&#34; and d[&#34;index&#34;] % 2 != 0, inplace=True)
+        result = dataset.data
+        result_expected = [
+            {
+                &#34;index&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 10,
+            },
+            {
+                &#34;index&#34;: 3,
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 30,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_order_by(self):
+        dataset = Dataset(self.list_data_5)
+        dataset_ordered = dataset.order_by(fields=[&#34;number&#34;, &#34;text&#34;], ascending=[False, False])
+        self.assertNotEqual(
+            id(dataset),
+            id(dataset_ordered),
+        )
+        result = dataset_ordered.data
+        result_expected = [
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: 50,
+            },
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 50,
+            },
+            {
+                &#34;text&#34;: None,
+                &#34;number&#34;: 50,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: 20,
+            },
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 5,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: None,
+            },
+            {
+                &#34;text&#34;: None,
+                &#34;number&#34;: None,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>unittest.case.TestCase</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="slupy.tests.test_dataset_class.TestDataset.setUp"><code class="name flex">
+<span>def <span class="ident">setUp</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Hook method for setting up the test fixture before exercising it.</p></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_autofill_from_init"><code class="name flex">
+<span>def <span class="ident">test_autofill_from_init</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields"><code class="name flex">
+<span>def <span class="ident">test_autofill_missing_fields</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields_inplace"><code class="name flex">
+<span>def <span class="ident">test_autofill_missing_fields_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_compute_field"><code class="name flex">
+<span>def <span class="ident">test_compute_field</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_compute_field_inplace"><code class="name flex">
+<span>def <span class="ident">test_compute_field_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates"><code class="name flex">
+<span>def <span class="ident">test_drop_duplicates</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates_inplace"><code class="name flex">
+<span>def <span class="ident">test_drop_duplicates_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_drop_fields"><code class="name flex">
+<span>def <span class="ident">test_drop_fields</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_drop_fields_inplace"><code class="name flex">
+<span>def <span class="ident">test_drop_fields_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_drop_nulls"><code class="name flex">
+<span>def <span class="ident">test_drop_nulls</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_drop_nulls_inplace"><code class="name flex">
+<span>def <span class="ident">test_drop_nulls_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_fill_nulls"><code class="name flex">
+<span>def <span class="ident">test_fill_nulls</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_fill_nulls_inplace"><code class="name flex">
+<span>def <span class="ident">test_fill_nulls_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_filter_rows"><code class="name flex">
+<span>def <span class="ident">test_filter_rows</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_filter_rows_inplace"><code class="name flex">
+<span>def <span class="ident">test_filter_rows_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_get_datatypes_by_field"><code class="name flex">
+<span>def <span class="ident">test_get_datatypes_by_field</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_get_unique_fields"><code class="name flex">
+<span>def <span class="ident">test_get_unique_fields</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_get_values_by_field"><code class="name flex">
+<span>def <span class="ident">test_get_values_by_field</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_getitem"><code class="name flex">
+<span>def <span class="ident">test_getitem</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_has_duplicates"><code class="name flex">
+<span>def <span class="ident">test_has_duplicates</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_len"><code class="name flex">
+<span>def <span class="ident">test_len</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_order_by"><code class="name flex">
+<span>def <span class="ident">test_order_by</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields"><code class="name flex">
+<span>def <span class="ident">test_set_defaults_for_fields</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields_inplace"><code class="name flex">
+<span>def <span class="ident">test_set_defaults_for_fields_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="slupy.tests" href="index.html">slupy.tests</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="slupy.tests.test_dataset_class.TestDataset" href="#slupy.tests.test_dataset_class.TestDataset">TestDataset</a></code></h4>
+<ul class="">
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.setUp" href="#slupy.tests.test_dataset_class.TestDataset.setUp">setUp</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_autofill_from_init" href="#slupy.tests.test_dataset_class.TestDataset.test_autofill_from_init">test_autofill_from_init</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields">test_autofill_missing_fields</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields_inplace">test_autofill_missing_fields_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_compute_field" href="#slupy.tests.test_dataset_class.TestDataset.test_compute_field">test_compute_field</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_compute_field_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_compute_field_inplace">test_compute_field_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates">test_drop_duplicates</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates_inplace">test_drop_duplicates_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_fields">test_drop_fields</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_fields_inplace">test_drop_fields_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_nulls" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_nulls">test_drop_nulls</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_nulls_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_nulls_inplace">test_drop_nulls_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_fill_nulls" href="#slupy.tests.test_dataset_class.TestDataset.test_fill_nulls">test_fill_nulls</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_fill_nulls_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_fill_nulls_inplace">test_fill_nulls_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_filter_rows" href="#slupy.tests.test_dataset_class.TestDataset.test_filter_rows">test_filter_rows</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_filter_rows_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_filter_rows_inplace">test_filter_rows_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_get_datatypes_by_field" href="#slupy.tests.test_dataset_class.TestDataset.test_get_datatypes_by_field">test_get_datatypes_by_field</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_get_unique_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_get_unique_fields">test_get_unique_fields</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_get_values_by_field" href="#slupy.tests.test_dataset_class.TestDataset.test_get_values_by_field">test_get_values_by_field</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_getitem" href="#slupy.tests.test_dataset_class.TestDataset.test_getitem">test_getitem</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_has_duplicates" href="#slupy.tests.test_dataset_class.TestDataset.test_has_duplicates">test_has_duplicates</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_len" href="#slupy.tests.test_dataset_class.TestDataset.test_len">test_len</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_order_by" href="#slupy.tests.test_dataset_class.TestDataset.test_order_by">test_order_by</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields">test_set_defaults_for_fields</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields_inplace">test_set_defaults_for_fields_inplace</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+</footer>
+</body>
+</html>

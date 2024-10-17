@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 # Constants
 PACKAGE_NAME = "slupy"
-PACKAGE_VERSION = "0.1.7"
+PACKAGE_VERSION = "0.2.0"
 AUTHOR_NAME = "Nishant Rao"
 AUTHOR_EMAIL_ID = "nishant.rao173@gmail.com"
 FILEPATH_TO_README = os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.md")
@@ -41,5 +41,4 @@ setup(
         "Operating System :: Microsoft :: Windows",
     ],
 )
-
 
