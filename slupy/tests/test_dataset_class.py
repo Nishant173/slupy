@@ -586,17 +586,17 @@ class TestDataset(unittest.TestCase):
 
     def test_reorder_fields(self):
         dataset = Dataset(self.list_data_2)
-        ordered_fields = ["text", "index", "number"]
-        result = dataset.reorder_fields(reordered_fields=ordered_fields).data
-        self._assert_order_of_fields(expected_order=ordered_fields, list_data=result)
+        reordered_fields = ["text", "index", "number"]
+        result = dataset.reorder_fields(reordered_fields=reordered_fields).data
+        self._assert_order_of_fields(expected_order=reordered_fields, list_data=result)
         self._assert_list_data_is_unchanged()
 
     def test_reorder_fields_inplace(self):
         dataset = Dataset(self.list_data_2, deep_copy=True)
-        ordered_fields = ["text", "index", "number"]
-        dataset.reorder_fields(reordered_fields=ordered_fields, inplace=True)
+        reordered_fields = ["text", "index", "number"]
+        dataset.reorder_fields(reordered_fields=reordered_fields, inplace=True)
         result = dataset.data
-        self._assert_order_of_fields(expected_order=ordered_fields, list_data=result)
+        self._assert_order_of_fields(expected_order=reordered_fields, list_data=result)
         self._assert_list_data_is_unchanged()
 
     def test_fill_nulls(self):

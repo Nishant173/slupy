@@ -254,7 +254,7 @@ class Dataset:
                 dict_obj.pop(field, None)
         return self if inplace else Dataset(list_obj)
 
-    def _has_all_fields_in_any_order(self, *, fields: List[str]) -> bool:
+    def _has_all_existing_fields_in_any_order(self, *, fields: List[str]) -> bool:
         existing_fields = self.get_unique_fields()
         return sorted(fields, reverse=False) == sorted(existing_fields, reverse=False)
 
@@ -265,15 +265,18 @@ class Dataset:
             inplace: Optional[bool] = False,
         ) -> Dataset:
         """Re-orders the fields"""
-        assert self._has_all_fields_in_any_order(fields=reordered_fields), (
+        assert self._has_all_existing_fields_in_any_order(fields=reordered_fields), (
             "Param `reordered_fields` must include all the existing fields (in any order)"
         )
         list_obj = self.data if inplace else self.data_copy()
         list_obj_new = []
-        for dict_obj in list_obj:
+        for idx, dict_obj in enumerate(list_obj):
             dict_obj_new = {}
             for field in reordered_fields:
-                value = dict_obj[field]
+                try:
+                    value = dict_obj[field]
+                except KeyError:
+                    raise KeyError(f"Field '{field}' is not found on row number {idx + 1}")
                 dict_obj_new[field] = value
             list_obj_new.append(dict_obj_new)
 
@@ -400,7 +403,7 @@ class Dataset:
             datasets: List[Dataset],
             inplace: Optional[bool] = False,
         ) -> Dataset:
-        """Concatenates the current dataset with the given datasets"""
+        """Concatenates the current dataset with the given datasets. The given `datasets` are never modified."""
         assert checks.is_list_of_instances_of_type(datasets, type_=Dataset, allow_empty=True), (
             "Param `datasets` must be a list of datasets, each being of type `slupy.data_wrangler.dataset.Dataset`"
         )
