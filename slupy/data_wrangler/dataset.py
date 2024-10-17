@@ -8,7 +8,7 @@ from slupy.data_wrangler.utils import multi_key_sort
 
 
 class Dataset:
-    """Class that represents a data wrangler"""
+    """Class that represents a dataset (collection of data as a list of dictionaries)"""
 
     def __init__(
             self,
@@ -52,6 +52,9 @@ class Dataset:
 
     @data.setter
     def data(self, value: List[Dict[str, Any]]) -> None:
+        assert checks.is_list_of_instances_of_type(value, type_=dict, allow_empty=True), (
+            "Param `data` must be a list of dictionaries"
+        )
         self._data = value
 
     def data_copy(self) -> List[Dict[str, Any]]:

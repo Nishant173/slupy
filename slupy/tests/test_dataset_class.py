@@ -386,6 +386,7 @@ class TestDataset(unittest.TestCase):
         self.assertTrue(
             all([dtype in types_of_field_c for dtype in [uuid.UUID, type(None), float, datetime]])
         )
+        self._assert_list_data_is_unchanged()
 
     def test_get_unique_fields(self):
         dataset = Dataset(self.list_data_1, deep_copy=True)
