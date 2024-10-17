@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.1">
+<title>slupy.data_wrangler.dataset API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>slupy.data_wrangler.dataset</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="slupy.data_wrangler.dataset.Dataset"><code class="flex name class">
+<span>class <span class="ident">Dataset</span></span>
+<span>(</span><span>data: List[Dict[str, Any]], /, *, deep_copy: Optional[bool] = False, autofill: Optional[bool] = False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class that represents a data wrangler</p>
+<h2 id="parameters">Parameters</h2>
+<ul>
+<li>data (list): List of dictionaries.</li>
+<li>deep_copy (bool): If <code>deep_copy=True</code>, creates a deep-copy of the given <code>data</code> and
+ensures that the original is never modified.</li>
+<li>autofill (bool): If <code>autofill=True</code>, checks if the existing unique fields are present in each dictionary
+in the list. If not present, sets their default value to <code>None</code>. Does this operation inplace.</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Dataset:
+    &#34;&#34;&#34;Class that represents a data wrangler&#34;&#34;&#34;
+
+    def __init__(
+            self,
+            data: List[Dict[str, Any]],
+            /,
+            *,
+            deep_copy: Optional[bool] = False,
+            autofill: Optional[bool] = False,
+        ) -&gt; None:
+        &#34;&#34;&#34;
+        Parameters:
+            - data (list): List of dictionaries.
+            - deep_copy (bool): If `deep_copy=True`, creates a deep-copy of the given `data` and
+            ensures that the original is never modified.
+            - autofill (bool): If `autofill=True`, checks if the existing unique fields are present in each dictionary
+            in the list. If not present, sets their default value to `None`. Does this operation inplace.
+        &#34;&#34;&#34;
+        assert checks.is_list_of_instances_of_type(data, type_=dict, allow_empty=True), (
+            &#34;Param `data` must be a list of dictionaries&#34;
+        )
+        self._data = make_deep_copy(data) if deep_copy else data
+        if autofill:
+            self = self.autofill_missing_fields(inplace=True)
+
+    def __str__(self) -&gt; str:
+        return f&#34;{self.__class__.__name__}()&#34;
+
+    def __len__(self) -&gt; int:
+        return len(self.data)
+
+    def __getitem__(self, idx: int) -&gt; Dict[str, Any]:
+        return self.data[idx]
+
+    def copy(self) -&gt; Dataset:
+        &#34;&#34;&#34;Returns deep-copy of `self`&#34;&#34;&#34;
+        return make_deep_copy(self)
+
+    @property
+    def data(self) -&gt; List[Dict[str, Any]]:
+        return self._data
+
+    @data.setter
+    def data(self, value: List[Dict[str, Any]]) -&gt; None:
+        self._data = value
+
+    def data_copy(self) -&gt; List[Dict[str, Any]]:
+        &#34;&#34;&#34;Returns deep-copy of `self.data`&#34;&#34;&#34;
+        return make_deep_copy(self.data)
+
+    def _identify_duplicate_indices(
+            self,
+            *,
+            break_at: Optional[Literal[&#34;first&#34;, &#34;first_full&#34;]] = None,
+            subset: Optional[List[str]] = None,
+        ) -&gt; List[List[int]]:
+        &#34;&#34;&#34;
+        Returns list of list of indices that correspond to duplicates. If no duplicates are found, returns an empty list.
+        Eg: An output of `[[0, 4, 5], [1, 6, 8]]` means that dictionaries at indices (0, 4, 5) are duplicates of the same
+        value; and dictionaries at indices (1, 6, 8) are duplicates of the same value.
+
+        Parameters:
+            - break_at (str): If `break_at=&#39;first&#39;`, returns early with the first 2 indices of the first set of duplicates identified (if any).
+            If `break_at=&#39;first_full&#39;`, returns early with all the indices of the first set of duplicates identified (if any).
+            - subset (List[str]): List of keys to consider in each dictionary in the list.
+        &#34;&#34;&#34;
+        indices = []
+        indices_involved_in_duplicates = set()
+        for idx, dict_obj in enumerate(self.data):
+            if idx in indices_involved_in_duplicates:
+                continue
+            sub_indices = []
+            list_remainder = self.data[idx + 1 : ]
+            for idx_inner, dict_obj_inner in enumerate(list_remainder):
+                overall_idx = idx + idx_inner + 1
+                if self._is_equal(dict_obj, dict_obj_inner, subset=subset):
+                    indices_involved_in_duplicates.add(idx)
+                    indices_involved_in_duplicates.add(overall_idx)
+                    if not sub_indices:
+                        sub_indices.append(idx)
+                    sub_indices.append(overall_idx)
+                    if break_at == &#34;first&#34;:
+                        return [sub_indices]
+            if sub_indices:
+                indices.append(sub_indices)
+                if break_at == &#34;first_full&#34;:
+                    return indices
+        return indices
+
+    def _is_equal(
+            self,
+            d1: Dict[str, Any],
+            d2: Dict[str, Any],
+            /,
+            *,
+            subset: Optional[List[str]] = None,
+        ) -&gt; bool:
+        &#34;&#34;&#34;Compares the given 2 dictionaries based on the subset of keys&#34;&#34;&#34;
+        if not subset:
+            return d1 == d2
+        for key in subset:
+            try:
+                are_equal: bool = d1[key] == d2[key]
+            except KeyError:
+                raise KeyError(f&#34;Key &#39;{key}&#39; from subset is not found&#34;)
+            if not are_equal:
+                return False
+        return True
+
+    def has_duplicates(
+            self,
+            *,
+            subset: Optional[List[str]] = None,
+        ) -&gt; bool:
+        return bool(
+            self._identify_duplicate_indices(break_at=&#34;first&#34;, subset=subset)
+        )
+
+    def drop_duplicates(
+            self,
+            *,
+            keep: Optional[Literal[&#34;first&#34;, &#34;last&#34;]] = &#34;first&#34;,
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;Drops the duplicate rows&#34;&#34;&#34;
+        list_obj = self.data if inplace else self.data_copy()
+        indices = self._identify_duplicate_indices(subset=subset)
+        if not indices:
+            return self if inplace else Dataset(list_obj)
+        indices_to_drop = []
+        for sub_indices in indices:
+            if keep == &#34;first&#34;:
+                temp = list(set(sub_indices).difference(set([min(sub_indices)])))
+                indices_to_drop.extend(temp)
+            elif keep == &#34;last&#34;:
+                temp = list(set(sub_indices).difference(set([max(sub_indices)])))
+                indices_to_drop.extend(temp)
+        for idx in sorted(indices_to_drop, reverse=True):
+            list_obj.pop(idx)
+        return self if inplace else Dataset(list_obj)
+
+    def get_values_by_field(self, *, field: str) -&gt; List[Any]:
+        &#34;&#34;&#34;Returns a list of values for the given field&#34;&#34;&#34;
+        values = []
+        for idx, dict_obj in enumerate(self.data):
+            try:
+                value = dict_obj[field]
+            except KeyError:
+                raise KeyError(f&#34;Field &#39;{field}&#39; is not found on row number {idx + 1}&#34;)
+            values.append(value)
+        return values
+
+    def get_datatypes_by_field(self) -&gt; Dict[str, set[Type]]:
+        &#34;&#34;&#34;Returns dictionary having keys = fields, and values = set of all the unique types present in said field&#34;&#34;&#34;
+        datatypes_by_field: Dict[str, set[Type]] = {}
+        for dict_obj in self.data:
+            for field, value in dict_obj.items():
+                datatypes_by_field.setdefault(field, set())
+                datatype = type(value)
+                datatypes_by_field[field].add(datatype)
+        return datatypes_by_field
+
+    def get_unique_fields(self) -&gt; List[str]:
+        &#34;&#34;&#34;Returns list of all the unique fields that are present&#34;&#34;&#34;
+        unique_fields = set()
+        for dict_obj in self.data:
+            unique_fields = unique_fields.union(set(dict_obj.keys()))
+        return list(sorted(unique_fields, reverse=False))
+
+    def set_defaults_for_fields(
+            self,
+            *,
+            fields: List[str],
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;
+        Checks if the given fields are present in each dictionary in the list.
+        If not present, sets their default value to `None`.
+        &#34;&#34;&#34;
+        assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
+            &#34;Param `fields` must be a non-empty list of strings&#34;
+        )
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            for field in fields:
+                dict_obj.setdefault(field, None)
+        return self if inplace else Dataset(list_obj)
+
+    def compute_field(
+            self,
+            *,
+            field: str,
+            func: Callable[[Dict[str, Any]], Any],
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;
+        Applies the given function `func` to each dictionary in the list, and stores the result of `func` in the key `field` of each dictionary.
+        The `func` takes in the dictionary (row) as a parameter.
+        &#34;&#34;&#34;
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            computed_value = func(dict_obj)
+            dict_obj[field] = computed_value
+        return self if inplace else Dataset(list_obj)
+
+    def drop_fields(
+            self,
+            *,
+            fields: List[str],
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;Drops the given fields&#34;&#34;&#34;
+        assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
+            &#34;Param `fields` must be a non-empty list of strings&#34;
+        )
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            for field in fields:
+                dict_obj.pop(field, None)
+        return self if inplace else Dataset(list_obj)
+
+    def fill_nulls(
+            self,
+            *,
+            value: Any,
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;Fills all values that are `None` with `value`&#34;&#34;&#34;
+        list_obj = self.data if inplace else self.data_copy()
+        for dict_obj in list_obj:
+            keys = subset if subset else list(dict_obj.keys())
+            for key in keys:
+                try:
+                    existing_value = dict_obj[key]
+                except KeyError:
+                    raise KeyError(f&#34;Key &#39;{key}&#39; from subset is not found&#34;)
+                if existing_value is None:
+                    dict_obj[key] = value
+        return self if inplace else Dataset(list_obj)
+
+    def autofill_missing_fields(
+            self,
+            *,
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;
+        Checks if the existing unique fields are present in each dictionary in the list.
+        If not present, sets their default value to `None`.
+        &#34;&#34;&#34;
+        fields = self.get_unique_fields()
+        instance = self.set_defaults_for_fields(fields=fields, inplace=inplace)
+        return instance
+
+    def _has_nulls(
+            self,
+            *,
+            dict_obj: Dict[str, Any],
+            subset: Optional[List[str]] = None,
+        ) -&gt; bool:
+        &#34;&#34;&#34;Checks if the given dictionary has value as `None` for any of the given `subset` of keys&#34;&#34;&#34;
+        keys = subset if subset else list(dict_obj.keys())
+        for key in keys:
+            try:
+                value = dict_obj[key]
+            except KeyError:
+                raise KeyError(f&#34;Key &#39;{key}&#39; from subset is not found&#34;)
+            if value is None:
+                return True
+        return False
+
+    def drop_nulls(
+            self,
+            *,
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;Drops rows having value as `None` in any of the given `subset` of fields&#34;&#34;&#34;
+        instance = self.filter_rows(
+            func=lambda dict_obj: not self._has_nulls(dict_obj=dict_obj, subset=subset),
+            inplace=inplace,
+        )
+        return instance
+
+    def filter_rows(
+            self,
+            *,
+            func: Callable[[Dict[str, Any]], bool],
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;
+        Applies the given function `func` to each dictionary (row) in the list, and expects the `func` to return a boolean.
+        If the result is `True` then keeps the row; otherwise removes the row.
+        The `func` takes in the dictionary (row) as a parameter.
+        &#34;&#34;&#34;
+        list_obj = self.data if inplace else self.data_copy()
+        list_obj_filtered: List[Dict[str, Any]] = []
+        for dict_obj in list_obj:
+            should_keep_row: bool = func(dict_obj)
+            assert isinstance(should_keep_row, bool), f&#34;Result of `func` must be of type boolean&#34;
+            if should_keep_row:
+                list_obj_filtered.append(dict_obj)
+
+        if inplace:
+            self.data = list_obj_filtered
+        else:
+            list_obj = list_obj_filtered
+
+        return self if inplace else Dataset(list_obj)
+
+    def order_by(
+            self,
+            *,
+            fields: List[str],
+            ascending: List[bool],
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;Orders by the given fields in the desired order. Returns a new instance having the ordered data.&#34;&#34;&#34;
+        assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
+            &#34;Param `fields` must be a non-empty list of strings&#34;
+        )
+        assert checks.is_list_of_instances_of_type(ascending, type_=bool, allow_empty=False), (
+            &#34;Param `ascending` must be a non-empty list of booleans&#34;
+        )
+        assert len(fields) == len(ascending), &#34;Params `fields` and `ascending` must be of same length&#34;
+        list_obj: List[Dict[str, Any]] = multi_key_sort(
+            self.data,
+            columns=fields,
+            ascending=ascending,
+        )
+        return Dataset(list_obj)</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="slupy.data_wrangler.dataset.Dataset.data"><code class="name">prop <span class="ident">data</span> : List[Dict[str, Any]]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def data(self) -&gt; List[Dict[str, Any]]:
+    return self._data</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="slupy.data_wrangler.dataset.Dataset.autofill_missing_fields"><code class="name flex">
+<span>def <span class="ident">autofill_missing_fields</span></span>(<span>self, *, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if the existing unique fields are present in each dictionary in the list.
+If not present, sets their default value to <code>None</code>.</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.compute_field"><code class="name flex">
+<span>def <span class="ident">compute_field</span></span>(<span>self, *, field: str, func: Callable[[Dict[str, Any]], Any], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Applies the given function <code>func</code> to each dictionary in the list, and stores the result of <code>func</code> in the key <code>field</code> of each dictionary.
+The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns deep-copy of <code>self</code></p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.data_copy"><code class="name flex">
+<span>def <span class="ident">data_copy</span></span>(<span>self) ‑> List[Dict[str, Any]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns deep-copy of <code>self.data</code></p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.drop_duplicates"><code class="name flex">
+<span>def <span class="ident">drop_duplicates</span></span>(<span>self, *, keep: "Optional[Literal['first', 'last']]" = 'first', subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Drops the duplicate rows</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.drop_fields"><code class="name flex">
+<span>def <span class="ident">drop_fields</span></span>(<span>self, *, fields: List[str], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Drops the given fields</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.drop_nulls"><code class="name flex">
+<span>def <span class="ident">drop_nulls</span></span>(<span>self, *, subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Drops rows having value as <code>None</code> in any of the given <code>subset</code> of fields</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.fill_nulls"><code class="name flex">
+<span>def <span class="ident">fill_nulls</span></span>(<span>self, *, value: Any, subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fills all values that are <code>None</code> with <code>value</code></p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.filter_rows"><code class="name flex">
+<span>def <span class="ident">filter_rows</span></span>(<span>self, *, func: Callable[[Dict[str, Any]], bool], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Applies the given function <code>func</code> to each dictionary (row) in the list, and expects the <code>func</code> to return a boolean.
+If the result is <code>True</code> then keeps the row; otherwise removes the row.
+The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.get_datatypes_by_field"><code class="name flex">
+<span>def <span class="ident">get_datatypes_by_field</span></span>(<span>self) ‑> Dict[str, set[Type]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns dictionary having keys = fields, and values = set of all the unique types present in said field</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.get_unique_fields"><code class="name flex">
+<span>def <span class="ident">get_unique_fields</span></span>(<span>self) ‑> List[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns list of all the unique fields that are present</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.get_values_by_field"><code class="name flex">
+<span>def <span class="ident">get_values_by_field</span></span>(<span>self, *, field: str) ‑> List[Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a list of values for the given field</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.has_duplicates"><code class="name flex">
+<span>def <span class="ident">has_duplicates</span></span>(<span>self, *, subset: Optional[List[str]] = None) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.order_by"><code class="name flex">
+<span>def <span class="ident">order_by</span></span>(<span>self, *, fields: List[str], ascending: List[bool]) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Orders by the given fields in the desired order. Returns a new instance having the ordered data.</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.set_defaults_for_fields"><code class="name flex">
+<span>def <span class="ident">set_defaults_for_fields</span></span>(<span>self, *, fields: List[str], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if the given fields are present in each dictionary in the list.
+If not present, sets their default value to <code>None</code>.</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="slupy.data_wrangler" href="index.html">slupy.data_wrangler</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></code></h4>
+<ul class="">
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.autofill_missing_fields" href="#slupy.data_wrangler.dataset.Dataset.autofill_missing_fields">autofill_missing_fields</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.compute_field" href="#slupy.data_wrangler.dataset.Dataset.compute_field">compute_field</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.copy" href="#slupy.data_wrangler.dataset.Dataset.copy">copy</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.data" href="#slupy.data_wrangler.dataset.Dataset.data">data</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.data_copy" href="#slupy.data_wrangler.dataset.Dataset.data_copy">data_copy</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.drop_duplicates" href="#slupy.data_wrangler.dataset.Dataset.drop_duplicates">drop_duplicates</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.drop_fields" href="#slupy.data_wrangler.dataset.Dataset.drop_fields">drop_fields</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.drop_nulls" href="#slupy.data_wrangler.dataset.Dataset.drop_nulls">drop_nulls</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.fill_nulls" href="#slupy.data_wrangler.dataset.Dataset.fill_nulls">fill_nulls</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.filter_rows" href="#slupy.data_wrangler.dataset.Dataset.filter_rows">filter_rows</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.get_datatypes_by_field" href="#slupy.data_wrangler.dataset.Dataset.get_datatypes_by_field">get_datatypes_by_field</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.get_unique_fields" href="#slupy.data_wrangler.dataset.Dataset.get_unique_fields">get_unique_fields</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.get_values_by_field" href="#slupy.data_wrangler.dataset.Dataset.get_values_by_field">get_values_by_field</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.has_duplicates" href="#slupy.data_wrangler.dataset.Dataset.has_duplicates">has_duplicates</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.order_by" href="#slupy.data_wrangler.dataset.Dataset.order_by">order_by</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.set_defaults_for_fields" href="#slupy.data_wrangler.dataset.Dataset.set_defaults_for_fields">set_defaults_for_fields</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+</footer>
+</body>
+</html>
