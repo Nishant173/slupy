@@ -1,4 +1,6 @@
+from datetime import datetime
 import unittest
+import uuid
 
 from slupy.core.helpers import make_deep_copy
 from slupy.data_wrangler.dataset import Dataset
@@ -147,6 +149,29 @@ class TestDataset(unittest.TestCase):
             },
         ]
         self.list_data_5_copy = make_deep_copy(self.list_data_5)
+        self.list_data_6 = [
+            {
+                "a": "aaa",
+                "b": 123,
+                "c": uuid.uuid4(),
+            },
+            {
+                "a": b"aaa",
+                "b": 1.23,
+                "c": datetime.now(),
+            },
+            {
+                "a": uuid.uuid4(),
+                "b": None,
+                "c": 1.23,
+            },
+            {
+                "a": datetime.now(),
+                "b": "bbb",
+                "c": None,
+            },
+        ]
+        self.list_data_6_copy = make_deep_copy(self.list_data_6)
 
     def _assert_list_data_is_unchanged(self):
         msg = "The value of list data should not be modified in-place"
@@ -199,6 +224,16 @@ class TestDataset(unittest.TestCase):
         self.assertNotEqual(
             id(self.list_data_5),
             id(self.list_data_5_copy),
+        )
+
+        self.assertEqual(
+            self.list_data_6,
+            self.list_data_6_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_6),
+            id(self.list_data_6_copy),
         )
 
     def test_len(self):
@@ -329,6 +364,28 @@ class TestDataset(unittest.TestCase):
             dataset.get_values_by_field(field="c")
 
         self._assert_list_data_is_unchanged()
+
+    def test_get_datatypes_by_field(self):
+        dataset = Dataset(self.list_data_6)
+        datatypes_by_field = dataset.get_datatypes_by_field()
+        types_of_field_a = datatypes_by_field.get("a", set())
+        types_of_field_b = datatypes_by_field.get("b", set())
+        types_of_field_c = datatypes_by_field.get("c", set())
+        self.assertIsInstance(types_of_field_a, set)
+        self.assertIsInstance(types_of_field_b, set)
+        self.assertIsInstance(types_of_field_c, set)
+        self.assertEqual(len(types_of_field_a), 4)
+        self.assertEqual(len(types_of_field_b), 4)
+        self.assertEqual(len(types_of_field_c), 4)
+        self.assertTrue(
+            all([dtype in types_of_field_a for dtype in [uuid.UUID, bytes, str, datetime]])
+        )
+        self.assertTrue(
+            all([dtype in types_of_field_b for dtype in [int, str, float, type(None)]])
+        )
+        self.assertTrue(
+            all([dtype in types_of_field_c for dtype in [uuid.UUID, type(None), float, datetime]])
+        )
 
     def test_get_unique_fields(self):
         dataset = Dataset(self.list_data_1, deep_copy=True)

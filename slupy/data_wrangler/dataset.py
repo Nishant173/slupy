@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, List, Literal, Optional
+from typing import Any, Callable, Dict, List, Literal, Optional, Type
 
 from slupy.core import checks
 from slupy.core.helpers import make_deep_copy
@@ -160,6 +160,16 @@ class Dataset:
                 raise KeyError(f"Field '{field}' is not found on row number {idx + 1}")
             values.append(value)
         return values
+
+    def get_datatypes_by_field(self) -> Dict[str, set[Type]]:
+        """Returns dictionary having keys = fields, and values = set of all the unique types present in said field"""
+        datatypes_by_field: Dict[str, set[Type]] = {}
+        for dict_obj in self.data:
+            for field, value in dict_obj.items():
+                datatypes_by_field.setdefault(field, set())
+                datatype = type(value)
+                datatypes_by_field[field].add(datatype)
+        return datatypes_by_field
 
     def get_unique_fields(self) -> List[str]:
         """Returns list of all the unique fields that are present"""
