@@ -868,4 +868,3 @@ class TestDataset(unittest.TestCase):
         self.assertEqual(result, result_expected)
         self._assert_list_data_is_unchanged()
 
-
