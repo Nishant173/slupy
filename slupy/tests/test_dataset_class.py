@@ -110,12 +110,24 @@ class TestDataset(unittest.TestCase):
         self.list_data_4_copy = make_deep_copy(self.list_data_4)
         self.list_data_5 = [
             {
+                "text": None,
+                "number": 50,
+            },
+            {
+                "text": "BBB",
+                "number": None,
+            },
+            {
                 "text": "AAA",
                 "number": -1,
             },
             {
                 "text": "BBB",
                 "number": -1,
+            },
+            {
+                "text": None,
+                "number": None,
             },
             {
                 "text": "AAA",
@@ -767,6 +779,10 @@ class TestDataset(unittest.TestCase):
                 "number": 50,
             },
             {
+                "text": None,
+                "number": 50,
+            },
+            {
                 "text": "BBB",
                 "number": 20,
             },
@@ -781,6 +797,14 @@ class TestDataset(unittest.TestCase):
             {
                 "text": "AAA",
                 "number": -1,
+            },
+            {
+                "text": "BBB",
+                "number": None,
+            },
+            {
+                "text": None,
+                "number": None,
             },
         ]
         self.assertEqual(result, result_expected)

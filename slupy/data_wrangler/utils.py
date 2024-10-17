@@ -13,6 +13,12 @@ def cmp(x: Any, y: Any) -> int:
 
     Reference: https://portingguide.readthedocs.io/en/latest/comparisons.html#the-cmp-function
     """
+    if x is None and y is None:
+        return 0
+    if x is None and y is not None:
+        return -1
+    if x is not None and y is None:
+        return 1
     return (x > y) - (x < y)
 
 
@@ -26,14 +32,14 @@ def multi_key_sort(
     """Returns a new list with the sorted iterable"""
     comparers = [
         (
-            (itemgetter(column.strip()), 1)
+            (itemgetter(column), 1)
             if ascending_ else
-            (itemgetter(column.strip()), -1)
+            (itemgetter(column), -1)
         )
         for column, ascending_ in zip(columns, ascending)
     ]
 
-    def comparer(left, right):
+    def comparer(left: Any, right: Any) -> int:
         comparer_iter = (
             cmp(fn(left), fn(right)) * mult
             for fn, mult in comparers
