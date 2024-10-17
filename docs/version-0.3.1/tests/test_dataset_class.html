@@ -555,6 +555,47 @@ not have a method with the specified name.</p></div>
 
         self._assert_list_data_is_unchanged()
 
+    def test_keep_fields(self):
+        dataset = Dataset(self.list_data_2)
+        result = dataset.keep_fields(fields=[&#34;number&#34;, &#34;text&#34;, &#34;key-that-does-not-exist&#34;]).data
+        result_expected = [
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 10,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;text&#34;: &#34;CCC&#34;,
+                &#34;number&#34;: 45,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_keep_fields_inplace(self):
+        dataset = Dataset(self.list_data_2, deep_copy=True)
+        dataset.keep_fields(fields=[&#34;number&#34;, &#34;text&#34;, &#34;key-that-does-not-exist&#34;], inplace=True)
+        result = dataset.data
+        result_expected = [
+            {
+                &#34;text&#34;: &#34;AAA&#34;,
+                &#34;number&#34;: 10,
+            },
+            {
+                &#34;text&#34;: &#34;BBB&#34;,
+                &#34;number&#34;: -1,
+            },
+            {
+                &#34;text&#34;: &#34;CCC&#34;,
+                &#34;number&#34;: 45,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
     def test_drop_fields(self):
         dataset = Dataset(self.list_data_2)
         result = dataset.drop_fields(fields=[&#34;number&#34;, &#34;key-that-does-not-exist&#34;]).data
@@ -598,6 +639,29 @@ not have a method with the specified name.</p></div>
             },
         ]
         self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def _assert_order_of_fields(self, *, expected_order: List[str], list_data: List[Dict[str, Any]]):
+        for idx, row in enumerate(list_data):
+            self.assertEqual(
+                expected_order,
+                list(row.keys()),
+                msg=f&#34;Field order did not match at row number {idx + 1}&#34;,
+            )
+
+    def test_reorder_fields(self):
+        dataset = Dataset(self.list_data_2)
+        reordered_fields = [&#34;text&#34;, &#34;index&#34;, &#34;number&#34;]
+        result = dataset.reorder_fields(reordered_fields=reordered_fields).data
+        self._assert_order_of_fields(expected_order=reordered_fields, list_data=result)
+        self._assert_list_data_is_unchanged()
+
+    def test_reorder_fields_inplace(self):
+        dataset = Dataset(self.list_data_2, deep_copy=True)
+        reordered_fields = [&#34;text&#34;, &#34;index&#34;, &#34;number&#34;]
+        dataset.reorder_fields(reordered_fields=reordered_fields, inplace=True)
+        result = dataset.data
+        self._assert_order_of_fields(expected_order=reordered_fields, list_data=result)
         self._assert_list_data_is_unchanged()
 
     def test_fill_nulls(self):
@@ -932,6 +996,40 @@ not have a method with the specified name.</p></div>
             },
         ]
         self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_concatenate(self):
+        dataset = Dataset(self.list_data_4)
+        initial_length = len(dataset)
+        datasets_to_concatenate = [
+            Dataset(self.list_data_1),
+            Dataset(self.list_data_2),
+            Dataset(self.list_data_3),
+        ]
+        expected_length = initial_length + sum(len(x) for x in datasets_to_concatenate)
+
+        dataset_new = dataset.concatenate(datasets=datasets_to_concatenate)
+        self.assertEqual(
+            len(dataset_new),
+            expected_length,
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_concatenate_inplace(self):
+        dataset = Dataset(self.list_data_4, deep_copy=True)
+        initial_length = len(dataset)
+        datasets_to_concatenate = [
+            Dataset(self.list_data_1),
+            Dataset(self.list_data_2),
+            Dataset(self.list_data_3),
+        ]
+        expected_length = initial_length + sum(len(x) for x in datasets_to_concatenate)
+
+        dataset.concatenate(datasets=datasets_to_concatenate, inplace=True)
+        self.assertEqual(
+            len(dataset),
+            expected_length,
+        )
         self._assert_list_data_is_unchanged()</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -972,6 +1070,18 @@ not have a method with the specified name.</p></div>
 </dd>
 <dt id="slupy.tests.test_dataset_class.TestDataset.test_compute_field_inplace"><code class="name flex">
 <span>def <span class="ident">test_compute_field_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_concatenate"><code class="name flex">
+<span>def <span class="ident">test_concatenate</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_concatenate_inplace"><code class="name flex">
+<span>def <span class="ident">test_concatenate_inplace</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1066,6 +1176,18 @@ not have a method with the specified name.</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_keep_fields"><code class="name flex">
+<span>def <span class="ident">test_keep_fields</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_keep_fields_inplace"><code class="name flex">
+<span>def <span class="ident">test_keep_fields_inplace</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="slupy.tests.test_dataset_class.TestDataset.test_len"><code class="name flex">
 <span>def <span class="ident">test_len</span></span>(<span>self)</span>
 </code></dt>
@@ -1074,6 +1196,18 @@ not have a method with the specified name.</p></div>
 </dd>
 <dt id="slupy.tests.test_dataset_class.TestDataset.test_order_by"><code class="name flex">
 <span>def <span class="ident">test_order_by</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields"><code class="name flex">
+<span>def <span class="ident">test_reorder_fields</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields_inplace"><code class="name flex">
+<span>def <span class="ident">test_reorder_fields_inplace</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1116,6 +1250,8 @@ not have a method with the specified name.</p></div>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_autofill_missing_fields_inplace">test_autofill_missing_fields_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_compute_field" href="#slupy.tests.test_dataset_class.TestDataset.test_compute_field">test_compute_field</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_compute_field_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_compute_field_inplace">test_compute_field_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_concatenate" href="#slupy.tests.test_dataset_class.TestDataset.test_concatenate">test_concatenate</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_concatenate_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_concatenate_inplace">test_concatenate_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates">test_drop_duplicates</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_duplicates_inplace">test_drop_duplicates_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_drop_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_drop_fields">test_drop_fields</a></code></li>
@@ -1131,8 +1267,12 @@ not have a method with the specified name.</p></div>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_get_values_by_field" href="#slupy.tests.test_dataset_class.TestDataset.test_get_values_by_field">test_get_values_by_field</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_getitem" href="#slupy.tests.test_dataset_class.TestDataset.test_getitem">test_getitem</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_has_duplicates" href="#slupy.tests.test_dataset_class.TestDataset.test_has_duplicates">test_has_duplicates</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_keep_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_keep_fields">test_keep_fields</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_keep_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_keep_fields_inplace">test_keep_fields_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_len" href="#slupy.tests.test_dataset_class.TestDataset.test_len">test_len</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_order_by" href="#slupy.tests.test_dataset_class.TestDataset.test_order_by">test_order_by</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_reorder_fields">test_reorder_fields</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_reorder_fields_inplace">test_reorder_fields_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields">test_set_defaults_for_fields</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields_inplace">test_set_defaults_for_fields_inplace</a></code></li>
 </ul>

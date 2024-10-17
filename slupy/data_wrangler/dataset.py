@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections import Counter
+from pprint import pprint
 from typing import Any, Callable, Dict, List, Literal, Optional, Type
 
 from slupy.core import checks
@@ -125,6 +127,7 @@ class Dataset:
             *,
             subset: Optional[List[str]] = None,
         ) -> bool:
+        """Checks if the dataset has duplicate rows over the given `subset` of fields"""
         return bool(
             self._identify_duplicate_indices(break_at="first", subset=subset)
         )
@@ -217,6 +220,24 @@ class Dataset:
             dict_obj[field] = computed_value
         return self if inplace else Dataset(list_obj)
 
+    def keep_fields(
+            self,
+            *,
+            fields: List[str],
+            inplace: Optional[bool] = False,
+        ) -> Dataset:
+        """Keeps the given fields"""
+        assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
+            "Param `fields` must be a non-empty list of strings"
+        )
+        fields_to_keep = set(fields)
+        existing_fields = self.get_unique_fields()
+        fields_to_drop = list(set(existing_fields).difference(fields_to_keep))
+        if not fields_to_drop:
+            return self if inplace else self.copy()
+        instance = self.drop_fields(fields=fields_to_drop, inplace=inplace)
+        return instance
+
     def drop_fields(
             self,
             *,
@@ -231,6 +252,39 @@ class Dataset:
         for dict_obj in list_obj:
             for field in fields:
                 dict_obj.pop(field, None)
+        return self if inplace else Dataset(list_obj)
+
+    def _has_all_existing_fields_in_any_order(self, *, fields: List[str]) -> bool:
+        existing_fields = self.get_unique_fields()
+        return sorted(fields, reverse=False) == sorted(existing_fields, reverse=False)
+
+    def reorder_fields(
+            self,
+            *,
+            reordered_fields: List[str],
+            inplace: Optional[bool] = False,
+        ) -> Dataset:
+        """Re-orders the fields"""
+        assert self._has_all_existing_fields_in_any_order(fields=reordered_fields), (
+            "Param `reordered_fields` must include all the existing fields (in any order)"
+        )
+        list_obj = self.data if inplace else self.data_copy()
+        list_obj_new = []
+        for idx, dict_obj in enumerate(list_obj):
+            dict_obj_new = {}
+            for field in reordered_fields:
+                try:
+                    value = dict_obj[field]
+                except KeyError:
+                    raise KeyError(f"Field '{field}' is not found on row number {idx + 1}")
+                dict_obj_new[field] = value
+            list_obj_new.append(dict_obj_new)
+
+        if inplace:
+            self.data = list_obj_new
+        else:
+            list_obj = list_obj_new
+
         return self if inplace else Dataset(list_obj)
 
     def fill_nulls(
@@ -342,4 +396,49 @@ class Dataset:
             ascending=ascending,
         )
         return Dataset(list_obj)
+
+    def concatenate(
+            self,
+            *,
+            datasets: List[Dataset],
+            inplace: Optional[bool] = False,
+        ) -> Dataset:
+        """Concatenates the current dataset with the given datasets. The given `datasets` are never modified."""
+        assert checks.is_list_of_instances_of_type(datasets, type_=Dataset, allow_empty=True), (
+            "Param `datasets` must be a list of datasets, each being of type `slupy.data_wrangler.dataset.Dataset`"
+        )
+        if not datasets:
+            return self if inplace else self.copy()
+
+        list_obj = self.data if inplace else self.data_copy()
+        for dataset in datasets:
+            list_obj += dataset.data_copy()
+
+        if inplace:
+            self.data = list_obj
+
+        return self if inplace else Dataset(list_obj)
+
+    def value_counts(self) -> Dict[str, Counter]:
+        """
+        Returns dictionary having keys = fields, and values = `collections.Counter` objects having the value-counts
+        of all the values in said field.
+        """
+        result: Dict[str, Counter] = {}
+        dataset_copy = self.copy()
+        dataset_copy.autofill_missing_fields(inplace=True)
+        existing_fields = dataset_copy.get_unique_fields()
+        for field in existing_fields:
+            values = dataset_copy.get_values_by_field(field=field)
+            counter = Counter(values)
+            result[field] = counter
+        return result
+
+    def pretty_print(self) -> None:
+        """Pretty prints the value of `self.data`"""
+        pprint(
+            self.data,
+            sort_dicts=False,
+            underscore_numbers=False,
+        )
 
