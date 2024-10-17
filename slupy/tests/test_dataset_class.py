@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Any, Dict, List
 import unittest
 import uuid
 
@@ -489,6 +490,47 @@ class TestDataset(unittest.TestCase):
 
         self._assert_list_data_is_unchanged()
 
+    def test_keep_fields(self):
+        dataset = Dataset(self.list_data_2)
+        result = dataset.keep_fields(fields=["number", "text", "key-that-does-not-exist"]).data
+        result_expected = [
+            {
+                "text": "AAA",
+                "number": 10,
+            },
+            {
+                "text": "BBB",
+                "number": -1,
+            },
+            {
+                "text": "CCC",
+                "number": 45,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_keep_fields_inplace(self):
+        dataset = Dataset(self.list_data_2, deep_copy=True)
+        dataset.keep_fields(fields=["number", "text", "key-that-does-not-exist"], inplace=True)
+        result = dataset.data
+        result_expected = [
+            {
+                "text": "AAA",
+                "number": 10,
+            },
+            {
+                "text": "BBB",
+                "number": -1,
+            },
+            {
+                "text": "CCC",
+                "number": 45,
+            },
+        ]
+        self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
     def test_drop_fields(self):
         dataset = Dataset(self.list_data_2)
         result = dataset.drop_fields(fields=["number", "key-that-does-not-exist"]).data
@@ -532,6 +574,29 @@ class TestDataset(unittest.TestCase):
             },
         ]
         self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def _assert_order_of_fields(self, *, expected_order: List[str], list_data: List[Dict[str, Any]]):
+        for idx, row in enumerate(list_data):
+            self.assertEqual(
+                expected_order,
+                list(row.keys()),
+                msg=f"Field order did not match at row number {idx + 1}",
+            )
+
+    def test_reorder_fields(self):
+        dataset = Dataset(self.list_data_2)
+        ordered_fields = ["text", "index", "number"]
+        result = dataset.reorder_fields(reordered_fields=ordered_fields).data
+        self._assert_order_of_fields(expected_order=ordered_fields, list_data=result)
+        self._assert_list_data_is_unchanged()
+
+    def test_reorder_fields_inplace(self):
+        dataset = Dataset(self.list_data_2, deep_copy=True)
+        ordered_fields = ["text", "index", "number"]
+        dataset.reorder_fields(reordered_fields=ordered_fields, inplace=True)
+        result = dataset.data
+        self._assert_order_of_fields(expected_order=ordered_fields, list_data=result)
         self._assert_list_data_is_unchanged()
 
     def test_fill_nulls(self):
@@ -866,5 +931,39 @@ class TestDataset(unittest.TestCase):
             },
         ]
         self.assertEqual(result, result_expected)
+        self._assert_list_data_is_unchanged()
+
+    def test_concatenate(self):
+        dataset = Dataset(self.list_data_4)
+        initial_length = len(dataset)
+        datasets_to_concatenate = [
+            Dataset(self.list_data_1),
+            Dataset(self.list_data_2),
+            Dataset(self.list_data_3),
+        ]
+        expected_length = initial_length + sum(len(x) for x in datasets_to_concatenate)
+
+        dataset_new = dataset.concatenate(datasets=datasets_to_concatenate)
+        self.assertEqual(
+            len(dataset_new),
+            expected_length,
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_concatenate_inplace(self):
+        dataset = Dataset(self.list_data_4, deep_copy=True)
+        initial_length = len(dataset)
+        datasets_to_concatenate = [
+            Dataset(self.list_data_1),
+            Dataset(self.list_data_2),
+            Dataset(self.list_data_3),
+        ]
+        expected_length = initial_length + sum(len(x) for x in datasets_to_concatenate)
+
+        dataset.concatenate(datasets=datasets_to_concatenate, inplace=True)
+        self.assertEqual(
+            len(dataset),
+            expected_length,
+        )
         self._assert_list_data_is_unchanged()
 
