@@ -222,11 +222,11 @@ in the list. If not present, sets their default value to <code>None</code>. Does
         return datatypes_by_field
 
     def get_unique_fields(self) -&gt; List[str]:
-        &#34;&#34;&#34;Returns list of all the unique fields that are present&#34;&#34;&#34;
+        &#34;&#34;&#34;Returns list of all the unique fields that are present (sorted in ascending order)&#34;&#34;&#34;
         unique_fields = set()
         for dict_obj in self.data:
             unique_fields = unique_fields.union(set(dict_obj.keys()))
-        return list(sorted(unique_fields, reverse=False))
+        return list(sorted(list(unique_fields), reverse=False))
 
     def set_defaults_for_fields(
             self,
@@ -270,7 +270,7 @@ in the list. If not present, sets their default value to <code>None</code>. Does
             fields: List[str],
             inplace: Optional[bool] = False,
         ) -&gt; Dataset:
-        &#34;&#34;&#34;Keeps the given fields&#34;&#34;&#34;
+        &#34;&#34;&#34;Keeps the given fields (if they exist)&#34;&#34;&#34;
         assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
             &#34;Param `fields` must be a non-empty list of strings&#34;
         )
@@ -288,7 +288,7 @@ in the list. If not present, sets their default value to <code>None</code>. Does
             fields: List[str],
             inplace: Optional[bool] = False,
         ) -&gt; Dataset:
-        &#34;&#34;&#34;Drops the given fields&#34;&#34;&#34;
+        &#34;&#34;&#34;Drops the given fields (if they exist)&#34;&#34;&#34;
         assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
             &#34;Param `fields` must be a non-empty list of strings&#34;
         )
@@ -298,9 +298,9 @@ in the list. If not present, sets their default value to <code>None</code>. Does
                 dict_obj.pop(field, None)
         return self if inplace else Dataset(list_obj)
 
-    def _has_all_existing_fields_in_any_order(self, *, fields: List[str]) -&gt; bool:
+    def _has_all_unique_existing_fields_in_any_order(self, *, reordered_fields: List[str]) -&gt; bool:
         existing_fields = self.get_unique_fields()
-        return sorted(fields, reverse=False) == sorted(existing_fields, reverse=False)
+        return sorted(reordered_fields, reverse=False) == sorted(existing_fields, reverse=False)
 
     def reorder_fields(
             self,
@@ -309,8 +309,8 @@ in the list. If not present, sets their default value to <code>None</code>. Does
             inplace: Optional[bool] = False,
         ) -&gt; Dataset:
         &#34;&#34;&#34;Re-orders the fields&#34;&#34;&#34;
-        assert self._has_all_existing_fields_in_any_order(fields=reordered_fields), (
-            &#34;Param `reordered_fields` must include all the existing fields (in any order)&#34;
+        assert self._has_all_unique_existing_fields_in_any_order(reordered_fields=reordered_fields), (
+            &#34;Param `reordered_fields` must include all the unique existing fields (in any order)&#34;
         )
         list_obj = self.data if inplace else self.data_copy()
         list_obj_new = []
@@ -545,7 +545,7 @@ The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 <span>def <span class="ident">drop_fields</span></span>(<span>self, *, fields: List[str], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Drops the given fields</p></div>
+<div class="desc"><p>Drops the given fields (if they exist)</p></div>
 </dd>
 <dt id="slupy.data_wrangler.dataset.Dataset.drop_nulls"><code class="name flex">
 <span>def <span class="ident">drop_nulls</span></span>(<span>self, *, subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
@@ -577,7 +577,7 @@ The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 <span>def <span class="ident">get_unique_fields</span></span>(<span>self) ‑> List[str]</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Returns list of all the unique fields that are present</p></div>
+<div class="desc"><p>Returns list of all the unique fields that are present (sorted in ascending order)</p></div>
 </dd>
 <dt id="slupy.data_wrangler.dataset.Dataset.get_values_by_field"><code class="name flex">
 <span>def <span class="ident">get_values_by_field</span></span>(<span>self, *, field: str) ‑> List[Any]</span>
@@ -595,7 +595,7 @@ The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 <span>def <span class="ident">keep_fields</span></span>(<span>self, *, fields: List[str], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Keeps the given fields</p></div>
+<div class="desc"><p>Keeps the given fields (if they exist)</p></div>
 </dd>
 <dt id="slupy.data_wrangler.dataset.Dataset.order_by"><code class="name flex">
 <span>def <span class="ident">order_by</span></span>(<span>self, *, fields: List[str], ascending: List[bool]) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>

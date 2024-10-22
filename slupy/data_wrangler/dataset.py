@@ -178,11 +178,11 @@ class Dataset:
         return datatypes_by_field
 
     def get_unique_fields(self) -> List[str]:
-        """Returns list of all the unique fields that are present"""
+        """Returns list of all the unique fields that are present (sorted in ascending order)"""
         unique_fields = set()
         for dict_obj in self.data:
             unique_fields = unique_fields.union(set(dict_obj.keys()))
-        return list(sorted(unique_fields, reverse=False))
+        return list(sorted(list(unique_fields), reverse=False))
 
     def set_defaults_for_fields(
             self,
@@ -226,7 +226,7 @@ class Dataset:
             fields: List[str],
             inplace: Optional[bool] = False,
         ) -> Dataset:
-        """Keeps the given fields"""
+        """Keeps the given fields (if they exist)"""
         assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
             "Param `fields` must be a non-empty list of strings"
         )
@@ -244,7 +244,7 @@ class Dataset:
             fields: List[str],
             inplace: Optional[bool] = False,
         ) -> Dataset:
-        """Drops the given fields"""
+        """Drops the given fields (if they exist)"""
         assert checks.is_list_of_instances_of_type(fields, type_=str, allow_empty=False), (
             "Param `fields` must be a non-empty list of strings"
         )
@@ -254,9 +254,9 @@ class Dataset:
                 dict_obj.pop(field, None)
         return self if inplace else Dataset(list_obj)
 
-    def _has_all_existing_fields_in_any_order(self, *, fields: List[str]) -> bool:
+    def _has_all_unique_existing_fields_in_any_order(self, *, reordered_fields: List[str]) -> bool:
         existing_fields = self.get_unique_fields()
-        return sorted(fields, reverse=False) == sorted(existing_fields, reverse=False)
+        return sorted(reordered_fields, reverse=False) == sorted(existing_fields, reverse=False)
 
     def reorder_fields(
             self,
@@ -265,8 +265,8 @@ class Dataset:
             inplace: Optional[bool] = False,
         ) -> Dataset:
         """Re-orders the fields"""
-        assert self._has_all_existing_fields_in_any_order(fields=reordered_fields), (
-            "Param `reordered_fields` must include all the existing fields (in any order)"
+        assert self._has_all_unique_existing_fields_in_any_order(reordered_fields=reordered_fields), (
+            "Param `reordered_fields` must include all the unique existing fields (in any order)"
         )
         list_obj = self.data if inplace else self.data_copy()
         list_obj_new = []
