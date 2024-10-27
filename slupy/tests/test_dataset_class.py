@@ -173,6 +173,64 @@ class TestDataset(unittest.TestCase):
             },
         ]
         self.list_data_6_copy = make_deep_copy(self.list_data_6)
+        self.list_data_7 = [
+            {
+                "index": 1,
+                "number": 1,
+                "text": "AAA",
+            },
+            {
+                "index": 2,
+                "number": 1,
+                "text": "AAA",
+            },
+            {
+                "index": 3,
+                "number": 1,
+                "text": "AAA",
+            },
+            {
+                "index": 4,
+                "number": 1,
+                "text": "AAA",
+            },
+            {
+                "index": 5,
+                "number": 2,
+                "text": "BBB",
+            },
+            {
+                "index": 6,
+                "number": 2,
+                "text": "BBB",
+            },
+            {
+                "index": 7,
+                "number": 3,
+                "text": "CCC",
+            },
+            {
+                "index": 8,
+                "number": 4,
+                "text": "DDD",
+            },
+            {
+                "index": 9,
+                "number": 4,
+                "text": "DDD",
+            },
+            {
+                "index": 10,
+                "number": 4,
+                "text": "DDD",
+            },
+            {
+                "index": 11,
+                "number": 5,
+                "text": "EEE",
+            },
+        ]
+        self.list_data_7_copy = make_deep_copy(self.list_data_7)
 
     def _assert_list_data_is_unchanged(self):
         msg = "The value of list data should not be modified in-place"
@@ -237,6 +295,16 @@ class TestDataset(unittest.TestCase):
             id(self.list_data_6_copy),
         )
 
+        self.assertEqual(
+            self.list_data_7,
+            self.list_data_7_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_7),
+            id(self.list_data_7_copy),
+        )
+
     def test_len(self):
         dataset = Dataset(self.list_data_1)
         self.assertEqual(len(dataset), len(dataset.data))
@@ -251,6 +319,34 @@ class TestDataset(unittest.TestCase):
         with self.assertRaises(IndexError):
             dataset[len(dataset)]  # Should always raise IndexError since len(dataset) will always be > it's last index
 
+        self._assert_list_data_is_unchanged()
+
+    def test_find_duplicate_indices(self):
+        dataset = Dataset(self.list_data_7)
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=["number", "text"]),
+            [
+                [0, 1, 2, 3],
+                [4, 5],
+                [7, 8, 9],
+            ],
+        )
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=["number", "text"], break_at="first"),
+            [
+                [0, 1],
+            ],
+        )
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=["number", "text"], break_at="first_full"),
+            [
+                [0, 1, 2, 3],
+            ],
+        )
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=["index", "number", "text"]),
+            [],
+        )
         self._assert_list_data_is_unchanged()
 
     def test_has_duplicates(self):
