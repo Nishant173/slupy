@@ -51,3 +51,29 @@ def multi_key_sort(
         key=cmp_to_key(comparer),
     )
 
+
+def drop_indices(
+        iterable: List[Any],
+        /,
+        *,
+        indices: List[int],
+    ) -> List[Any]:
+    """Drops items at the given `indices` (in-place). Accepts only non-negative indices."""
+    for idx in sorted(indices, reverse=True):
+        assert idx >= 0, "Accepts only non-negative indices"
+        iterable.pop(idx)
+    return iterable
+
+
+def keep_indices(
+        iterable: List[Any],
+        /,
+        *,
+        indices: List[int],
+    ) -> List[Any]:
+    """Keeps items at the given `indices` (in-place). Accepts only non-negative indices."""
+    all_indices = list(range(0, len(iterable)))
+    indices_to_drop = list(set(all_indices).difference(set(indices)))
+    iterable = drop_indices(iterable, indices=indices_to_drop)
+    return iterable
+

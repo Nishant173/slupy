@@ -43,6 +43,18 @@ the outcome. The return value is negative if x &lt; y, zero if x == y
 and strictly positive if x &gt; y.</p>
 <p>Reference: <a href="https://portingguide.readthedocs.io/en/latest/comparisons.html#the-cmp-function">https://portingguide.readthedocs.io/en/latest/comparisons.html#the-cmp-function</a></p></div>
 </dd>
+<dt id="slupy.data_wrangler.utils.drop_indices"><code class="name flex">
+<span>def <span class="ident">drop_indices</span></span>(<span>iterable: List[Any], /, *, indices: List[int]) ‑> List[Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Drops items at the given <code>indices</code> (in-place). Accepts only non-negative indices.</p></div>
+</dd>
+<dt id="slupy.data_wrangler.utils.keep_indices"><code class="name flex">
+<span>def <span class="ident">keep_indices</span></span>(<span>iterable: List[Any], /, *, indices: List[int]) ‑> List[Any]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Keeps items at the given <code>indices</code> (in-place). Accepts only non-negative indices.</p></div>
+</dd>
 <dt id="slupy.data_wrangler.utils.multi_key_sort"><code class="name flex">
 <span>def <span class="ident">multi_key_sort</span></span>(<span>iterable: List[Any], /, *, columns: List[str], ascending: List[bool]) ‑> List[Any]</span>
 </code></dt>
@@ -67,6 +79,8 @@ and strictly positive if x &gt; y.</p>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="slupy.data_wrangler.utils.cmp" href="#slupy.data_wrangler.utils.cmp">cmp</a></code></li>
+<li><code><a title="slupy.data_wrangler.utils.drop_indices" href="#slupy.data_wrangler.utils.drop_indices">drop_indices</a></code></li>
+<li><code><a title="slupy.data_wrangler.utils.keep_indices" href="#slupy.data_wrangler.utils.keep_indices">keep_indices</a></code></li>
 <li><code><a title="slupy.data_wrangler.utils.multi_key_sort" href="#slupy.data_wrangler.utils.multi_key_sort">multi_key_sort</a></code></li>
 </ul>
 </li>

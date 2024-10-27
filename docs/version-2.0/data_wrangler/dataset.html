@@ -107,16 +107,20 @@ in the list. If not present, sets their default value to <code>None</code>. Does
         &#34;&#34;&#34;Returns deep-copy of `self.data`&#34;&#34;&#34;
         return make_deep_copy(self.data)
 
-    def _identify_duplicate_indices(
+    def find_duplicate_indices(
             self,
             *,
             break_at: Optional[Literal[&#34;first&#34;, &#34;first_full&#34;]] = None,
             subset: Optional[List[str]] = None,
         ) -&gt; List[List[int]]:
         &#34;&#34;&#34;
+        Used to find the indices of the duplicate elements (if any).
+
         Returns list of list of indices that correspond to duplicates. If no duplicates are found, returns an empty list.
+        Always returns non-negative indices. Each sub-list of indices will be sorted in ascending order.
+
         Eg: An output of `[[0, 4, 5], [1, 6, 8]]` means that dictionaries at indices (0, 4, 5) are duplicates of the same
-        value; and dictionaries at indices (1, 6, 8) are duplicates of the same value.
+        value; and dictionaries at indices (1, 6, 8) are duplicates of the same value; etc.
 
         Parameters:
             - break_at (str): If `break_at=&#39;first&#39;`, returns early with the first 2 indices of the first set of duplicates identified (if any).
@@ -173,31 +177,55 @@ in the list. If not present, sets their default value to <code>None</code>. Does
         ) -&gt; bool:
         &#34;&#34;&#34;Checks if the dataset has duplicate rows over the given `subset` of fields&#34;&#34;&#34;
         return bool(
-            self._identify_duplicate_indices(break_at=&#34;first&#34;, subset=subset)
+            self.find_duplicate_indices(break_at=&#34;first&#34;, subset=subset)
         )
 
     def drop_duplicates(
             self,
             *,
-            keep: Optional[Literal[&#34;first&#34;, &#34;last&#34;]] = &#34;first&#34;,
+            keep: Literal[&#34;first&#34;, &#34;last&#34;, &#34;none&#34;] = &#34;first&#34;,
             subset: Optional[List[str]] = None,
             inplace: Optional[bool] = False,
         ) -&gt; Dataset:
         &#34;&#34;&#34;Drops the duplicate rows&#34;&#34;&#34;
         list_obj = self.data if inplace else self.data_copy()
-        indices = self._identify_duplicate_indices(subset=subset)
-        if not indices:
+        duplicate_indices = self.find_duplicate_indices(subset=subset)
+        if not duplicate_indices:
             return self if inplace else Dataset(list_obj)
         indices_to_drop = []
-        for sub_indices in indices:
+        for sub_indices in duplicate_indices:
             if keep == &#34;first&#34;:
-                temp = list(set(sub_indices).difference(set([min(sub_indices)])))
-                indices_to_drop.extend(temp)
+                indices_to_drop.extend(sub_indices[1:])
             elif keep == &#34;last&#34;:
-                temp = list(set(sub_indices).difference(set([max(sub_indices)])))
-                indices_to_drop.extend(temp)
-        for idx in sorted(indices_to_drop, reverse=True):
-            list_obj.pop(idx)
+                indices_to_drop.extend(sub_indices[:-1])
+            elif keep == &#34;none&#34;:
+                indices_to_drop.extend(sub_indices)
+        list_obj = drop_indices(list_obj, indices=indices_to_drop)
+        return self if inplace else Dataset(list_obj)
+
+    def keep_duplicates(
+            self,
+            *,
+            keep: Literal[&#34;first&#34;, &#34;last&#34;, &#34;all&#34;] = &#34;first&#34;,
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;Keeps the duplicate rows&#34;&#34;&#34;
+        duplicate_indices = self.find_duplicate_indices(subset=subset)
+        if not duplicate_indices:
+            if inplace:
+                self.data = []
+            return self if inplace else Dataset([])
+        indices_to_keep = []
+        for sub_indices in duplicate_indices:
+            if keep == &#34;first&#34;:
+                indices_to_keep.append(sub_indices[0])
+            elif keep == &#34;last&#34;:
+                indices_to_keep.append(sub_indices[-1])
+            elif keep == &#34;all&#34;:
+                indices_to_keep.extend(sub_indices)
+        list_obj = self.data if inplace else self.data_copy()
+        list_obj = keep_indices(list_obj, indices=indices_to_keep)
         return self if inplace else Dataset(list_obj)
 
     def get_values_by_field(self, *, field: str) -&gt; List[Any]:
@@ -536,7 +564,7 @@ The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 <div class="desc"><p>Returns deep-copy of <code>self.data</code></p></div>
 </dd>
 <dt id="slupy.data_wrangler.dataset.Dataset.drop_duplicates"><code class="name flex">
-<span>def <span class="ident">drop_duplicates</span></span>(<span>self, *, keep: "Optional[Literal['first', 'last']]" = 'first', subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+<span>def <span class="ident">drop_duplicates</span></span>(<span>self, *, keep: "Literal['first', 'last', 'none']" = 'first', subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Drops the duplicate rows</p></div>
@@ -567,6 +595,22 @@ The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 If the result is <code>True</code> then keeps the row; otherwise removes the row.
 The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 </dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.find_duplicate_indices"><code class="name flex">
+<span>def <span class="ident">find_duplicate_indices</span></span>(<span>self, *, break_at: "Optional[Literal['first', 'first_full']]" = None, subset: Optional[List[str]] = None) ‑> List[List[int]]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Used to find the indices of the duplicate elements (if any).</p>
+<p>Returns list of list of indices that correspond to duplicates. If no duplicates are found, returns an empty list.
+Always returns non-negative indices. Each sub-list of indices will be sorted in ascending order.</p>
+<p>Eg: An output of <code>[[0, 4, 5], [1, 6, 8]]</code> means that dictionaries at indices (0, 4, 5) are duplicates of the same
+value; and dictionaries at indices (1, 6, 8) are duplicates of the same value; etc.</p>
+<h2 id="parameters">Parameters</h2>
+<ul>
+<li>break_at (str): If <code>break_at='first'</code>, returns early with the first 2 indices of the first set of duplicates identified (if any).
+If <code>break_at='first_full'</code>, returns early with all the indices of the first set of duplicates identified (if any).</li>
+<li>subset (List[str]): List of keys to consider in each dictionary in the list.</li>
+</ul></div>
+</dd>
 <dt id="slupy.data_wrangler.dataset.Dataset.get_datatypes_by_field"><code class="name flex">
 <span>def <span class="ident">get_datatypes_by_field</span></span>(<span>self) ‑> Dict[str, set[Type]]</span>
 </code></dt>
@@ -590,6 +634,12 @@ The <code>func</code> takes in the dictionary (row) as a parameter.</p></div>
 </code></dt>
 <dd>
 <div class="desc"><p>Checks if the dataset has duplicate rows over the given <code>subset</code> of fields</p></div>
+</dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.keep_duplicates"><code class="name flex">
+<span>def <span class="ident">keep_duplicates</span></span>(<span>self, *, keep: "Literal['first', 'last', 'all']" = 'first', subset: Optional[List[str]] = None, inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Keeps the duplicate rows</p></div>
 </dd>
 <dt id="slupy.data_wrangler.dataset.Dataset.keep_fields"><code class="name flex">
 <span>def <span class="ident">keep_fields</span></span>(<span>self, *, fields: List[str], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
@@ -660,10 +710,12 @@ of all the values in said field.</p></div>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.drop_nulls" href="#slupy.data_wrangler.dataset.Dataset.drop_nulls">drop_nulls</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.fill_nulls" href="#slupy.data_wrangler.dataset.Dataset.fill_nulls">fill_nulls</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.filter_rows" href="#slupy.data_wrangler.dataset.Dataset.filter_rows">filter_rows</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.find_duplicate_indices" href="#slupy.data_wrangler.dataset.Dataset.find_duplicate_indices">find_duplicate_indices</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.get_datatypes_by_field" href="#slupy.data_wrangler.dataset.Dataset.get_datatypes_by_field">get_datatypes_by_field</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.get_unique_fields" href="#slupy.data_wrangler.dataset.Dataset.get_unique_fields">get_unique_fields</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.get_values_by_field" href="#slupy.data_wrangler.dataset.Dataset.get_values_by_field">get_values_by_field</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.has_duplicates" href="#slupy.data_wrangler.dataset.Dataset.has_duplicates">has_duplicates</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.keep_duplicates" href="#slupy.data_wrangler.dataset.Dataset.keep_duplicates">keep_duplicates</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.keep_fields" href="#slupy.data_wrangler.dataset.Dataset.keep_fields">keep_fields</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.order_by" href="#slupy.data_wrangler.dataset.Dataset.order_by">order_by</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.pretty_print" href="#slupy.data_wrangler.dataset.Dataset.pretty_print">pretty_print</a></code></li>

@@ -238,6 +238,64 @@ not have a method with the specified name.</p></div>
             },
         ]
         self.list_data_6_copy = make_deep_copy(self.list_data_6)
+        self.list_data_7 = [
+            {
+                &#34;index&#34;: 1,
+                &#34;number&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+            },
+            {
+                &#34;index&#34;: 2,
+                &#34;number&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+            },
+            {
+                &#34;index&#34;: 3,
+                &#34;number&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+            },
+            {
+                &#34;index&#34;: 4,
+                &#34;number&#34;: 1,
+                &#34;text&#34;: &#34;AAA&#34;,
+            },
+            {
+                &#34;index&#34;: 5,
+                &#34;number&#34;: 2,
+                &#34;text&#34;: &#34;BBB&#34;,
+            },
+            {
+                &#34;index&#34;: 6,
+                &#34;number&#34;: 2,
+                &#34;text&#34;: &#34;BBB&#34;,
+            },
+            {
+                &#34;index&#34;: 7,
+                &#34;number&#34;: 3,
+                &#34;text&#34;: &#34;CCC&#34;,
+            },
+            {
+                &#34;index&#34;: 8,
+                &#34;number&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+            {
+                &#34;index&#34;: 9,
+                &#34;number&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+            {
+                &#34;index&#34;: 10,
+                &#34;number&#34;: 4,
+                &#34;text&#34;: &#34;DDD&#34;,
+            },
+            {
+                &#34;index&#34;: 11,
+                &#34;number&#34;: 5,
+                &#34;text&#34;: &#34;EEE&#34;,
+            },
+        ]
+        self.list_data_7_copy = make_deep_copy(self.list_data_7)
 
     def _assert_list_data_is_unchanged(self):
         msg = &#34;The value of list data should not be modified in-place&#34;
@@ -302,6 +360,16 @@ not have a method with the specified name.</p></div>
             id(self.list_data_6_copy),
         )
 
+        self.assertEqual(
+            self.list_data_7,
+            self.list_data_7_copy,
+            msg=msg,
+        )
+        self.assertNotEqual(
+            id(self.list_data_7),
+            id(self.list_data_7_copy),
+        )
+
     def test_len(self):
         dataset = Dataset(self.list_data_1)
         self.assertEqual(len(dataset), len(dataset.data))
@@ -316,6 +384,34 @@ not have a method with the specified name.</p></div>
         with self.assertRaises(IndexError):
             dataset[len(dataset)]  # Should always raise IndexError since len(dataset) will always be &gt; it&#39;s last index
 
+        self._assert_list_data_is_unchanged()
+
+    def test_find_duplicate_indices(self):
+        dataset = Dataset(self.list_data_7)
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=[&#34;number&#34;, &#34;text&#34;]),
+            [
+                [0, 1, 2, 3],
+                [4, 5],
+                [7, 8, 9],
+            ],
+        )
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=[&#34;number&#34;, &#34;text&#34;], break_at=&#34;first&#34;),
+            [
+                [0, 1],
+            ],
+        )
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=[&#34;number&#34;, &#34;text&#34;], break_at=&#34;first_full&#34;),
+            [
+                [0, 1, 2, 3],
+            ],
+        )
+        self.assertEqual(
+            dataset.find_duplicate_indices(subset=[&#34;index&#34;, &#34;number&#34;, &#34;text&#34;]),
+            [],
+        )
         self._assert_list_data_is_unchanged()
 
     def test_has_duplicates(self):
@@ -385,6 +481,39 @@ not have a method with the specified name.</p></div>
             ],
         )
 
+        result_4 = dataset.drop_duplicates(keep=&#34;none&#34;, subset=[&#34;number&#34;]).data
+        self.assertEqual(len(result_4), 5)
+        self.assertEqual(
+            result_4,
+            [
+                {
+                    &#34;index&#34;: 1,
+                    &#34;text&#34;: &#34;AAA&#34;,
+                    &#34;number&#34;: 10,
+                },
+                {
+                    &#34;index&#34;: 2,
+                    &#34;text&#34;: &#34;AAA&#34;,
+                    &#34;number&#34;: 20,
+                },
+                {
+                    &#34;index&#34;: 3,
+                    &#34;text&#34;: &#34;AAA&#34;,
+                    &#34;number&#34;: 30,
+                },
+                {
+                    &#34;index&#34;: 6,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -5,
+                },
+                {
+                    &#34;index&#34;: 7,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 45,
+                },
+            ],
+        )
+
         self._assert_list_data_is_unchanged()
 
     def test_drop_duplicates_inplace(self):
@@ -411,6 +540,188 @@ not have a method with the specified name.</p></div>
                     &#34;number&#34;: 50,
                 },
             ],
+        )
+        self._assert_list_data_is_unchanged()
+
+    def test_keep_duplicates(self):
+        dataset = Dataset(self.list_data_1)
+
+        result_1 = dataset.keep_duplicates(keep=&#34;all&#34;, subset=[&#34;text&#34;, &#34;number&#34;]).data
+        self.assertEqual(len(result_1), 4)
+        self.assertEqual(
+            result_1,
+            [
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 5,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 8,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+                {
+                    &#34;index&#34;: 9,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+
+        result_2 = dataset.keep_duplicates(keep=&#34;first&#34;, subset=[&#34;text&#34;, &#34;number&#34;]).data
+        self.assertEqual(len(result_2), 2)
+        self.assertEqual(
+            result_2,
+            [
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 8,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+
+        result_3 = dataset.keep_duplicates(keep=&#34;last&#34;, subset=[&#34;text&#34;, &#34;number&#34;]).data
+        self.assertEqual(len(result_3), 2)
+        self.assertEqual(
+            result_3,
+            [
+                {
+                    &#34;index&#34;: 5,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 9,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+
+        result_4 = dataset.keep_duplicates(keep=&#34;all&#34;, subset=[&#34;number&#34;]).data
+        self.assertEqual(len(result_4), 4)
+        self.assertEqual(
+            result_4,
+            [
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 5,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 8,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+                {
+                    &#34;index&#34;: 9,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+
+        result_5 = dataset.keep_duplicates(keep=&#34;first&#34;, subset=[&#34;number&#34;]).data
+        self.assertEqual(len(result_5), 2)
+        self.assertEqual(
+            result_5,
+            [
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 8,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+
+        result_6 = dataset.keep_duplicates(keep=&#34;last&#34;, subset=[&#34;number&#34;]).data
+        self.assertEqual(len(result_6), 2)
+        self.assertEqual(
+            result_6,
+            [
+                {
+                    &#34;index&#34;: 5,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 9,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+
+        result_7 = dataset.keep_duplicates(keep=&#34;all&#34;, subset=[&#34;index&#34;]).data
+        self.assertEqual(len(result_7), 0)
+        self.assertEqual(
+            result_7,
+            [],
+        )
+
+        self._assert_list_data_is_unchanged()
+
+    def test_keep_duplicates_inplace(self):
+        dataset_1 = Dataset(self.list_data_1, deep_copy=True)
+        dataset_1.keep_duplicates(keep=&#34;all&#34;, subset=[&#34;text&#34;, &#34;number&#34;], inplace=True)
+        result = dataset_1.data
+        self.assertEqual(len(result), 4)
+        self.assertEqual(
+            result,
+            [
+                {
+                    &#34;index&#34;: 4,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 5,
+                    &#34;text&#34;: &#34;BBB&#34;,
+                    &#34;number&#34;: -1,
+                },
+                {
+                    &#34;index&#34;: 8,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+                {
+                    &#34;index&#34;: 9,
+                    &#34;text&#34;: &#34;CCC&#34;,
+                    &#34;number&#34;: 50,
+                },
+            ],
+        )
+        self._assert_list_data_is_unchanged()
+
+        dataset_2 = Dataset(self.list_data_1, deep_copy=True)
+        dataset_2.keep_duplicates(keep=&#34;all&#34;, subset=[&#34;index&#34;], inplace=True)
+        result = dataset_2.data
+        self.assertEqual(len(result), 0)
+        self.assertEqual(
+            result,
+            [],
         )
         self._assert_list_data_is_unchanged()
 
@@ -1146,6 +1457,12 @@ not have a method with the specified name.</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_find_duplicate_indices"><code class="name flex">
+<span>def <span class="ident">test_find_duplicate_indices</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="slupy.tests.test_dataset_class.TestDataset.test_get_datatypes_by_field"><code class="name flex">
 <span>def <span class="ident">test_get_datatypes_by_field</span></span>(<span>self)</span>
 </code></dt>
@@ -1172,6 +1489,18 @@ not have a method with the specified name.</p></div>
 </dd>
 <dt id="slupy.tests.test_dataset_class.TestDataset.test_has_duplicates"><code class="name flex">
 <span>def <span class="ident">test_has_duplicates</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_keep_duplicates"><code class="name flex">
+<span>def <span class="ident">test_keep_duplicates</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_keep_duplicates_inplace"><code class="name flex">
+<span>def <span class="ident">test_keep_duplicates_inplace</span></span>(<span>self)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -1262,11 +1591,14 @@ not have a method with the specified name.</p></div>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_fill_nulls_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_fill_nulls_inplace">test_fill_nulls_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_filter_rows" href="#slupy.tests.test_dataset_class.TestDataset.test_filter_rows">test_filter_rows</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_filter_rows_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_filter_rows_inplace">test_filter_rows_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_find_duplicate_indices" href="#slupy.tests.test_dataset_class.TestDataset.test_find_duplicate_indices">test_find_duplicate_indices</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_get_datatypes_by_field" href="#slupy.tests.test_dataset_class.TestDataset.test_get_datatypes_by_field">test_get_datatypes_by_field</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_get_unique_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_get_unique_fields">test_get_unique_fields</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_get_values_by_field" href="#slupy.tests.test_dataset_class.TestDataset.test_get_values_by_field">test_get_values_by_field</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_getitem" href="#slupy.tests.test_dataset_class.TestDataset.test_getitem">test_getitem</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_has_duplicates" href="#slupy.tests.test_dataset_class.TestDataset.test_has_duplicates">test_has_duplicates</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_keep_duplicates" href="#slupy.tests.test_dataset_class.TestDataset.test_keep_duplicates">test_keep_duplicates</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_keep_duplicates_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_keep_duplicates_inplace">test_keep_duplicates_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_keep_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_keep_fields">test_keep_fields</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_keep_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_keep_fields_inplace">test_keep_fields_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_len" href="#slupy.tests.test_dataset_class.TestDataset.test_len">test_len</a></code></li>

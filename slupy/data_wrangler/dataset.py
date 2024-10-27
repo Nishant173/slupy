@@ -6,7 +6,11 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Type
 
 from slupy.core import checks
 from slupy.core.helpers import make_deep_copy
-from slupy.data_wrangler.utils import multi_key_sort
+from slupy.data_wrangler.utils import (
+    drop_indices,
+    keep_indices,
+    multi_key_sort,
+)
 
 
 class Dataset:
@@ -63,16 +67,20 @@ class Dataset:
         """Returns deep-copy of `self.data`"""
         return make_deep_copy(self.data)
 
-    def _identify_duplicate_indices(
+    def find_duplicate_indices(
             self,
             *,
             break_at: Optional[Literal["first", "first_full"]] = None,
             subset: Optional[List[str]] = None,
         ) -> List[List[int]]:
         """
+        Used to find the indices of the duplicate elements (if any).
+
         Returns list of list of indices that correspond to duplicates. If no duplicates are found, returns an empty list.
+        Always returns non-negative indices. Each sub-list of indices will be sorted in ascending order.
+
         Eg: An output of `[[0, 4, 5], [1, 6, 8]]` means that dictionaries at indices (0, 4, 5) are duplicates of the same
-        value; and dictionaries at indices (1, 6, 8) are duplicates of the same value.
+        value; and dictionaries at indices (1, 6, 8) are duplicates of the same value; etc.
 
         Parameters:
             - break_at (str): If `break_at='first'`, returns early with the first 2 indices of the first set of duplicates identified (if any).
@@ -129,31 +137,55 @@ class Dataset:
         ) -> bool:
         """Checks if the dataset has duplicate rows over the given `subset` of fields"""
         return bool(
-            self._identify_duplicate_indices(break_at="first", subset=subset)
+            self.find_duplicate_indices(break_at="first", subset=subset)
         )
 
     def drop_duplicates(
             self,
             *,
-            keep: Optional[Literal["first", "last"]] = "first",
+            keep: Literal["first", "last", "none"] = "first",
             subset: Optional[List[str]] = None,
             inplace: Optional[bool] = False,
         ) -> Dataset:
         """Drops the duplicate rows"""
         list_obj = self.data if inplace else self.data_copy()
-        indices = self._identify_duplicate_indices(subset=subset)
-        if not indices:
+        duplicate_indices = self.find_duplicate_indices(subset=subset)
+        if not duplicate_indices:
             return self if inplace else Dataset(list_obj)
         indices_to_drop = []
-        for sub_indices in indices:
+        for sub_indices in duplicate_indices:
             if keep == "first":
-                temp = list(set(sub_indices).difference(set([min(sub_indices)])))
-                indices_to_drop.extend(temp)
+                indices_to_drop.extend(sub_indices[1:])
             elif keep == "last":
-                temp = list(set(sub_indices).difference(set([max(sub_indices)])))
-                indices_to_drop.extend(temp)
-        for idx in sorted(indices_to_drop, reverse=True):
-            list_obj.pop(idx)
+                indices_to_drop.extend(sub_indices[:-1])
+            elif keep == "none":
+                indices_to_drop.extend(sub_indices)
+        list_obj = drop_indices(list_obj, indices=indices_to_drop)
+        return self if inplace else Dataset(list_obj)
+
+    def keep_duplicates(
+            self,
+            *,
+            keep: Literal["first", "last", "all"] = "first",
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -> Dataset:
+        """Keeps the duplicate rows"""
+        duplicate_indices = self.find_duplicate_indices(subset=subset)
+        if not duplicate_indices:
+            if inplace:
+                self.data = []
+            return self if inplace else Dataset([])
+        indices_to_keep = []
+        for sub_indices in duplicate_indices:
+            if keep == "first":
+                indices_to_keep.append(sub_indices[0])
+            elif keep == "last":
+                indices_to_keep.append(sub_indices[-1])
+            elif keep == "all":
+                indices_to_keep.extend(sub_indices)
+        list_obj = self.data if inplace else self.data_copy()
+        list_obj = keep_indices(list_obj, indices=indices_to_keep)
         return self if inplace else Dataset(list_obj)
 
     def get_values_by_field(self, *, field: str) -> List[Any]:
