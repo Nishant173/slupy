@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
 <meta name="generator" content="pdoc3 0.11.1">
-<title>slupy API documentation</title>
+<title>slupy.data_wrangler.utils API documentation</title>
 <meta name="description" content="">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
@@ -22,58 +22,46 @@ hljs.highlightAll();
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>slupy</code></h1>
+<h1 class="title">Module <code>slupy.data_wrangler.utils</code></h1>
 </header>
 <section id="section-intro">
 </section>
 <section>
-<h2 class="section-title" id="header-submodules">Sub-modules</h2>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt><code class="name"><a title="slupy.core" href="core/index.html">slupy.core</a></code></dt>
+<dt id="slupy.data_wrangler.utils.cmp"><code class="name flex">
+<span>def <span class="ident">cmp</span></span>(<span>x: Any, y: Any) ‑> int</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Replacement for built-in function cmp that was removed in Python 3.</p>
+<p>Compare the two objects x and y and return an integer according to
+the outcome. The return value is negative if x &lt; y, zero if x == y
+and strictly positive if x &gt; y.</p>
+<p>Reference: <a href="https://portingguide.readthedocs.io/en/latest/comparisons.html#the-cmp-function">https://portingguide.readthedocs.io/en/latest/comparisons.html#the-cmp-function</a></p></div>
 </dd>
-<dt><code class="name"><a title="slupy.data_wrangler" href="data_wrangler/index.html">slupy.data_wrangler</a></code></dt>
+<dt id="slupy.data_wrangler.utils.drop_indices"><code class="name flex">
+<span>def <span class="ident">drop_indices</span></span>(<span>iterable: List[Any], /, *, indices: List[int]) ‑> List[Any]</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Drops items at the given <code>indices</code> (in-place). Accepts only non-negative indices.</p></div>
 </dd>
-<dt><code class="name"><a title="slupy.dates" href="dates/index.html">slupy.dates</a></code></dt>
+<dt id="slupy.data_wrangler.utils.keep_indices"><code class="name flex">
+<span>def <span class="ident">keep_indices</span></span>(<span>iterable: List[Any], /, *, indices: List[int]) ‑> List[Any]</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Keeps items at the given <code>indices</code> (in-place). Accepts only non-negative indices.</p></div>
 </dd>
-<dt><code class="name"><a title="slupy.decorators" href="decorators/index.html">slupy.decorators</a></code></dt>
+<dt id="slupy.data_wrangler.utils.multi_key_sort"><code class="name flex">
+<span>def <span class="ident">multi_key_sort</span></span>(<span>iterable: List[Any], /, *, columns: List[str], ascending: List[bool]) ‑> List[Any]</span>
+</code></dt>
 <dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.email_ops" href="email_ops/index.html">slupy.email_ops</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.file_ops" href="file_ops/index.html">slupy.file_ops</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.mathematics" href="mathematics/index.html">slupy.mathematics</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.randomizer" href="randomizer/index.html">slupy.randomizer</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.strings" href="strings/index.html">slupy.strings</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="slupy.tests" href="tests/index.html">slupy.tests</a></code></dt>
-<dd>
-<div class="desc"></div>
+<div class="desc"><p>Returns a new list with the sorted iterable</p></div>
 </dd>
 </dl>
-</section>
-<section>
-</section>
-<section>
 </section>
 <section>
 </section>
@@ -83,18 +71,17 @@ hljs.highlightAll();
 <ul></ul>
 </div>
 <ul id="index">
-<li><h3><a href="#header-submodules">Sub-modules</a></h3>
+<li><h3>Super-module</h3>
 <ul>
-<li><code><a title="slupy.core" href="core/index.html">slupy.core</a></code></li>
-<li><code><a title="slupy.data_wrangler" href="data_wrangler/index.html">slupy.data_wrangler</a></code></li>
-<li><code><a title="slupy.dates" href="dates/index.html">slupy.dates</a></code></li>
-<li><code><a title="slupy.decorators" href="decorators/index.html">slupy.decorators</a></code></li>
-<li><code><a title="slupy.email_ops" href="email_ops/index.html">slupy.email_ops</a></code></li>
-<li><code><a title="slupy.file_ops" href="file_ops/index.html">slupy.file_ops</a></code></li>
-<li><code><a title="slupy.mathematics" href="mathematics/index.html">slupy.mathematics</a></code></li>
-<li><code><a title="slupy.randomizer" href="randomizer/index.html">slupy.randomizer</a></code></li>
-<li><code><a title="slupy.strings" href="strings/index.html">slupy.strings</a></code></li>
-<li><code><a title="slupy.tests" href="tests/index.html">slupy.tests</a></code></li>
+<li><code><a title="slupy.data_wrangler" href="index.html">slupy.data_wrangler</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="slupy.data_wrangler.utils.cmp" href="#slupy.data_wrangler.utils.cmp">cmp</a></code></li>
+<li><code><a title="slupy.data_wrangler.utils.drop_indices" href="#slupy.data_wrangler.utils.drop_indices">drop_indices</a></code></li>
+<li><code><a title="slupy.data_wrangler.utils.keep_indices" href="#slupy.data_wrangler.utils.keep_indices">keep_indices</a></code></li>
+<li><code><a title="slupy.data_wrangler.utils.multi_key_sort" href="#slupy.data_wrangler.utils.multi_key_sort">multi_key_sort</a></code></li>
 </ul>
 </li>
 </ul>
@@ -105,4 +92,3 @@ hljs.highlightAll();
 </footer>
 </body>
 </html>
-
