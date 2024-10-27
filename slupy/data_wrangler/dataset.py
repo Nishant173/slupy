@@ -6,7 +6,10 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Type
 
 from slupy.core import checks
 from slupy.core.helpers import make_deep_copy
-from slupy.data_wrangler.utils import multi_key_sort
+from slupy.data_wrangler.utils import (
+    drop_indices,
+    multi_key_sort,
+)
 
 
 class Dataset:
@@ -73,6 +76,7 @@ class Dataset:
         Used to find the indices of the duplicate elements (if any).
 
         Returns list of list of indices that correspond to duplicates. If no duplicates are found, returns an empty list.
+        Always returns non-negative indices.
 
         Eg: An output of `[[0, 4, 5], [1, 6, 8]]` means that dictionaries at indices (0, 4, 5) are duplicates of the same
         value; and dictionaries at indices (1, 6, 8) are duplicates of the same value; etc.
@@ -144,11 +148,11 @@ class Dataset:
         ) -> Dataset:
         """Drops the duplicate rows"""
         list_obj = self.data if inplace else self.data_copy()
-        indices = self.find_duplicate_indices(subset=subset)
-        if not indices:
+        duplicate_indices = self.find_duplicate_indices(subset=subset)
+        if not duplicate_indices:
             return self if inplace else Dataset(list_obj)
         indices_to_drop = []
-        for sub_indices in indices:
+        for sub_indices in duplicate_indices:
             if keep == "first":
                 temp = list(set(sub_indices).difference(set([min(sub_indices)])))
                 indices_to_drop.extend(temp)
@@ -157,8 +161,7 @@ class Dataset:
                 indices_to_drop.extend(temp)
             elif keep == "none":
                 indices_to_drop.extend(sub_indices)
-        for idx in sorted(indices_to_drop, reverse=True):
-            list_obj.pop(idx)
+        list_obj = drop_indices(list_obj, indices=indices_to_drop)
         return self if inplace else Dataset(list_obj)
 
     def get_values_by_field(self, *, field: str) -> List[Any]:
