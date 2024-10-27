@@ -8,6 +8,7 @@ from slupy.core import checks
 from slupy.core.helpers import make_deep_copy
 from slupy.data_wrangler.utils import (
     drop_indices,
+    keep_indices,
     multi_key_sort,
 )
 
@@ -162,6 +163,31 @@ class Dataset:
             elif keep == "none":
                 indices_to_drop.extend(sub_indices)
         list_obj = drop_indices(list_obj, indices=indices_to_drop)
+        return self if inplace else Dataset(list_obj)
+
+    def keep_duplicates(
+            self,
+            *,
+            keep: Literal["first", "last", "all"] = "first",
+            subset: Optional[List[str]] = None,
+            inplace: Optional[bool] = False,
+        ) -> Dataset:
+        """Keeps the duplicate rows"""
+        duplicate_indices = self.find_duplicate_indices(subset=subset)
+        if not duplicate_indices:
+            if inplace:
+                self.data = []
+            return self if inplace else Dataset([])
+        indices_to_keep = []
+        for sub_indices in duplicate_indices:
+            if keep == "first":
+                indices_to_keep.append(sub_indices[0])
+            elif keep == "last":
+                indices_to_keep.append(sub_indices[-1])
+            elif keep == "all":
+                indices_to_keep.extend(sub_indices)
+        list_obj = self.data if inplace else self.data_copy()
+        list_obj = keep_indices(list_obj, indices=indices_to_keep)
         return self if inplace else Dataset(list_obj)
 
     def get_values_by_field(self, *, field: str) -> List[Any]:

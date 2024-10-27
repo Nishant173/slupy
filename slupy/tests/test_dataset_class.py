@@ -382,6 +382,188 @@ class TestDataset(unittest.TestCase):
         )
         self._assert_list_data_is_unchanged()
 
+    def test_keep_duplicates(self):
+        dataset = Dataset(self.list_data_1)
+
+        result_1 = dataset.keep_duplicates(keep="all", subset=["text", "number"]).data
+        self.assertEqual(len(result_1), 4)
+        self.assertEqual(
+            result_1,
+            [
+                {
+                    "index": 4,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 5,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 8,
+                    "text": "CCC",
+                    "number": 50,
+                },
+                {
+                    "index": 9,
+                    "text": "CCC",
+                    "number": 50,
+                },
+            ],
+        )
+
+        result_2 = dataset.keep_duplicates(keep="first", subset=["text", "number"]).data
+        self.assertEqual(len(result_2), 2)
+        self.assertEqual(
+            result_2,
+            [
+                {
+                    "index": 4,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 8,
+                    "text": "CCC",
+                    "number": 50,
+                },
+            ],
+        )
+
+        result_3 = dataset.keep_duplicates(keep="last", subset=["text", "number"]).data
+        self.assertEqual(len(result_3), 2)
+        self.assertEqual(
+            result_3,
+            [
+                {
+                    "index": 5,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 9,
+                    "text": "CCC",
+                    "number": 50,
+                },
+            ],
+        )
+
+        result_4 = dataset.keep_duplicates(keep="all", subset=["number"]).data
+        self.assertEqual(len(result_4), 4)
+        self.assertEqual(
+            result_4,
+            [
+                {
+                    "index": 4,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 5,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 8,
+                    "text": "CCC",
+                    "number": 50,
+                },
+                {
+                    "index": 9,
+                    "text": "CCC",
+                    "number": 50,
+                },
+            ],
+        )
+
+        result_5 = dataset.keep_duplicates(keep="first", subset=["number"]).data
+        self.assertEqual(len(result_5), 2)
+        self.assertEqual(
+            result_5,
+            [
+                {
+                    "index": 4,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 8,
+                    "text": "CCC",
+                    "number": 50,
+                },
+            ],
+        )
+
+        result_6 = dataset.keep_duplicates(keep="last", subset=["number"]).data
+        self.assertEqual(len(result_6), 2)
+        self.assertEqual(
+            result_6,
+            [
+                {
+                    "index": 5,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 9,
+                    "text": "CCC",
+                    "number": 50,
+                },
+            ],
+        )
+
+        result_7 = dataset.keep_duplicates(keep="all", subset=["index"]).data
+        self.assertEqual(len(result_7), 0)
+        self.assertEqual(
+            result_7,
+            [],
+        )
+
+        self._assert_list_data_is_unchanged()
+
+    def test_keep_duplicates_inplace(self):
+        dataset_1 = Dataset(self.list_data_1, deep_copy=True)
+        dataset_1.keep_duplicates(keep="all", subset=["text", "number"], inplace=True)
+        result = dataset_1.data
+        self.assertEqual(len(result), 4)
+        self.assertEqual(
+            result,
+            [
+                {
+                    "index": 4,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 5,
+                    "text": "BBB",
+                    "number": -1,
+                },
+                {
+                    "index": 8,
+                    "text": "CCC",
+                    "number": 50,
+                },
+                {
+                    "index": 9,
+                    "text": "CCC",
+                    "number": 50,
+                },
+            ],
+        )
+        self._assert_list_data_is_unchanged()
+
+        dataset_2 = Dataset(self.list_data_1, deep_copy=True)
+        dataset_2.keep_duplicates(keep="all", subset=["index"], inplace=True)
+        result = dataset_2.data
+        self.assertEqual(len(result), 0)
+        self.assertEqual(
+            result,
+            [],
+        )
+        self._assert_list_data_is_unchanged()
+
     def test_get_values_by_field(self):
         dataset = Dataset(self.list_data_4)
 
