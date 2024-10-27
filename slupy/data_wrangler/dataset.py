@@ -63,16 +63,19 @@ class Dataset:
         """Returns deep-copy of `self.data`"""
         return make_deep_copy(self.data)
 
-    def _identify_duplicate_indices(
+    def find_duplicate_indices(
             self,
             *,
             break_at: Optional[Literal["first", "first_full"]] = None,
             subset: Optional[List[str]] = None,
         ) -> List[List[int]]:
         """
+        Used to find the indices of the duplicate elements (if any).
+
         Returns list of list of indices that correspond to duplicates. If no duplicates are found, returns an empty list.
+
         Eg: An output of `[[0, 4, 5], [1, 6, 8]]` means that dictionaries at indices (0, 4, 5) are duplicates of the same
-        value; and dictionaries at indices (1, 6, 8) are duplicates of the same value.
+        value; and dictionaries at indices (1, 6, 8) are duplicates of the same value; etc.
 
         Parameters:
             - break_at (str): If `break_at='first'`, returns early with the first 2 indices of the first set of duplicates identified (if any).
@@ -129,19 +132,19 @@ class Dataset:
         ) -> bool:
         """Checks if the dataset has duplicate rows over the given `subset` of fields"""
         return bool(
-            self._identify_duplicate_indices(break_at="first", subset=subset)
+            self.find_duplicate_indices(break_at="first", subset=subset)
         )
 
     def drop_duplicates(
             self,
             *,
-            keep: Optional[Literal["first", "last"]] = "first",
+            keep: Literal["first", "last", "none"] = "first",
             subset: Optional[List[str]] = None,
             inplace: Optional[bool] = False,
         ) -> Dataset:
         """Drops the duplicate rows"""
         list_obj = self.data if inplace else self.data_copy()
-        indices = self._identify_duplicate_indices(subset=subset)
+        indices = self.find_duplicate_indices(subset=subset)
         if not indices:
             return self if inplace else Dataset(list_obj)
         indices_to_drop = []
@@ -152,6 +155,8 @@ class Dataset:
             elif keep == "last":
                 temp = list(set(sub_indices).difference(set([max(sub_indices)])))
                 indices_to_drop.extend(temp)
+            elif keep == "none":
+                indices_to_drop.extend(sub_indices)
         for idx in sorted(indices_to_drop, reverse=True):
             list_obj.pop(idx)
         return self if inplace else Dataset(list_obj)

@@ -320,6 +320,39 @@ class TestDataset(unittest.TestCase):
             ],
         )
 
+        result_4 = dataset.drop_duplicates(keep="none", subset=["number"]).data
+        self.assertEqual(len(result_4), 5)
+        self.assertEqual(
+            result_4,
+            [
+                {
+                    "index": 1,
+                    "text": "AAA",
+                    "number": 10,
+                },
+                {
+                    "index": 2,
+                    "text": "AAA",
+                    "number": 20,
+                },
+                {
+                    "index": 3,
+                    "text": "AAA",
+                    "number": 30,
+                },
+                {
+                    "index": 6,
+                    "text": "BBB",
+                    "number": -5,
+                },
+                {
+                    "index": 7,
+                    "text": "CCC",
+                    "number": 45,
+                },
+            ],
+        )
+
         self._assert_list_data_is_unchanged()
 
     def test_drop_duplicates_inplace(self):
