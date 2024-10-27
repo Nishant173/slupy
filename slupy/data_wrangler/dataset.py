@@ -77,7 +77,7 @@ class Dataset:
         Used to find the indices of the duplicate elements (if any).
 
         Returns list of list of indices that correspond to duplicates. If no duplicates are found, returns an empty list.
-        Always returns non-negative indices.
+        Always returns non-negative indices. Each sub-list of indices will be sorted in ascending order.
 
         Eg: An output of `[[0, 4, 5], [1, 6, 8]]` means that dictionaries at indices (0, 4, 5) are duplicates of the same
         value; and dictionaries at indices (1, 6, 8) are duplicates of the same value; etc.
@@ -155,11 +155,9 @@ class Dataset:
         indices_to_drop = []
         for sub_indices in duplicate_indices:
             if keep == "first":
-                temp = list(set(sub_indices).difference(set([min(sub_indices)])))
-                indices_to_drop.extend(temp)
+                indices_to_drop.extend(sub_indices[1:])
             elif keep == "last":
-                temp = list(set(sub_indices).difference(set([max(sub_indices)])))
-                indices_to_drop.extend(temp)
+                indices_to_drop.extend(sub_indices[:-1])
             elif keep == "none":
                 indices_to_drop.extend(sub_indices)
         list_obj = drop_indices(list_obj, indices=indices_to_drop)
