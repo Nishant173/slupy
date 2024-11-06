@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 # Constants
 PACKAGE_NAME = "slupy"
-PACKAGE_VERSION = "2.0"
+PACKAGE_VERSION = "3.0"
 AUTHOR_NAME = "Nishant Rao"
 AUTHOR_EMAIL_ID = "nishant.rao173@gmail.com"
 FILEPATH_TO_README = os.path.join(os.path.abspath(os.path.dirname(__file__)), "README.md")
@@ -31,7 +31,7 @@ setup(
     install_requires=install_requires,
     license="MIT",
     classifiers=[
-        "Development Status :: 1 - Planning",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: ISC License (ISCL)",
         "Natural Language :: English",
@@ -41,4 +41,3 @@ setup(
         "Operating System :: Microsoft :: Windows",
     ],
 )
-

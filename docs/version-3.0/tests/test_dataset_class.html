@@ -1341,6 +1341,37 @@ not have a method with the specified name.</p></div>
             len(dataset),
             expected_length,
         )
+        self._assert_list_data_is_unchanged()
+
+    def test_value_counts(self):
+        dataset = Dataset(self.list_data_7)
+        dict_value_counts = dataset.value_counts()
+        for field, counter_obj in dict_value_counts.items():
+            if field == &#34;index&#34;:
+                self.assertEqual(counter_obj.get(1, 0), 1)
+                self.assertEqual(counter_obj.get(2, 0), 1)
+                self.assertEqual(counter_obj.get(3, 0), 1)
+                self.assertEqual(counter_obj.get(4, 0), 1)
+                self.assertEqual(counter_obj.get(5, 0), 1)
+                self.assertEqual(counter_obj.get(6, 0), 1)
+                self.assertEqual(counter_obj.get(7, 0), 1)
+                self.assertEqual(counter_obj.get(8, 0), 1)
+                self.assertEqual(counter_obj.get(9, 0), 1)
+                self.assertEqual(counter_obj.get(10, 0), 1)
+                self.assertEqual(counter_obj.get(11, 0), 1)
+            elif field == &#34;number&#34;:
+                self.assertEqual(counter_obj.get(1, 0), 4)
+                self.assertEqual(counter_obj.get(2, 0), 2)
+                self.assertEqual(counter_obj.get(3, 0), 1)
+                self.assertEqual(counter_obj.get(4, 0), 3)
+                self.assertEqual(counter_obj.get(5, 0), 1)
+            elif field == &#34;text&#34;:
+                self.assertEqual(counter_obj.get(&#34;AAA&#34;, 0), 4)
+                self.assertEqual(counter_obj.get(&#34;BBB&#34;, 0), 2)
+                self.assertEqual(counter_obj.get(&#34;CCC&#34;, 0), 1)
+                self.assertEqual(counter_obj.get(&#34;DDD&#34;, 0), 3)
+                self.assertEqual(counter_obj.get(&#34;EEE&#34;, 0), 1)
+
         self._assert_list_data_is_unchanged()</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -1553,6 +1584,12 @@ not have a method with the specified name.</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_value_counts"><code class="name flex">
+<span>def <span class="ident">test_value_counts</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 </dl>
 </dd>
 </dl>
@@ -1607,6 +1644,7 @@ not have a method with the specified name.</p></div>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_reorder_fields_inplace">test_reorder_fields_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields">test_set_defaults_for_fields</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields_inplace">test_set_defaults_for_fields_inplace</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_value_counts" href="#slupy.tests.test_dataset_class.TestDataset.test_value_counts">test_value_counts</a></code></li>
 </ul>
 </li>
 </ul>

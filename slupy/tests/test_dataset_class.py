@@ -1278,4 +1278,35 @@ class TestDataset(unittest.TestCase):
         )
         self._assert_list_data_is_unchanged()
 
+    def test_value_counts(self):
+        dataset = Dataset(self.list_data_7)
+        dict_value_counts = dataset.value_counts()
+        for field, counter_obj in dict_value_counts.items():
+            if field == "index":
+                self.assertEqual(counter_obj.get(1, 0), 1)
+                self.assertEqual(counter_obj.get(2, 0), 1)
+                self.assertEqual(counter_obj.get(3, 0), 1)
+                self.assertEqual(counter_obj.get(4, 0), 1)
+                self.assertEqual(counter_obj.get(5, 0), 1)
+                self.assertEqual(counter_obj.get(6, 0), 1)
+                self.assertEqual(counter_obj.get(7, 0), 1)
+                self.assertEqual(counter_obj.get(8, 0), 1)
+                self.assertEqual(counter_obj.get(9, 0), 1)
+                self.assertEqual(counter_obj.get(10, 0), 1)
+                self.assertEqual(counter_obj.get(11, 0), 1)
+            elif field == "number":
+                self.assertEqual(counter_obj.get(1, 0), 4)
+                self.assertEqual(counter_obj.get(2, 0), 2)
+                self.assertEqual(counter_obj.get(3, 0), 1)
+                self.assertEqual(counter_obj.get(4, 0), 3)
+                self.assertEqual(counter_obj.get(5, 0), 1)
+            elif field == "text":
+                self.assertEqual(counter_obj.get("AAA", 0), 4)
+                self.assertEqual(counter_obj.get("BBB", 0), 2)
+                self.assertEqual(counter_obj.get("CCC", 0), 1)
+                self.assertEqual(counter_obj.get("DDD", 0), 3)
+                self.assertEqual(counter_obj.get("EEE", 0), 1)
+
+        self._assert_list_data_is_unchanged()
+
 
