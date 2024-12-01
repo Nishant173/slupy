@@ -480,6 +480,9 @@ class Dataset:
         ranks = rank_func(data=instance.data, fields=fields)
         data_ranked = []
         for row, rank in zip(instance.data, ranks):
+            assert rank_field_name not in row, (
+                f"Invalid param (rank_field_name='{rank_field_name}'). This field name already exists in the dataset."
+            )
             row_with_rank = {
                 rank_field_name: rank,
                 **row,
