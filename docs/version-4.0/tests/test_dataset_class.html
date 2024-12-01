@@ -1309,6 +1309,87 @@ not have a method with the specified name.</p></div>
         self.assertEqual(result, result_expected)
         self._assert_list_data_is_unchanged()
 
+    def test_rank_by(self):
+        dataset = Dataset(self.list_data_5, deep_copy=True, autofill=True)
+        dataset.keep_fields(fields=[&#34;text&#34;], inplace=True)
+
+        # Invalid strategy
+        with self.assertRaises(AssertionError):
+            _ = dataset.rank_by(
+                fields=[&#34;text&#34;],
+                ascending=[False],
+                rank_field_name=&#34;ranking&#34;,
+                rank_strategy=&#34;...&#34;,
+            )
+
+        # Strategy = row_number
+        output_row_number = dataset.rank_by(
+            fields=[&#34;text&#34;],
+            ascending=[False],
+            rank_field_name=&#34;ranking&#34;,
+            rank_strategy=&#34;row_number&#34;,
+        )
+        self.assertEqual(
+            output_row_number.data,
+            [
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 2, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 3, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 4, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 5, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 6, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 7, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 8, &#34;text&#34;: None},
+                {&#34;ranking&#34;: 9, &#34;text&#34;: None},
+            ],
+        )
+
+        # Strategy = rank
+        output_rank = dataset.rank_by(
+            fields=[&#34;text&#34;],
+            ascending=[False],
+            rank_field_name=&#34;ranking&#34;,
+            rank_strategy=&#34;rank&#34;,
+        )
+        self.assertEqual(
+            output_rank.data,
+            [
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 5, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 5, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 5, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 8, &#34;text&#34;: None},
+                {&#34;ranking&#34;: 8, &#34;text&#34;: None},
+            ],
+        )
+
+        # Strategy = dense_rank
+        output_dense_rank = dataset.rank_by(
+            fields=[&#34;text&#34;],
+            ascending=[False],
+            rank_field_name=&#34;ranking&#34;,
+            rank_strategy=&#34;dense_rank&#34;,
+        )
+        self.assertEqual(
+            output_dense_rank.data,
+            [
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 1, &#34;text&#34;: &#34;BBB&#34;},
+                {&#34;ranking&#34;: 2, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 2, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 2, &#34;text&#34;: &#34;AAA&#34;},
+                {&#34;ranking&#34;: 3, &#34;text&#34;: None},
+                {&#34;ranking&#34;: 3, &#34;text&#34;: None},
+            ],
+        )
+
+        self._assert_list_data_is_unchanged()
+
     def test_concatenate(self):
         dataset = Dataset(self.list_data_4)
         initial_length = len(dataset)
@@ -1560,6 +1641,12 @@ not have a method with the specified name.</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="slupy.tests.test_dataset_class.TestDataset.test_rank_by"><code class="name flex">
+<span>def <span class="ident">test_rank_by</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields"><code class="name flex">
 <span>def <span class="ident">test_reorder_fields</span></span>(<span>self)</span>
 </code></dt>
@@ -1640,6 +1727,7 @@ not have a method with the specified name.</p></div>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_keep_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_keep_fields_inplace">test_keep_fields_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_len" href="#slupy.tests.test_dataset_class.TestDataset.test_len">test_len</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_order_by" href="#slupy.tests.test_dataset_class.TestDataset.test_order_by">test_order_by</a></code></li>
+<li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_rank_by" href="#slupy.tests.test_dataset_class.TestDataset.test_rank_by">test_rank_by</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_reorder_fields">test_reorder_fields</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_reorder_fields_inplace" href="#slupy.tests.test_dataset_class.TestDataset.test_reorder_fields_inplace">test_reorder_fields_inplace</a></code></li>
 <li><code><a title="slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields" href="#slupy.tests.test_dataset_class.TestDataset.test_set_defaults_for_fields">test_set_defaults_for_fields</a></code></li>
