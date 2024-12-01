@@ -519,6 +519,9 @@ in the list. If not present, sets their default value to <code>None</code>. Does
         ranks = rank_func(data=instance.data, fields=fields)
         data_ranked = []
         for row, rank in zip(instance.data, ranks):
+            assert rank_field_name not in row, (
+                f&#34;Invalid param (rank_field_name=&#39;{rank_field_name}&#39;). This field name already exists in the dataset.&#34;
+            )
             row_with_rank = {
                 rank_field_name: rank,
                 **row,
