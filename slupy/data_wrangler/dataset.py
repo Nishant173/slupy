@@ -432,6 +432,70 @@ class Dataset:
         )
         return Dataset(list_obj)
 
+    def rank_by(
+            self,
+            *,
+            fields: List[str],
+            ascending: List[bool],
+            rank_field_name: str,
+            rank_strategy: Literal["row_number", "rank", "dense_rank"],
+        ) -> Dataset:
+        """
+        Orders by the given fields in the desired order (as done in `Dataset.order_by()`), and then ranks them based on a given strategy (`rank_strategy`).
+        Adds a new field (`rank_field_name`) having the ranking.
+        Returns a new `Dataset` instance having the ranked data.
+        """
+        mapper = {
+            "row_number": self._compute_row_number,
+            "rank": self._compute_rank,
+            "dense_rank": self._compute_dense_rank,
+        }
+        assert rank_strategy in mapper, f"Param `rank_strategy` must be one of {list(mapper.keys())}"
+        instance = self.order_by(fields=fields, ascending=ascending)
+        rank_func = mapper[rank_strategy]
+        ranks = rank_func(data=instance.data, fields=fields)
+        data_ranked = []
+        for row, rank in zip(instance.data, ranks):
+            row_with_rank = {
+                rank_field_name: rank,
+                **row,
+            }
+            data_ranked.append(row_with_rank)
+        instance.data = data_ranked
+        return instance
+
+    def _compute_row_number(self, *, data: List[Dict[str, Any]], fields: List[str]) -> Iterator[int]:
+        for idx, _ in enumerate(data):
+            yield idx + 1
+
+    def _compute_rank(self, *, data: List[Dict[str, Any]], fields: List[str]) -> Iterator[int]:
+        latest_rank = 1
+        for idx, item in enumerate(data):
+            if idx == 0:
+                yield latest_rank
+                prev = item
+                continue
+            if self._is_equal(prev, item, subset=fields):
+                yield latest_rank
+            else:
+                latest_rank = idx + 1
+                yield latest_rank
+            prev = item
+
+    def _compute_dense_rank(self, *, data: List[Dict[str, Any]], fields: List[str]) -> Iterator[int]:
+        latest_rank = 1
+        for idx, item in enumerate(data):
+            if idx == 0:
+                yield latest_rank
+                prev = item
+                continue
+            if self._is_equal(prev, item, subset=fields):
+                yield latest_rank
+            else:
+                latest_rank += 1
+                yield latest_rank
+            prev = item
+
     def concatenate(
             self,
             *,

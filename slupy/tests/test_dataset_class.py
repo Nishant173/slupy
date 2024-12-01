@@ -1244,6 +1244,87 @@ class TestDataset(unittest.TestCase):
         self.assertEqual(result, result_expected)
         self._assert_list_data_is_unchanged()
 
+    def test_rank_by(self):
+        dataset = Dataset(self.list_data_5, deep_copy=True, autofill=True)
+        dataset.keep_fields(fields=["text"], inplace=True)
+
+        # Invalid strategy
+        with self.assertRaises(AssertionError):
+            _ = dataset.rank_by(
+                fields=["text"],
+                ascending=[False],
+                rank_field_name="ranking",
+                rank_strategy="...",
+            )
+
+        # Strategy = row_number
+        output_row_number = dataset.rank_by(
+            fields=["text"],
+            ascending=[False],
+            rank_field_name="ranking",
+            rank_strategy="row_number",
+        )
+        self.assertEqual(
+            output_row_number.data,
+            [
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 2, "text": "BBB"},
+                {"ranking": 3, "text": "BBB"},
+                {"ranking": 4, "text": "BBB"},
+                {"ranking": 5, "text": "AAA"},
+                {"ranking": 6, "text": "AAA"},
+                {"ranking": 7, "text": "AAA"},
+                {"ranking": 8, "text": None},
+                {"ranking": 9, "text": None},
+            ],
+        )
+
+        # Strategy = rank
+        output_rank = dataset.rank_by(
+            fields=["text"],
+            ascending=[False],
+            rank_field_name="ranking",
+            rank_strategy="rank",
+        )
+        self.assertEqual(
+            output_rank.data,
+            [
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 5, "text": "AAA"},
+                {"ranking": 5, "text": "AAA"},
+                {"ranking": 5, "text": "AAA"},
+                {"ranking": 8, "text": None},
+                {"ranking": 8, "text": None},
+            ],
+        )
+
+        # Strategy = dense_rank
+        output_dense_rank = dataset.rank_by(
+            fields=["text"],
+            ascending=[False],
+            rank_field_name="ranking",
+            rank_strategy="dense_rank",
+        )
+        self.assertEqual(
+            output_dense_rank.data,
+            [
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 1, "text": "BBB"},
+                {"ranking": 2, "text": "AAA"},
+                {"ranking": 2, "text": "AAA"},
+                {"ranking": 2, "text": "AAA"},
+                {"ranking": 3, "text": None},
+                {"ranking": 3, "text": None},
+            ],
+        )
+
+        self._assert_list_data_is_unchanged()
+
     def test_concatenate(self):
         dataset = Dataset(self.list_data_4)
         initial_length = len(dataset)
