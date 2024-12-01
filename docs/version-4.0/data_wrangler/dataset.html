@@ -471,6 +471,94 @@ in the list. If not present, sets their default value to <code>None</code>. Does
         )
         return Dataset(list_obj)
 
+    def rank_by(
+            self,
+            *,
+            fields: List[str],
+            ascending: List[bool],
+            rank_field_name: str,
+            rank_strategy: Literal[&#34;row_number&#34;, &#34;rank&#34;, &#34;dense_rank&#34;],
+        ) -&gt; Dataset:
+        &#34;&#34;&#34;
+        Orders by the given fields in the desired order (as done in `Dataset.order_by()`), and then ranks them based on a given strategy (`rank_strategy`).
+        Adds a new field (`rank_field_name`) having the ranking.
+        Returns a new `Dataset` instance having the ranked data.
+
+        Example:
+        ```
+        dataset.rank_by(
+            fields=[&#34;text&#34;],
+            ascending=[False],
+            rank_field_name=&#34;...&#34;,
+            rank_strategy=&#34;...&#34;,
+        )
+
+        ------------------------------------------------
+        row_number  |  rank  |  dense_rank  |  text
+        ------------------------------------------------
+            1       |  1     |  1           |  &#34;BBB&#34;
+            2       |  1     |  1           |  &#34;BBB&#34;
+            3       |  1     |  1           |  &#34;BBB&#34;
+            4       |  1     |  1           |  &#34;BBB&#34;
+            5       |  5     |  2           |  &#34;AAA&#34;
+            6       |  5     |  2           |  &#34;AAA&#34;
+            7       |  5     |  2           |  &#34;AAA&#34;
+            8       |  8     |  3           |  None
+            9       |  8     |  3           |  None
+        ------------------------------------------------
+        ```
+        &#34;&#34;&#34;
+        mapper = {
+            &#34;row_number&#34;: self._compute_row_number,
+            &#34;rank&#34;: self._compute_rank,
+            &#34;dense_rank&#34;: self._compute_dense_rank,
+        }
+        assert rank_strategy in mapper, f&#34;Param `rank_strategy` must be one of {list(mapper.keys())}&#34;
+        instance = self.order_by(fields=fields, ascending=ascending)
+        rank_func = mapper[rank_strategy]
+        ranks = rank_func(data=instance.data, fields=fields)
+        data_ranked = []
+        for row, rank in zip(instance.data, ranks):
+            row_with_rank = {
+                rank_field_name: rank,
+                **row,
+            }
+            data_ranked.append(row_with_rank)
+        instance.data = data_ranked
+        return instance
+
+    def _compute_row_number(self, *, data: List[Dict[str, Any]], fields: List[str]) -&gt; Iterator[int]:
+        for idx, _ in enumerate(data):
+            yield idx + 1
+
+    def _compute_rank(self, *, data: List[Dict[str, Any]], fields: List[str]) -&gt; Iterator[int]:
+        latest_rank = 1
+        for idx, item in enumerate(data):
+            if idx == 0:
+                yield latest_rank
+                prev = item
+                continue
+            if self._is_equal(prev, item, subset=fields):
+                yield latest_rank
+            else:
+                latest_rank = idx + 1
+                yield latest_rank
+            prev = item
+
+    def _compute_dense_rank(self, *, data: List[Dict[str, Any]], fields: List[str]) -&gt; Iterator[int]:
+        latest_rank = 1
+        for idx, item in enumerate(data):
+            if idx == 0:
+                yield latest_rank
+                prev = item
+                continue
+            if self._is_equal(prev, item, subset=fields):
+                yield latest_rank
+            else:
+                latest_rank += 1
+                yield latest_rank
+            prev = item
+
     def concatenate(
             self,
             *,
@@ -661,6 +749,36 @@ If <code>break_at='first_full'</code>, returns early with all the indices of the
 <dd>
 <div class="desc"><p>Pretty prints the value of <code>self.data</code></p></div>
 </dd>
+<dt id="slupy.data_wrangler.dataset.Dataset.rank_by"><code class="name flex">
+<span>def <span class="ident">rank_by</span></span>(<span>self, *, fields: List[str], ascending: List[bool], rank_field_name: str, rank_strategy: "Literal['row_number', 'rank', 'dense_rank']") ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Orders by the given fields in the desired order (as done in <code><a title="slupy.data_wrangler.dataset.Dataset.order_by" href="#slupy.data_wrangler.dataset.Dataset.order_by">Dataset.order_by()</a></code>), and then ranks them based on a given strategy (<code>rank_strategy</code>).
+Adds a new field (<code>rank_field_name</code>) having the ranking.
+Returns a new <code><a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></code> instance having the ranked data.</p>
+<p>Example:</p>
+<pre><code>dataset.rank_by(
+    fields=[&quot;text&quot;],
+    ascending=[False],
+    rank_field_name=&quot;...&quot;,
+    rank_strategy=&quot;...&quot;,
+)
+
+------------------------------------------------
+row_number  |  rank  |  dense_rank  |  text
+------------------------------------------------
+    1       |  1     |  1           |  &quot;BBB&quot;
+    2       |  1     |  1           |  &quot;BBB&quot;
+    3       |  1     |  1           |  &quot;BBB&quot;
+    4       |  1     |  1           |  &quot;BBB&quot;
+    5       |  5     |  2           |  &quot;AAA&quot;
+    6       |  5     |  2           |  &quot;AAA&quot;
+    7       |  5     |  2           |  &quot;AAA&quot;
+    8       |  8     |  3           |  None
+    9       |  8     |  3           |  None
+------------------------------------------------
+</code></pre></div>
+</dd>
 <dt id="slupy.data_wrangler.dataset.Dataset.reorder_fields"><code class="name flex">
 <span>def <span class="ident">reorder_fields</span></span>(<span>self, *, reordered_fields: List[str], inplace: Optional[bool] = False) ‑> <a title="slupy.data_wrangler.dataset.Dataset" href="#slupy.data_wrangler.dataset.Dataset">Dataset</a></span>
 </code></dt>
@@ -727,6 +845,7 @@ of all the values in said field.</p></div>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.keep_fields" href="#slupy.data_wrangler.dataset.Dataset.keep_fields">keep_fields</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.order_by" href="#slupy.data_wrangler.dataset.Dataset.order_by">order_by</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.pretty_print" href="#slupy.data_wrangler.dataset.Dataset.pretty_print">pretty_print</a></code></li>
+<li><code><a title="slupy.data_wrangler.dataset.Dataset.rank_by" href="#slupy.data_wrangler.dataset.Dataset.rank_by">rank_by</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.reorder_fields" href="#slupy.data_wrangler.dataset.Dataset.reorder_fields">reorder_fields</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.set_defaults_for_fields" href="#slupy.data_wrangler.dataset.Dataset.set_defaults_for_fields">set_defaults_for_fields</a></code></li>
 <li><code><a title="slupy.data_wrangler.dataset.Dataset.value_counts" href="#slupy.data_wrangler.dataset.Dataset.value_counts">value_counts</a></code></li>
