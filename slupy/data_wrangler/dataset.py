@@ -444,6 +444,30 @@ class Dataset:
         Orders by the given fields in the desired order (as done in `Dataset.order_by()`), and then ranks them based on a given strategy (`rank_strategy`).
         Adds a new field (`rank_field_name`) having the ranking.
         Returns a new `Dataset` instance having the ranked data.
+
+        Example:
+        ```
+        dataset.rank_by(
+            fields=["text"],
+            ascending=[False],
+            rank_field_name="...",
+            rank_strategy="...",
+        )
+
+        ------------------------------------------------
+        row_number  |  rank  |  dense_rank  |  text
+        ------------------------------------------------
+            1       |  1     |  1           |  "BBB"
+            2       |  1     |  1           |  "BBB"
+            3       |  1     |  1           |  "BBB"
+            4       |  1     |  1           |  "BBB"
+            5       |  5     |  2           |  "AAA"
+            6       |  5     |  2           |  "AAA"
+            7       |  5     |  2           |  "AAA"
+            8       |  8     |  3           |  None
+            9       |  8     |  3           |  None
+        ------------------------------------------------
+        ```
         """
         mapper = {
             "row_number": self._compute_row_number,
