@@ -1,9 +1,13 @@
-from typing import Any, Callable, Optional
+from dataclasses import dataclass
 import functools
+import logging
 import random
 import time
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
 
 from slupy.dates.utils import get_timetaken_fstring
+
+logger = logging.getLogger(__name__)
 
 
 def timer(func: Callable) -> Callable:
@@ -69,3 +73,132 @@ def functionality_injector(
             return result
         return inner_func
     return outer_func
+
+
+@dataclass
+class RetryConfig:
+    base_delay: int = 0
+    backoff: Literal["constant", "linear", "exponential"] = "constant"
+    jitter_range: Optional[Tuple[int, int]] = None
+
+    def __post_init__(self):
+        assert isinstance(self.base_delay, int) and self.base_delay >= 0, (
+            "Param `base_delay` must be a non-negative integer"
+        )
+        assert self.jitter_range is None or (
+            isinstance(self.jitter_range, tuple)
+            and len(self.jitter_range) == 2
+            and self.jitter_range[0] <= self.jitter_range[1]
+        ), "Param `jitter_range` must be a tuple of two numbers (min, max) where min <= max"
+
+
+def _compute_delays_between_retries(
+        *,
+        num_retries: int,
+        retry_config: RetryConfig,
+    ) -> List[int]:
+    """
+    Computes the delays (in seconds) between retries.
+    For N retries, there will be N delays.
+    """
+    backoff_mapper: Dict[str, Callable[[int], int]] = {
+        "constant": lambda retry_count: retry_config.base_delay,
+        "linear": lambda retry_count: retry_config.base_delay * retry_count,
+        "exponential": lambda retry_count: retry_config.base_delay * (2 ** (retry_count - 1)),
+    }
+    delays = []
+    for retry_count in range(1, num_retries + 1):
+        delay = backoff_mapper[retry_config.backoff](retry_count)
+        delay = delay if retry_config.jitter_range is None else delay + random.uniform(*retry_config.jitter_range)
+        delay = round(delay)
+        delays.append(delay)
+    return delays
+
+
+def retry_on_exception(
+        func: Optional[Callable] = None,
+        /,
+        *,
+        num_retries: int = 0,
+        retry_config: Optional[RetryConfig] = None,
+        include_error_log: Optional[bool] = False,
+        include_error_traceback: Optional[bool] = False,
+        raise_if_exception: Optional[bool] = True,
+        func_name: Optional[str] = None,
+    ) -> Union[Any, Callable]:
+    """
+    Can be used either:
+    1. As a decorator:
+    ```python
+    @retry_on_exception(num_retries=3)
+    def my_func():
+        ...
+    ```
+
+    2. As a direct wrapper:
+    ```python
+    retry_on_exception(
+        my_func,
+        num_retries=3,
+    )
+    ```
+    """
+
+    assert isinstance(num_retries, int) and num_retries >= 0, (
+        "Param `num_retries` must be a non-negative integer"
+    )
+    assert retry_config is None or isinstance(retry_config, RetryConfig), (
+        "Param `retry_config` must be of type RetryConfig"
+    )
+    retry_config = retry_config or RetryConfig()
+
+    def decorator(inner_func: Callable):
+        assert callable(inner_func), "Param `func` must be callable"
+
+        @functools.wraps(inner_func)
+        def wrapper(*args, **kwargs):
+            delays_between_retries = _compute_delays_between_retries(
+                num_retries=num_retries,
+                retry_config=retry_config,
+            )
+            actual_func_name = func_name or inner_func.__name__
+            total_tries = num_retries + 1
+
+            for try_count in range(1, total_tries + 1):
+                is_first_try = (try_count == 1)
+                is_last_try = (try_count == total_tries)
+                try_count_string = (
+                    "[Initial try]"
+                    if is_first_try
+                    else f"[Retry #{try_count - 1}/{total_tries - 1}]"
+                )
+                try:
+                    result = inner_func(*args, **kwargs)
+                except Exception as exc:
+                    if include_error_log:
+                        msg = (
+                            f"{try_count_string}"
+                            f" Error while calling '{actual_func_name}'."
+                            f" Error type: '{type(exc).__name__}'."
+                        )
+                        logger.error(
+                            msg,
+                            exc_info=include_error_traceback,
+                        )
+                    if is_last_try:
+                        if raise_if_exception:
+                            raise exc
+                        return None
+                    delay_in_secs = delays_between_retries[try_count - 1]
+                    time.sleep(delay_in_secs)
+                else:
+                    return result
+        return wrapper
+
+    # Direct-call mode
+    if func is not None:
+        return decorator(func)()
+
+    # Decorator mode
+    return decorator
+
