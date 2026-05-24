@@ -1,45 +1,75 @@
 import unittest
 
-from slupy.decorators.decorators import RetryConfig, retry_on_exception
-
-
-@retry_on_exception(num_retries=3)
-def zero_division_error_func():
-    1 / 0
-
-
-@retry_on_exception(num_retries=3)
-def type_error_func():
-    1 >= "1"
-
-
-@retry_on_exception(
-    num_retries=10,
-    retry_config=RetryConfig(
-        base_delay=10,
-        backoff="exponential",
-        jitter_range=(0, 5),
-    ),
-    include_error_log=True,
-    include_error_traceback=True,
-    raise_if_exception=False,
-    func_name="SUCCESSFUL-FUNCTION",
+from slupy.decorators.decorators import (
+    execute_with_decorator,
+    retry_on_exception,
 )
-def successful_func():
-    return "success"
 
 
 class TestDecorators(unittest.TestCase):
 
-    def test_retry_on_exception(self):
-        with self.assertRaises(ZeroDivisionError):  
-            zero_division_error_func()
+    def test_retry_on_exception_for_success(self):
+        call_count = 0
+        num_retries = 5
 
-        with self.assertRaises(TypeError):  
-            type_error_func()
+        @retry_on_exception(num_retries=num_retries)
+        def mock_func():
+            nonlocal call_count
+            call_count += 1
+            return "Hello World"
 
-        self.assertEqual(
-            successful_func(),
-            "success",
+        self.assertEqual(mock_func(), "Hello World")
+        self.assertEqual(call_count, 1)
+
+    def test_retry_on_exception_for_error(self):
+        call_count = 0
+        num_retries = 5
+
+        @retry_on_exception(num_retries=num_retries)
+        def mock_func():
+            nonlocal call_count
+            call_count += 1
+            raise AssertionError()
+
+        with self.assertRaises(AssertionError):
+            mock_func()
+
+        self.assertEqual(call_count, num_retries + 1)
+
+    def test_execute_with_decorator_with_error(self):
+        call_count = 0
+        num_retries = 5
+
+        def mock_func():
+            nonlocal call_count
+            call_count += 1
+            raise ZeroDivisionError()
+
+        decorated_func = execute_with_decorator(
+            decorator=retry_on_exception(num_retries=num_retries),
+            func=mock_func,
         )
+
+        with self.assertRaises(ZeroDivisionError):
+            decorated_func()
+
+        self.assertEqual(call_count, num_retries + 1)
+
+    def test_execute_with_decorator_with_result(self):
+        call_count = 0
+        num_retries = 5
+
+        def mock_func(number: int):
+            nonlocal call_count
+            call_count += 1
+            return "Hello World" + " " + str(number)
+
+        decorated_func = execute_with_decorator(
+            decorator=retry_on_exception(num_retries=num_retries),
+            func=mock_func,
+        )
+
+        self.assertEqual(decorated_func(123), "Hello World 123")
+        self.assertEqual(call_count, 1)
+
 
