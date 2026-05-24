@@ -3,11 +3,52 @@ import functools
 import logging
 import random
 import time
-from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, ParamSpec, Tuple, TypeVar
 
 from slupy.dates.utils import get_timetaken_fstring
 
 logger = logging.getLogger(__name__)
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def execute_with_decorator(
+        *,
+        decorator: Callable[[Callable[P, R]], Callable[P, R]],
+        func: Callable[P, R],
+    ) -> Callable[P, R]:
+    """
+    Applies a decorator to a callable through a direct function call instead of using the `@decorator` syntax.
+    The `decorator` argument must be a decorator callable, or the result of a decorator factory.
+
+    Example:
+    ```python
+    def main():
+        pass
+
+    decorated_func = execute_with_decorator(
+        decorator=retry_on_exception(num_retries=5),
+        func=main,
+    )
+    result = decorated_func(*args, **kwargs)
+    ```
+
+    Equivalent to:
+    ```python
+    @retry_on_exception(num_retries=5)
+    def main():
+        pass
+    ```
+
+    Parameters:
+        decorator: The decorator to apply.
+        func: The callable to decorate.
+
+    Returns a decorated callable with the same signature and return type as the original function.
+    """
+    return decorator(func)
 
 
 def timer(func: Callable) -> Callable:
@@ -77,13 +118,13 @@ def functionality_injector(
 
 @dataclass
 class RetryConfig:
-    base_delay: int = 0
+    base_delay_in_seconds: int = 0
     backoff: Literal["constant", "linear", "exponential"] = "constant"
     jitter_range: Optional[Tuple[int, int]] = None
 
     def __post_init__(self):
-        assert isinstance(self.base_delay, int) and self.base_delay >= 0, (
-            "Param `base_delay` must be a non-negative integer"
+        assert isinstance(self.base_delay_in_seconds, int) and self.base_delay_in_seconds >= 0, (
+            "Param `base_delay_in_seconds` must be a non-negative integer"
         )
         assert self.jitter_range is None or (
             isinstance(self.jitter_range, tuple)
@@ -102,9 +143,9 @@ def _compute_delays_between_retries(
     For N retries, there will be N delays.
     """
     backoff_mapper: Dict[str, Callable[[int], int]] = {
-        "constant": lambda retry_count: retry_config.base_delay,
-        "linear": lambda retry_count: retry_config.base_delay * retry_count,
-        "exponential": lambda retry_count: retry_config.base_delay * (2 ** (retry_count - 1)),
+        "constant": lambda retry_count: retry_config.base_delay_in_seconds,
+        "linear": lambda retry_count: retry_config.base_delay_in_seconds * retry_count,
+        "exponential": lambda retry_count: retry_config.base_delay_in_seconds * (2 ** (retry_count - 1)),
     }
     delays = []
     for retry_count in range(1, num_retries + 1):
@@ -116,8 +157,6 @@ def _compute_delays_between_retries(
 
 
 def retry_on_exception(
-        func: Optional[Callable] = None,
-        /,
         *,
         num_retries: int = 0,
         retry_config: Optional[RetryConfig] = None,
@@ -125,22 +164,15 @@ def retry_on_exception(
         include_error_traceback: Optional[bool] = False,
         raise_if_exception: Optional[bool] = True,
         func_name: Optional[str] = None,
-    ) -> Union[Any, Callable]:
+    ) -> Callable:
     """
-    Can be used either:
-    1. As a decorator:
+    Decorator used to retry a function in case of an exception.
+
+    Usage:
     ```python
     @retry_on_exception(num_retries=3)
     def my_func():
         ...
-    ```
-
-    2. As a direct wrapper:
-    ```python
-    retry_on_exception(
-        my_func,
-        num_retries=3,
-    )
     ```
     """
 
@@ -152,16 +184,16 @@ def retry_on_exception(
     )
     retry_config = retry_config or RetryConfig()
 
-    def decorator(inner_func: Callable):
-        assert callable(inner_func), "Param `func` must be callable"
+    def decorator(func: Callable) -> Callable:
+        assert callable(func), "Decorated object must be a callable"
 
-        @functools.wraps(inner_func)
-        def wrapper(*args, **kwargs):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> Any:
             delays_between_retries = _compute_delays_between_retries(
                 num_retries=num_retries,
                 retry_config=retry_config,
             )
-            actual_func_name = func_name or inner_func.__name__
+            actual_func_name = func_name or func.__name__
             total_tries = num_retries + 1
 
             for try_count in range(1, total_tries + 1):
@@ -173,7 +205,7 @@ def retry_on_exception(
                     else f"[Retry #{try_count - 1}/{total_tries - 1}]"
                 )
                 try:
-                    result = inner_func(*args, **kwargs)
+                    result = func(*args, **kwargs)
                 except Exception as exc:
                     if include_error_log:
                         msg = (
@@ -193,12 +225,9 @@ def retry_on_exception(
                     time.sleep(delay_in_secs)
                 else:
                     return result
+
         return wrapper
 
-    # Direct-call mode
-    if func is not None:
-        return decorator(func)()
-
-    # Decorator mode
     return decorator
+
 
