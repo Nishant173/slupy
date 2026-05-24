@@ -193,7 +193,7 @@ def retry_on_exception(
                 num_retries=num_retries,
                 retry_config=retry_config,
             )
-            actual_func_name = func_name or getattr(func, "__name__", "<unknown>")
+            actual_func_name = func_name or func.__name__
             total_tries = num_retries + 1
 
             for try_count in range(1, total_tries + 1):
