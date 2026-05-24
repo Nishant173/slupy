@@ -116,8 +116,6 @@ def _compute_delays_between_retries(
 
 
 def retry_on_exception(
-        func: Optional[Callable] = None,
-        /,
         *,
         num_retries: int = 0,
         retry_config: Optional[RetryConfig] = None,
@@ -125,22 +123,15 @@ def retry_on_exception(
         include_error_traceback: Optional[bool] = False,
         raise_if_exception: Optional[bool] = True,
         func_name: Optional[str] = None,
-    ) -> Union[Any, Callable]:
+    ) -> Callable:
     """
-    Can be used either:
-    1. As a decorator:
+    Decorator used to retry a function in case of an exception.
+
+    Usage:
     ```python
     @retry_on_exception(num_retries=3)
     def my_func():
         ...
-    ```
-
-    2. As a direct wrapper:
-    ```python
-    retry_on_exception(
-        my_func,
-        num_retries=3,
-    )
     ```
     """
 
@@ -152,16 +143,16 @@ def retry_on_exception(
     )
     retry_config = retry_config or RetryConfig()
 
-    def decorator(inner_func: Callable):
-        assert callable(inner_func), "Param `func` must be callable"
+    def decorator(func: Callable) -> Callable:
+        assert callable(func), "Decorated object must be a callable"
 
-        @functools.wraps(inner_func)
-        def wrapper(*args, **kwargs):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs) -> Any:
             delays_between_retries = _compute_delays_between_retries(
                 num_retries=num_retries,
                 retry_config=retry_config,
             )
-            actual_func_name = func_name or inner_func.__name__
+            actual_func_name = func_name or func.__name__
             total_tries = num_retries + 1
 
             for try_count in range(1, total_tries + 1):
@@ -173,7 +164,7 @@ def retry_on_exception(
                     else f"[Retry #{try_count - 1}/{total_tries - 1}]"
                 )
                 try:
-                    result = inner_func(*args, **kwargs)
+                    result = func(*args, **kwargs)
                 except Exception as exc:
                     if include_error_log:
                         msg = (
@@ -193,12 +184,8 @@ def retry_on_exception(
                     time.sleep(delay_in_secs)
                 else:
                     return result
+
         return wrapper
 
-    # Direct-call mode
-    if func is not None:
-        return decorator(func)()
-
-    # Decorator mode
     return decorator
 
