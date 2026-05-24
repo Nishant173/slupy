@@ -118,13 +118,13 @@ def functionality_injector(
 
 @dataclass
 class RetryConfig:
-    base_delay: int = 0
+    base_delay_in_seconds: int = 0
     backoff: Literal["constant", "linear", "exponential"] = "constant"
     jitter_range: Optional[Tuple[int, int]] = None
 
     def __post_init__(self):
-        assert isinstance(self.base_delay, int) and self.base_delay >= 0, (
-            "Param `base_delay` must be a non-negative integer"
+        assert isinstance(self.base_delay_in_seconds, int) and self.base_delay_in_seconds >= 0, (
+            "Param `base_delay_in_seconds` must be a non-negative integer"
         )
         assert self.jitter_range is None or (
             isinstance(self.jitter_range, tuple)
@@ -143,9 +143,9 @@ def _compute_delays_between_retries(
     For N retries, there will be N delays.
     """
     backoff_mapper: Dict[str, Callable[[int], int]] = {
-        "constant": lambda retry_count: retry_config.base_delay,
-        "linear": lambda retry_count: retry_config.base_delay * retry_count,
-        "exponential": lambda retry_count: retry_config.base_delay * (2 ** (retry_count - 1)),
+        "constant": lambda retry_count: retry_config.base_delay_in_seconds,
+        "linear": lambda retry_count: retry_config.base_delay_in_seconds * retry_count,
+        "exponential": lambda retry_count: retry_config.base_delay_in_seconds * (2 ** (retry_count - 1)),
     }
     delays = []
     for retry_count in range(1, num_retries + 1):
