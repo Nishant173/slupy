@@ -3,11 +3,52 @@ import functools
 import logging
 import random
 import time
-from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, ParamSpec, Tuple, TypeVar
 
 from slupy.dates.utils import get_timetaken_fstring
 
 logger = logging.getLogger(__name__)
+
+
+P = ParamSpec("P")
+R = TypeVar("R")
+
+
+def execute_with_decorator(
+        *,
+        decorator: Callable[[Callable[P, R]], Callable[P, R]],
+        func: Callable[P, R],
+    ) -> Callable[P, R]:
+    """
+    Applies a decorator to a callable through a direct function call instead of using the `@decorator` syntax.
+    The `decorator` argument must be a decorator callable, or the result of a decorator factory.
+
+    Example:
+    ```python
+    def main():
+        pass
+
+    decorated_func = execute_with_decorator(
+        decorator=retry_on_exception(num_retries=5),
+        func=main,
+    )
+    result = decorated_func(*args, **kwargs)
+    ```
+
+    Equivalent to:
+    ```python
+    @retry_on_exception(num_retries=5)
+    def main():
+        pass
+    ```
+
+    Parameters:
+        decorator: The decorator to apply.
+        func: The callable to decorate.
+
+    Returns a decorated callable with the same signature and return type as the original function.
+    """
+    return decorator(func)
 
 
 def timer(func: Callable) -> Callable:
@@ -152,7 +193,7 @@ def retry_on_exception(
                 num_retries=num_retries,
                 retry_config=retry_config,
             )
-            actual_func_name = func_name or func.__name__
+            actual_func_name = func_name or getattr(func, "__name__", "<unknown>")
             total_tries = num_retries + 1
 
             for try_count in range(1, total_tries + 1):
