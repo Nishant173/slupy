@@ -136,4 +136,3 @@ class TestRetryDecorators(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(call_count, 3)
         self.assertEqual(mock_async_sleep.call_count, 2)
-
