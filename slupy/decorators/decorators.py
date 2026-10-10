@@ -1,9 +1,8 @@
-from dataclasses import dataclass
 import functools
 import logging
 import random
 import time
-from typing import Any, Callable, Dict, List, Literal, Optional, ParamSpec, Tuple, TypeVar
+from typing import Any, Callable, Optional, ParamSpec, TypeVar
 
 from slupy.dates.utils import get_timetaken_fstring
 
@@ -25,11 +24,11 @@ def execute_with_decorator(
 
     Example:
     ```python
-    def main():
+    def main(*args, **kwargs):
         pass
 
     decorated_func = execute_with_decorator(
-        decorator=retry_on_exception(num_retries=5),
+        decorator=repeat(num_times=3),
         func=main,
     )
     result = decorated_func(*args, **kwargs)
@@ -37,9 +36,11 @@ def execute_with_decorator(
 
     Equivalent to:
     ```python
-    @retry_on_exception(num_retries=5)
-    def main():
+    @repeat(num_times=3)
+    def main(*args, **kwargs):
         pass
+
+    result = main(*args, **kwargs)
     ```
 
     Parameters:
@@ -114,120 +115,4 @@ def functionality_injector(
             return result
         return inner_func
     return outer_func
-
-
-@dataclass
-class RetryConfig:
-    base_delay_in_seconds: int = 0
-    backoff: Literal["constant", "linear", "exponential"] = "constant"
-    jitter_range: Optional[Tuple[int, int]] = None
-
-    def __post_init__(self):
-        assert isinstance(self.base_delay_in_seconds, int) and self.base_delay_in_seconds >= 0, (
-            "Param `base_delay_in_seconds` must be a non-negative integer"
-        )
-        assert self.jitter_range is None or (
-            isinstance(self.jitter_range, tuple)
-            and len(self.jitter_range) == 2
-            and self.jitter_range[0] <= self.jitter_range[1]
-        ), "Param `jitter_range` must be a tuple of two numbers (min, max) where min <= max"
-
-
-def _compute_delays_between_retries(
-        *,
-        num_retries: int,
-        retry_config: RetryConfig,
-    ) -> List[int]:
-    """
-    Computes the delays (in seconds) between retries.
-    For N retries, there will be N delays.
-    """
-    backoff_mapper: Dict[str, Callable[[int], int]] = {
-        "constant": lambda retry_count: retry_config.base_delay_in_seconds,
-        "linear": lambda retry_count: retry_config.base_delay_in_seconds * retry_count,
-        "exponential": lambda retry_count: retry_config.base_delay_in_seconds * (2 ** (retry_count - 1)),
-    }
-    delays = []
-    for retry_count in range(1, num_retries + 1):
-        delay = backoff_mapper[retry_config.backoff](retry_count)
-        delay = delay if retry_config.jitter_range is None else delay + random.uniform(*retry_config.jitter_range)
-        delay = round(delay)
-        delays.append(delay)
-    return delays
-
-
-def retry_on_exception(
-        *,
-        num_retries: int = 0,
-        retry_config: Optional[RetryConfig] = None,
-        include_error_log: Optional[bool] = False,
-        include_error_traceback: Optional[bool] = False,
-        raise_if_exception: Optional[bool] = True,
-        func_name: Optional[str] = None,
-    ) -> Callable:
-    """
-    Decorator used to retry a function in case of an exception.
-
-    Usage:
-    ```python
-    @retry_on_exception(num_retries=3)
-    def my_func():
-        ...
-    ```
-    """
-
-    assert isinstance(num_retries, int) and num_retries >= 0, (
-        "Param `num_retries` must be a non-negative integer"
-    )
-    assert retry_config is None or isinstance(retry_config, RetryConfig), (
-        "Param `retry_config` must be of type RetryConfig"
-    )
-    retry_config = retry_config or RetryConfig()
-
-    def decorator(func: Callable) -> Callable:
-        assert callable(func), "Decorated object must be a callable"
-
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs) -> Any:
-            delays_between_retries = _compute_delays_between_retries(
-                num_retries=num_retries,
-                retry_config=retry_config,
-            )
-            actual_func_name = func_name or func.__name__
-            total_tries = num_retries + 1
-
-            for try_count in range(1, total_tries + 1):
-                is_first_try = (try_count == 1)
-                is_last_try = (try_count == total_tries)
-                try_count_string = (
-                    "[Initial try]"
-                    if is_first_try
-                    else f"[Retry #{try_count - 1}/{total_tries - 1}]"
-                )
-                try:
-                    result = func(*args, **kwargs)
-                except Exception as exc:
-                    if include_error_log:
-                        msg = (
-                            f"{try_count_string}"
-                            f" Error while calling '{actual_func_name}'."
-                            f" Error type: '{type(exc).__name__}'."
-                        )
-                        logger.error(
-                            msg,
-                            exc_info=include_error_traceback,
-                        )
-                    if is_last_try:
-                        if raise_if_exception:
-                            raise exc
-                        return None
-                    delay_in_secs = delays_between_retries[try_count - 1]
-                    time.sleep(delay_in_secs)
-                else:
-                    return result
-
-        return wrapper
-
-    return decorator
-
 
