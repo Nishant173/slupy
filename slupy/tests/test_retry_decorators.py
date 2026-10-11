@@ -1,3 +1,4 @@
+import logging
 import unittest
 from unittest.mock import (
     AsyncMock,
@@ -9,6 +10,7 @@ from slupy.decorators.retry import (
     retry_on_exception,
     retry_on_exception_async,
     RetryConfig,
+    RetryLoggingConfig,
 )
 
 
@@ -146,3 +148,71 @@ class TestRetryDecorators(unittest.IsolatedAsyncioTestCase):
 
         self.assertEqual(call_count, 3)
         self.assertEqual(mock_async_sleep.call_count, 2)
+
+
+class TestRetryLogging(unittest.IsolatedAsyncioTestCase):
+
+    @patch("time.sleep", return_value=None)
+    def test_sync_retry_log_attempt_labels(self, mock_sleep: MagicMock):
+        call_count = 0
+
+        @retry_on_exception(
+            retry_config=RetryConfig(num_retries=5),
+            log_config=RetryLoggingConfig(include_error_log=True),
+        )
+        def flaky_func():
+            nonlocal call_count
+            call_count += 1
+            # Fail 5 times, succeed on the 6th time (Retry #5)
+            if call_count < 6:
+                raise ValueError("Temporary failure")
+            return "recovered"
+
+        with self.assertLogs("slupy.decorators.retry", level="ERROR") as cm:
+            result = flaky_func()
+
+        self.assertEqual(result, "recovered")
+
+        # cm.output contains all logged messages strings
+        log_messages = cm.output
+
+        # Verify that the correct attempt tags were logged sequentially
+        self.assertTrue(any("[Initial try]" in msg for msg in log_messages), "Missing [Initial try] log")
+        self.assertTrue(any("[Retry #1/5]" in msg for msg in log_messages), "Missing [Retry #1/5] log")
+        self.assertTrue(any("[Retry #2/5]" in msg for msg in log_messages), "Missing [Retry #2/5] log")
+        self.assertTrue(any("[Retry #3/5]" in msg for msg in log_messages), "Missing [Retry #3/5] log")
+        self.assertTrue(any("[Retry #4/5]" in msg for msg in log_messages), "Missing [Retry #4/5] log")
+        self.assertTrue(not any("[Retry #5/5]" in msg for msg in log_messages), "[Retry #5/5] log should be missing")
+
+    @patch("asyncio.sleep", return_value=None)
+    async def test_async_retry_log_attempt_labels(self, mock_async_sleep: MagicMock):
+        call_count = 0
+
+        @retry_on_exception_async(
+            retry_config=RetryConfig(num_retries=5),
+            log_config=RetryLoggingConfig(include_error_log=True),
+        )
+        async def flaky_async_func():
+            nonlocal call_count
+            call_count += 1
+            # Fail 5 times, succeed on the 6th time (Retry #5)
+            if call_count < 6:
+                raise ValueError("Temporary async failure")
+            return "async recovered"
+
+        with self.assertLogs("slupy.decorators.retry", level="ERROR") as cm:
+            result = await flaky_async_func()
+
+        self.assertEqual(result, "async recovered")
+
+        # cm.output contains all logged message strings
+        log_messages = cm.output
+
+        # Verify that the correct attempt tags were logged sequentially
+        self.assertTrue(any("[Initial try]" in msg for msg in log_messages), "Missing [Initial try] log")
+        self.assertTrue(any("[Retry #1/5]" in msg for msg in log_messages), "Missing [Retry #1/5] log")
+        self.assertTrue(any("[Retry #2/5]" in msg for msg in log_messages), "Missing [Retry #2/5] log")
+        self.assertTrue(any("[Retry #3/5]" in msg for msg in log_messages), "Missing [Retry #3/5] log")
+        self.assertTrue(any("[Retry #4/5]" in msg for msg in log_messages), "Missing [Retry #4/5] log")
+        self.assertTrue(not any("[Retry #5/5]" in msg for msg in log_messages), "[Retry #5/5] log should be missing")
+
