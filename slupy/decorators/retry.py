@@ -32,6 +32,7 @@ class RetryConfig:
     base_delay_in_seconds: float = 0.0
     backoff: Literal["constant", "linear", "exponential"] = "constant"
     jitter_range: Tuple[float, float] = (0.0, 0.0)
+    should_retry: Callable[[Exception], bool] = lambda exc: isinstance(exc, Exception)
 
     def __post_init__(self):
         assert self.num_retries is None or (
@@ -73,7 +74,6 @@ class RetryLoggingConfig:
 def retry_on_exception(
         *,
         retry_config: Optional[RetryConfig] = None,
-        should_retry: Callable[[Exception], bool] = lambda exc: isinstance(exc, Exception),
         log_config: Optional[RetryLoggingConfig] = None,
         raise_if_exception: Optional[bool] = True,
         func_name: Optional[str] = None,
@@ -113,34 +113,30 @@ def retry_on_exception(
             retry_attempt = 0
 
             while True:
-                is_initial_try = (retry_attempt == 0)
-                attempt_info = (
-                    "[Initial try]"
-                    if is_initial_try
-                    else f"[Retry #{retry_attempt}/{num_retries_str}]"
-                )
                 try:
                     return func(*args, **kwargs)
                 except Exception as exc:
-                    retry_attempt += 1
+                    is_initial_try = (retry_attempt == 0)
                     if log_config.include_error_log:
+                        attempt_info = (
+                            "[Initial try]"
+                            if is_initial_try
+                            else f"[Retry #{retry_attempt}/{num_retries_str}]"
+                        )
                         msg = (
-                            "Error while calling function '{}'."
-                            " Error type is '{}'."
-                            " {}."
-                        ).format(
-                            actual_func_name,
-                            type(exc).__name__,
-                            attempt_info,
+                            f"Error while calling function '{actual_func_name}'."
+                            f" Error type is '{type(exc).__name__}'."
+                            f" {attempt_info}."
                         )
                         logger.error(
                             msg,
                             exc_info=log_config.include_error_traceback,
                         )
-                    if not should_retry(exc) or retry_attempt > num_retries:
+                    if not retry_config.should_retry(exc) or retry_attempt >= num_retries:
                         if raise_if_exception:
                             raise
                         return
+                    retry_attempt += 1
                     delay_in_secs = retry_config.compute_delays_between_retries(retry_attempt=retry_attempt)
                     time.sleep(delay_in_secs)
 
@@ -152,7 +148,6 @@ def retry_on_exception(
 def retry_on_exception_async(
         *,
         retry_config: Optional[RetryConfig] = None,
-        should_retry: Callable[[Exception], bool] = lambda exc: isinstance(exc, Exception),
         log_config: Optional[RetryLoggingConfig] = None,
         raise_if_exception: Optional[bool] = True,
         func_name: Optional[str] = None,
@@ -192,34 +187,30 @@ def retry_on_exception_async(
             retry_attempt = 0
 
             while True:
-                is_initial_try = (retry_attempt == 0)
-                attempt_info = (
-                    "[Initial try]"
-                    if is_initial_try
-                    else f"[Retry #{retry_attempt}/{num_retries_str}]"
-                )
                 try:
                     return await func(*args, **kwargs)
                 except Exception as exc:
-                    retry_attempt += 1
+                    is_initial_try = (retry_attempt == 0)
                     if log_config.include_error_log:
+                        attempt_info = (
+                            "[Initial try]"
+                            if is_initial_try
+                            else f"[Retry #{retry_attempt}/{num_retries_str}]"
+                        )
                         msg = (
-                            "Error while calling function '{}'."
-                            " Error type is '{}'."
-                            " {}."
-                        ).format(
-                            actual_func_name,
-                            type(exc).__name__,
-                            attempt_info,
+                            f"Error while calling function '{actual_func_name}'."
+                            f" Error type is '{type(exc).__name__}'."
+                            f" {attempt_info}."
                         )
                         logger.error(
                             msg,
                             exc_info=log_config.include_error_traceback,
                         )
-                    if not should_retry(exc) or retry_attempt > num_retries:
+                    if not retry_config.should_retry(exc) or retry_attempt >= num_retries:
                         if raise_if_exception:
                             raise
                         return
+                    retry_attempt += 1
                     delay_in_secs = retry_config.compute_delays_between_retries(retry_attempt=retry_attempt)
                     await asyncio.sleep(delay_in_secs)
 
