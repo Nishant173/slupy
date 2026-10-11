@@ -221,7 +221,7 @@ class TestRetryLogging(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(not any("[Retry #5/5]" in msg for msg in log_messages), "[Retry #5/5] log should be missing")
 
     @patch("asyncio.sleep", return_value=None)
-    async def test_async_retry_log_attempt_labels(self, mock_async_sleep: MagicMock):
+    async def test_async_retry_log_attempt_labels(self, mock_async_sleep: AsyncMock):
         call_count = 0
 
         @retry_on_exception_async(
