@@ -50,6 +50,9 @@ class RetryConfig:
             and len(self.jitter_range) == 2
             and self.jitter_range[0] <= self.jitter_range[1]
         ), "Param `jitter_range` must be a tuple of two numbers (min, max) where min <= max"
+        assert callable(self.should_retry), (
+            "Param `should_retry` must be a callable which takes an Exception (exc) and returns a boolean"
+        )
 
     def compute_delays_between_retries(self, *, retry_attempt: int) -> float:
         """Computes the delays (in seconds) between retries. The `retry_attempt` must be >= 1."""

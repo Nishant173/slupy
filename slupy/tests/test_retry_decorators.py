@@ -14,6 +14,42 @@ from slupy.decorators.retry import (
 )
 
 
+class TestRetryConfig(unittest.TestCase):
+
+    def test_valid_retry_config(self):
+        retry_config = RetryConfig(
+            num_retries=3,
+            base_delay_in_seconds=10.0,
+            backoff="linear",
+            jitter_range=(1.0, 2.0),
+            should_retry=lambda exc: isinstance(exc, (ValueError, TypeError)),
+        )
+        self.assertIsInstance(retry_config, RetryConfig)
+
+        ## since there is a random jitter_range, let's check if the delay is correctly computed multiple times
+        for _ in range(10_000):
+            self.assertTrue(
+                11 <= retry_config.compute_delays_between_retries(retry_attempt=1) <= 12
+            )
+            self.assertTrue(
+                61 <= retry_config.compute_delays_between_retries(retry_attempt=6) <= 62
+            )
+            self.assertTrue(
+                251 <= retry_config.compute_delays_between_retries(retry_attempt=25) <= 252
+            )
+
+    def test_invalid_should_retry(self):
+        with self.assertRaises(AssertionError) as exc:
+            RetryConfig(
+                num_retries=3,
+                should_retry=False,
+            )
+        self.assertEqual(
+            str(exc.exception),
+            "Param `should_retry` must be a callable which takes an Exception (exc) and returns a boolean",
+        )
+
+
 class TestRetryDecorators(unittest.IsolatedAsyncioTestCase):
 
     # ==========================================
