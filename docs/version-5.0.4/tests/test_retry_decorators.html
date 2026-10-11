@@ -35,6 +35,98 @@ hljs.highlightAll();
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
+<dt id="slupy.tests.test_retry_decorators.TestRetryConfig"><code class="flex name class">
+<span>class <span class="ident">TestRetryConfig</span></span>
+<span>(</span><span>methodName='runTest')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class whose instances are single test cases.</p>
+<p>By default, the test code itself should be placed in a method named
+'runTest'.</p>
+<p>If the fixture may be used for many test cases, create as
+many test methods as are needed. When instantiating such a TestCase
+subclass, specify in the constructor arguments the name of the test method
+that the instance is to execute.</p>
+<p>Test authors should subclass TestCase for their own tests. Construction
+and deconstruction of the test's environment ('fixture') can be
+implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
+<p>If it is necessary to override the <strong>init</strong> method, the base class
+<strong>init</strong> method must always be called. It is important that subclasses
+should not change the signature of their <strong>init</strong> method, since instances
+of the classes are instantiated automatically by parts of the framework
+in order to be run.</p>
+<p>When subclassing TestCase, you can set these attributes:
+* failureException: determines which exception will be raised when
+the instance's assertion methods fail; test methods raising this
+exception will be deemed to have 'failed' rather than 'errored'.
+* longMessage: determines whether long messages (including repr of
+objects used in assert methods) will be printed on failure in <em>addition</em>
+to any explicit message passed.
+* maxDiff: sets the maximum length of a diff in failure messages
+by assert methods using difflib. It is looked up as an instance
+attribute so can be configured by individual tests if required.</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TestRetryConfig(unittest.TestCase):
+
+    def test_valid_retry_config(self):
+        retry_config = RetryConfig(
+            num_retries=3,
+            base_delay_in_seconds=10.0,
+            backoff=&#34;linear&#34;,
+            jitter_range=(1.0, 2.0),
+            should_retry=lambda exc: isinstance(exc, (ValueError, TypeError)),
+        )
+        self.assertIsInstance(retry_config, RetryConfig)
+
+        ## since there is a random jitter_range, let&#39;s check if the delay is correctly computed multiple times
+        for _ in range(10_000):
+            self.assertTrue(
+                11 &lt;= retry_config.compute_delays_between_retries(retry_attempt=1) &lt;= 12
+            )
+            self.assertTrue(
+                61 &lt;= retry_config.compute_delays_between_retries(retry_attempt=6) &lt;= 62
+            )
+            self.assertTrue(
+                251 &lt;= retry_config.compute_delays_between_retries(retry_attempt=25) &lt;= 252
+            )
+
+    def test_invalid_should_retry(self):
+        with self.assertRaises(AssertionError) as exc:
+            RetryConfig(
+                num_retries=3,
+                should_retry=False,
+            )
+        self.assertEqual(
+            str(exc.exception),
+            &#34;Param `should_retry` must be a callable which takes an Exception (exc) and returns a boolean&#34;,
+        )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>unittest.case.TestCase</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="slupy.tests.test_retry_decorators.TestRetryConfig.test_invalid_should_retry"><code class="name flex">
+<span>def <span class="ident">test_invalid_should_retry</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_retry_decorators.TestRetryConfig.test_valid_retry_config"><code class="name flex">
+<span>def <span class="ident">test_valid_retry_config</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 <dt id="slupy.tests.test_retry_decorators.TestRetryDecorators"><code class="flex name class">
 <span>class <span class="ident">TestRetryDecorators</span></span>
 <span>(</span><span>methodName='runTest')</span>
@@ -114,7 +206,11 @@ not have a method with the specified name.</p></div>
     def test_sync_exhausts_retries_raises_exception(self, mock_sleep: MagicMock):
         call_count = 0
 
-        @retry_on_exception(retry_config=RetryConfig(num_retries=2), raise_if_exception=True)
+        @retry_on_exception(
+            retry_config=RetryConfig(
+                num_retries=2,
+            )
+        )
         def sample_func():
             nonlocal call_count
             call_count += 1
@@ -131,8 +227,10 @@ not have a method with the specified name.</p></div>
         call_count = 0
 
         @retry_on_exception(
-            retry_config=RetryConfig(num_retries=3),
-            should_retry=lambda exc: isinstance(exc, ValueError)  # Don&#39;t retry ConnectionError
+            retry_config=RetryConfig(
+                num_retries=3,
+                should_retry=lambda exc: isinstance(exc, ValueError)  # Don&#39;t retry ConnectionError
+            ),
         )
         def sample_func():
             nonlocal call_count
@@ -185,7 +283,11 @@ not have a method with the specified name.</p></div>
     async def test_async_exhausts_retries_raises_exception(self, mock_async_sleep: AsyncMock):
         call_count = 0
 
-        @retry_on_exception_async(retry_config=RetryConfig(num_retries=2), raise_if_exception=True)
+        @retry_on_exception_async(
+            retry_config=RetryConfig(
+                num_retries=2,
+            ),
+        )
         async def sample_async_func():
             nonlocal call_count
             call_count += 1
@@ -248,6 +350,130 @@ not have a method with the specified name.</p></div>
 </dd>
 </dl>
 </dd>
+<dt id="slupy.tests.test_retry_decorators.TestRetryLogging"><code class="flex name class">
+<span>class <span class="ident">TestRetryLogging</span></span>
+<span>(</span><span>methodName='runTest')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class whose instances are single test cases.</p>
+<p>By default, the test code itself should be placed in a method named
+'runTest'.</p>
+<p>If the fixture may be used for many test cases, create as
+many test methods as are needed. When instantiating such a TestCase
+subclass, specify in the constructor arguments the name of the test method
+that the instance is to execute.</p>
+<p>Test authors should subclass TestCase for their own tests. Construction
+and deconstruction of the test's environment ('fixture') can be
+implemented by overriding the 'setUp' and 'tearDown' methods respectively.</p>
+<p>If it is necessary to override the <strong>init</strong> method, the base class
+<strong>init</strong> method must always be called. It is important that subclasses
+should not change the signature of their <strong>init</strong> method, since instances
+of the classes are instantiated automatically by parts of the framework
+in order to be run.</p>
+<p>When subclassing TestCase, you can set these attributes:
+* failureException: determines which exception will be raised when
+the instance's assertion methods fail; test methods raising this
+exception will be deemed to have 'failed' rather than 'errored'.
+* longMessage: determines whether long messages (including repr of
+objects used in assert methods) will be printed on failure in <em>addition</em>
+to any explicit message passed.
+* maxDiff: sets the maximum length of a diff in failure messages
+by assert methods using difflib. It is looked up as an instance
+attribute so can be configured by individual tests if required.</p>
+<p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TestRetryLogging(unittest.IsolatedAsyncioTestCase):
+
+    @patch(&#34;time.sleep&#34;, return_value=None)
+    def test_sync_retry_log_attempt_labels(self, mock_sleep: MagicMock):
+        call_count = 0
+
+        @retry_on_exception(
+            retry_config=RetryConfig(num_retries=5),
+            log_config=RetryLoggingConfig(include_error_log=True),
+        )
+        def flaky_func():
+            nonlocal call_count
+            call_count += 1
+            # Fail 5 times, succeed on the 6th time (Retry #5)
+            if call_count &lt; 6:
+                raise ValueError(&#34;Temporary failure&#34;)
+            return &#34;recovered&#34;
+
+        with self.assertLogs(&#34;slupy.decorators.retry&#34;, level=&#34;ERROR&#34;) as cm:
+            result = flaky_func()
+
+        self.assertEqual(result, &#34;recovered&#34;)
+
+        # cm.output contains all logged messages strings
+        log_messages = cm.output
+
+        # Verify that the correct attempt tags were logged sequentially
+        self.assertTrue(any(&#34;[Initial try]&#34; in msg for msg in log_messages), &#34;Missing [Initial try] log&#34;)
+        self.assertTrue(any(&#34;[Retry #1/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #1/5] log&#34;)
+        self.assertTrue(any(&#34;[Retry #2/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #2/5] log&#34;)
+        self.assertTrue(any(&#34;[Retry #3/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #3/5] log&#34;)
+        self.assertTrue(any(&#34;[Retry #4/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #4/5] log&#34;)
+        self.assertTrue(not any(&#34;[Retry #5/5]&#34; in msg for msg in log_messages), &#34;[Retry #5/5] log should be missing&#34;)
+
+    @patch(&#34;asyncio.sleep&#34;, return_value=None)
+    async def test_async_retry_log_attempt_labels(self, mock_async_sleep: MagicMock):
+        call_count = 0
+
+        @retry_on_exception_async(
+            retry_config=RetryConfig(num_retries=5),
+            log_config=RetryLoggingConfig(include_error_log=True),
+        )
+        async def flaky_async_func():
+            nonlocal call_count
+            call_count += 1
+            # Fail 5 times, succeed on the 6th time (Retry #5)
+            if call_count &lt; 6:
+                raise ValueError(&#34;Temporary async failure&#34;)
+            return &#34;async recovered&#34;
+
+        with self.assertLogs(&#34;slupy.decorators.retry&#34;, level=&#34;ERROR&#34;) as cm:
+            result = await flaky_async_func()
+
+        self.assertEqual(result, &#34;async recovered&#34;)
+
+        # cm.output contains all logged message strings
+        log_messages = cm.output
+
+        # Verify that the correct attempt tags were logged sequentially
+        self.assertTrue(any(&#34;[Initial try]&#34; in msg for msg in log_messages), &#34;Missing [Initial try] log&#34;)
+        self.assertTrue(any(&#34;[Retry #1/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #1/5] log&#34;)
+        self.assertTrue(any(&#34;[Retry #2/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #2/5] log&#34;)
+        self.assertTrue(any(&#34;[Retry #3/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #3/5] log&#34;)
+        self.assertTrue(any(&#34;[Retry #4/5]&#34; in msg for msg in log_messages), &#34;Missing [Retry #4/5] log&#34;)
+        self.assertTrue(not any(&#34;[Retry #5/5]&#34; in msg for msg in log_messages), &#34;[Retry #5/5] log should be missing&#34;)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li>unittest.async_case.IsolatedAsyncioTestCase</li>
+<li>unittest.case.TestCase</li>
+</ul>
+<h3>Methods</h3>
+<dl>
+<dt id="slupy.tests.test_retry_decorators.TestRetryLogging.test_async_retry_log_attempt_labels"><code class="name flex">
+<span>async def <span class="ident">test_async_retry_log_attempt_labels</span></span>(<span>self, mock_async_sleep: unittest.mock.MagicMock)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="slupy.tests.test_retry_decorators.TestRetryLogging.test_sync_retry_log_attempt_labels"><code class="name flex">
+<span>def <span class="ident">test_sync_retry_log_attempt_labels</span></span>(<span>self, mock_sleep: unittest.mock.MagicMock)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
 </dl>
 </section>
 </article>
@@ -264,6 +490,13 @@ not have a method with the specified name.</p></div>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
+<h4><code><a title="slupy.tests.test_retry_decorators.TestRetryConfig" href="#slupy.tests.test_retry_decorators.TestRetryConfig">TestRetryConfig</a></code></h4>
+<ul class="">
+<li><code><a title="slupy.tests.test_retry_decorators.TestRetryConfig.test_invalid_should_retry" href="#slupy.tests.test_retry_decorators.TestRetryConfig.test_invalid_should_retry">test_invalid_should_retry</a></code></li>
+<li><code><a title="slupy.tests.test_retry_decorators.TestRetryConfig.test_valid_retry_config" href="#slupy.tests.test_retry_decorators.TestRetryConfig.test_valid_retry_config">test_valid_retry_config</a></code></li>
+</ul>
+</li>
+<li>
 <h4><code><a title="slupy.tests.test_retry_decorators.TestRetryDecorators" href="#slupy.tests.test_retry_decorators.TestRetryDecorators">TestRetryDecorators</a></code></h4>
 <ul class="">
 <li><code><a title="slupy.tests.test_retry_decorators.TestRetryDecorators.test_async_exhausts_retries_raises_exception" href="#slupy.tests.test_retry_decorators.TestRetryDecorators.test_async_exhausts_retries_raises_exception">test_async_exhausts_retries_raises_exception</a></code></li>
@@ -273,6 +506,13 @@ not have a method with the specified name.</p></div>
 <li><code><a title="slupy.tests.test_retry_decorators.TestRetryDecorators.test_sync_exhausts_retries_raises_exception" href="#slupy.tests.test_retry_decorators.TestRetryDecorators.test_sync_exhausts_retries_raises_exception">test_sync_exhausts_retries_raises_exception</a></code></li>
 <li><code><a title="slupy.tests.test_retry_decorators.TestRetryDecorators.test_sync_succeeds_after_retries" href="#slupy.tests.test_retry_decorators.TestRetryDecorators.test_sync_succeeds_after_retries">test_sync_succeeds_after_retries</a></code></li>
 <li><code><a title="slupy.tests.test_retry_decorators.TestRetryDecorators.test_sync_success_on_first_try" href="#slupy.tests.test_retry_decorators.TestRetryDecorators.test_sync_success_on_first_try">test_sync_success_on_first_try</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="slupy.tests.test_retry_decorators.TestRetryLogging" href="#slupy.tests.test_retry_decorators.TestRetryLogging">TestRetryLogging</a></code></h4>
+<ul class="">
+<li><code><a title="slupy.tests.test_retry_decorators.TestRetryLogging.test_async_retry_log_attempt_labels" href="#slupy.tests.test_retry_decorators.TestRetryLogging.test_async_retry_log_attempt_labels">test_async_retry_log_attempt_labels</a></code></li>
+<li><code><a title="slupy.tests.test_retry_decorators.TestRetryLogging.test_sync_retry_log_attempt_labels" href="#slupy.tests.test_retry_decorators.TestRetryLogging.test_sync_retry_log_attempt_labels">test_sync_retry_log_attempt_labels</a></code></li>
 </ul>
 </li>
 </ul>

@@ -34,7 +34,7 @@ hljs.highlightAll();
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="slupy.decorators.retry.retry_on_exception"><code class="name flex">
-<span>def <span class="ident">retry_on_exception</span></span>(<span>*, retry_config: Optional[<a title="slupy.decorators.retry.RetryConfig" href="#slupy.decorators.retry.RetryConfig">RetryConfig</a>] = None, should_retry: Callable[[Exception], bool] = &lt;function &lt;lambda&gt;&gt;, log_config: Optional[<a title="slupy.decorators.retry.RetryLoggingConfig" href="#slupy.decorators.retry.RetryLoggingConfig">RetryLoggingConfig</a>] = None, raise_if_exception: Optional[bool] = True, func_name: Optional[str] = None) ‑> Callable[[Callable[~P, ~R]], Callable[~P, Optional[~R]]]</span>
+<span>def <span class="ident">retry_on_exception</span></span>(<span>*, retry_config: Optional[<a title="slupy.decorators.retry.RetryConfig" href="#slupy.decorators.retry.RetryConfig">RetryConfig</a>] = None, log_config: Optional[<a title="slupy.decorators.retry.RetryLoggingConfig" href="#slupy.decorators.retry.RetryLoggingConfig">RetryLoggingConfig</a>] = None, raise_if_exception: Optional[bool] = True, func_name: Optional[str] = None) ‑> Callable[[Callable[~P, ~R]], Callable[~P, Optional[~R]]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Decorator used to retry a function in case of an exception.</p>
@@ -45,7 +45,7 @@ def my_func():
 </code></pre></div>
 </dd>
 <dt id="slupy.decorators.retry.retry_on_exception_async"><code class="name flex">
-<span>def <span class="ident">retry_on_exception_async</span></span>(<span>*, retry_config: Optional[<a title="slupy.decorators.retry.RetryConfig" href="#slupy.decorators.retry.RetryConfig">RetryConfig</a>] = None, should_retry: Callable[[Exception], bool] = &lt;function &lt;lambda&gt;&gt;, log_config: Optional[<a title="slupy.decorators.retry.RetryLoggingConfig" href="#slupy.decorators.retry.RetryLoggingConfig">RetryLoggingConfig</a>] = None, raise_if_exception: Optional[bool] = True, func_name: Optional[str] = None) ‑> Callable[[Callable[~P, Awaitable[~R]]], Callable[~P, Coroutine[Any, Any, Optional[~R]]]]</span>
+<span>def <span class="ident">retry_on_exception_async</span></span>(<span>*, retry_config: Optional[<a title="slupy.decorators.retry.RetryConfig" href="#slupy.decorators.retry.RetryConfig">RetryConfig</a>] = None, log_config: Optional[<a title="slupy.decorators.retry.RetryLoggingConfig" href="#slupy.decorators.retry.RetryLoggingConfig">RetryLoggingConfig</a>] = None, raise_if_exception: Optional[bool] = True, func_name: Optional[str] = None) ‑> Callable[[Callable[~P, Awaitable[~R]]], Callable[~P, Coroutine[Any, Any, Optional[~R]]]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Decorator used to retry an async function in case of an exception.</p>
@@ -62,10 +62,10 @@ async def my_func():
 <dl>
 <dt id="slupy.decorators.retry.RetryConfig"><code class="flex name class">
 <span>class <span class="ident">RetryConfig</span></span>
-<span>(</span><span>num_retries: Optional[int] = 0, base_delay_in_seconds: float = 0.0, backoff: Literal['constant', 'linear', 'exponential'] = 'constant', jitter_range: Tuple[float, float] = (0.0, 0.0))</span>
+<span>(</span><span>num_retries: Optional[int] = 0, base_delay_in_seconds: float = 0.0, backoff: Literal['constant', 'linear', 'exponential'] = 'constant', jitter_range: Tuple[float, float] = (0.0, 0.0), should_retry: Callable[[Exception], bool] = &lt;function RetryConfig.&lt;lambda&gt;&gt;)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>RetryConfig(num_retries: Optional[int] = 0, base_delay_in_seconds: float = 0.0, backoff: Literal['constant', 'linear', 'exponential'] = 'constant', jitter_range: Tuple[float, float] = (0.0, 0.0))</p></div>
+<div class="desc"><p>RetryConfig(num_retries: Optional[int] = 0, base_delay_in_seconds: float = 0.0, backoff: Literal['constant', 'linear', 'exponential'] = 'constant', jitter_range: Tuple[float, float] = (0.0, 0.0), should_retry: Callable[[Exception], bool] = <function RetryConfig.\<lambda> at 0x0000022901E78A40>)</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -76,6 +76,7 @@ class RetryConfig:
     base_delay_in_seconds: float = 0.0
     backoff: Literal[&#34;constant&#34;, &#34;linear&#34;, &#34;exponential&#34;] = &#34;constant&#34;
     jitter_range: Tuple[float, float] = (0.0, 0.0)
+    should_retry: Callable[[Exception], bool] = lambda exc: isinstance(exc, Exception)
 
     def __post_init__(self):
         assert self.num_retries is None or (
@@ -93,6 +94,9 @@ class RetryConfig:
             and len(self.jitter_range) == 2
             and self.jitter_range[0] &lt;= self.jitter_range[1]
         ), &#34;Param `jitter_range` must be a tuple of two numbers (min, max) where min &lt;= max&#34;
+        assert callable(self.should_retry), (
+            &#34;Param `should_retry` must be a callable which takes an Exception (exc) and returns a boolean&#34;
+        )
 
     def compute_delays_between_retries(self, *, retry_attempt: int) -&gt; float:
         &#34;&#34;&#34;Computes the delays (in seconds) between retries. The `retry_attempt` must be &gt;= 1.&#34;&#34;&#34;
@@ -133,6 +137,12 @@ class RetryConfig:
 </code></dt>
 <dd>
 <div class="desc"><p>Computes the delays (in seconds) between retries. The <code>retry_attempt</code> must be &gt;= 1.</p></div>
+</dd>
+<dt id="slupy.decorators.retry.RetryConfig.should_retry"><code class="name flex">
+<span>def <span class="ident">should_retry</span></span>(<span>exc) ‑> Callable[[Exception], bool]</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 </dl>
 </dd>
@@ -192,6 +202,7 @@ class RetryLoggingConfig:
 <li><code><a title="slupy.decorators.retry.RetryConfig.compute_delays_between_retries" href="#slupy.decorators.retry.RetryConfig.compute_delays_between_retries">compute_delays_between_retries</a></code></li>
 <li><code><a title="slupy.decorators.retry.RetryConfig.jitter_range" href="#slupy.decorators.retry.RetryConfig.jitter_range">jitter_range</a></code></li>
 <li><code><a title="slupy.decorators.retry.RetryConfig.num_retries" href="#slupy.decorators.retry.RetryConfig.num_retries">num_retries</a></code></li>
+<li><code><a title="slupy.decorators.retry.RetryConfig.should_retry" href="#slupy.decorators.retry.RetryConfig.should_retry">should_retry</a></code></li>
 </ul>
 </li>
 <li>
