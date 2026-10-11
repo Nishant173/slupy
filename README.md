@@ -9,4 +9,3 @@
 
 ## Tests
 - To run all unit-tests: `python -m unittest discover -s slupy/tests -p "test_*.py"`
-
