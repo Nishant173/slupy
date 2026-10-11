@@ -252,3 +252,4 @@ class TestRetryLogging(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(any("[Retry #4/5]" in msg for msg in log_messages), "Missing [Retry #4/5] log")
         self.assertTrue(not any("[Retry #5/5]" in msg for msg in log_messages), "[Retry #5/5] log should be missing")
 
+
