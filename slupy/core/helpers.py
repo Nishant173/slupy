@@ -1,10 +1,20 @@
 import copy
+from decimal import Decimal
 import math
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from slupy.core import checks
 
 Sliceable = Union[list, tuple, str]
+
+
+def get_num_decimal_places(number: float) -> int:
+    """Returns the number of decimal places present in the given number (float)"""
+    if number.is_integer():
+        return 0
+    decimal_obj = Decimal(str(number))
+    decimal_tuple = decimal_obj.as_tuple()
+    return decimal_tuple.exponent * -1
 
 
 def make_deep_copy(obj: Any, /) -> Any:

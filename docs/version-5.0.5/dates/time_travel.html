@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+<meta name="generator" content="pdoc3 0.11.1">
+<title>slupy.dates.time_travel API documentation</title>
+<meta name="description" content="">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/sanitize.min.css" integrity="sha512-y1dtMcuvtTMJc1yPgEqF0ZjQbhnc/bFhyvIyVNb9Zk5mIGtqVaAB1Ttl28su8AvFMOY0EwRbAe+HCLqj6W7/KA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/13.0.0/typography.min.css" integrity="sha512-Y1DYSb995BAfxobCkKepB1BqJJTPrOp3zPL74AWFugHHmmdcvO+C48WLrUOlhGMc0QG7AE3f7gmvvcrmX2fDoA==" crossorigin>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:1.5em;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:2em 0 .50em 0}h3{font-size:1.4em;margin:1.6em 0 .7em 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .2s ease-in-out}a:visited{color:#503}a:hover{color:#b62}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900;font-weight:bold}pre code{font-size:.8em;line-height:1.4em;padding:1em;display:block}code{background:#f3f3f3;font-family:"DejaVu Sans Mono",monospace;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em 1em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul ul{padding-left:1em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" integrity="sha512-D9gUyxqja7hBtkWpPWGt9wfbfaMGVt9gnyCvYa+jojwwPHLCzUm5i8rpk7vD7wNee9bA35eYIjobYPaQuKS1MQ==" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => {
+hljs.configure({languages: ['bash', 'css', 'diff', 'graphql', 'ini', 'javascript', 'json', 'plaintext', 'python', 'python-repl', 'rust', 'shell', 'sql', 'typescript', 'xml', 'yaml']});
+hljs.highlightAll();
+})</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>slupy.dates.time_travel</code></h1>
+</header>
+<section id="section-intro">
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="slupy.dates.time_travel.TimeTravel"><code class="flex name class">
+<span>class <span class="ident">TimeTravel</span></span>
+<span>(</span><span>origin: Union[datetime, date], /)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Class that represents a time-traveller.</p>
+<p>Instance methods:
+- add()
+- copy()
+- diff_for_humans()
+- subtract()</p>
+<h2 id="properties">Properties</h2>
+<ul>
+<li>dtype</li>
+<li>initial_value</li>
+<li>value</li>
+</ul></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TimeTravel:
+    &#34;&#34;&#34;
+    Class that represents a time-traveller.
+
+    Instance methods:
+        - add()
+        - copy()
+        - diff_for_humans()
+        - subtract()
+
+    Properties:
+        - dtype
+        - initial_value
+        - value
+    &#34;&#34;&#34;
+
+    def __init__(self, origin: Union[datetime, date], /) -&gt; None:
+        assert utils.is_date_or_datetime_object(origin), &#34;Param must be of type &#39;date&#39; or &#39;datetime&#39;&#34;
+        self._initial_value = origin.replace()  # make a copy
+        self._value = origin.replace()  # make a copy
+        self._dtype: Literal[&#34;DATE&#34;, &#34;DATETIME&#34;] = (
+            &#34;DATETIME&#34; if isinstance(self._value, datetime) else &#34;DATE&#34;
+        )
+
+    def __str__(self) -&gt; str:
+        return self._value_as_string()
+
+    def __repr__(self) -&gt; str:
+        return f&#34;{self.__class__.__name__}(value=&#39;{self._value_as_string()}&#39;)&#34;
+
+    def copy(self) -&gt; TimeTravel:
+        &#34;&#34;&#34;Returns a copy (new instance) of the `TimeTravel` object&#34;&#34;&#34;
+        return TimeTravel(self.value)
+
+    @property
+    def initial_value(self) -&gt; Union[datetime, date]:
+        return self._initial_value
+
+    @initial_value.setter
+    def initial_value(self, obj) -&gt; None:
+        raise NotImplementedError(&#34;Not allowed to set the `initial_value` property&#34;)
+
+    def _value_as_string(self) -&gt; str:
+        &#34;&#34;&#34;Returns the string representation of the `value` property&#34;&#34;&#34;
+        if self.dtype == &#34;DATETIME&#34;:
+            return self.value.strftime(constants.DATETIME_FORMAT)
+        return self.value.strftime(constants.DATE_FORMAT)
+
+    @property
+    def value(self) -&gt; Union[datetime, date]:
+        return self._value
+
+    @value.setter
+    def value(self, obj) -&gt; None:
+        assert utils.is_date_or_datetime_object(obj), &#34;Param must be of type &#39;date&#39; or &#39;datetime&#39;&#34;
+        self._value = obj
+
+    @property
+    def dtype(self) -&gt; Literal[&#34;DATE&#34;, &#34;DATETIME&#34;]:
+        return self._dtype
+
+    @dtype.setter
+    def dtype(self, obj) -&gt; None:
+        raise NotImplementedError(&#34;Not allowed to set the `dtype` property&#34;)
+
+    def _add_years(self, *, years: int = 0) -&gt; TimeTravel:
+        updated_year = self.value.year + years
+        self.value = utils.update_year(self.value, to_year=updated_year, leap_forward=True)
+        return self
+
+    def _subtract_years(self, *, years: int = 0) -&gt; TimeTravel:
+        updated_year = self.value.year - years
+        self.value = utils.update_year(self.value, to_year=updated_year, leap_forward=False)
+        return self
+
+    def _compute_day_of_month_after_travelling(self, *, to_year: int, to_month: int, day_of_month: int) -&gt; int:
+        &#34;&#34;&#34;
+        Used for cases where day-of-month could be 29, 30, 31.
+        Returns the day-of-month to use [1-31].
+        &#34;&#34;&#34;
+        assert checks.is_positive_integer(day_of_month) and 29 &lt;= day_of_month &lt;= 31, (
+            &#34;Param `day_of_month` must be one of: [29, 30, 31]&#34;
+        )
+        if to_month in constants.MONTHS_HAVING_30_DAYS:
+            return day_of_month if day_of_month &lt; 30 else 30
+        elif to_month in constants.MONTHS_HAVING_31_DAYS:
+            return day_of_month
+        return 29 if utils.is_leap_year(to_year) else 28
+
+    def _add_months(self, *, months: int = 0) -&gt; TimeTravel:
+        diff_years, diff_months = divmod(months, constants.NUM_MONTHS_PER_YEAR)
+        if diff_years &gt; 0:
+            self = self._add_years(years=diff_years)
+        if diff_months == 0:
+            return self
+        updated_month = (
+            (self.value.month + diff_months) % constants.NUM_MONTHS_PER_YEAR
+            if self.value.month + diff_months &gt; constants.NUM_MONTHS_PER_YEAR else
+            self.value.month + diff_months
+        )
+        updated_year = (
+            self.value.year + 1
+            if self.value.month + diff_months &gt; constants.NUM_MONTHS_PER_YEAR else
+            self.value.year
+        )
+        if 1 &lt;= self.value.day &lt;= 28:
+            self.value = self.value.replace(year=updated_year, month=updated_month)
+        else:
+            day_of_month = self._compute_day_of_month_after_travelling(
+                to_year=updated_year,
+                to_month=updated_month,
+                day_of_month=self.value.day,
+            )
+            self.value = self.value.replace(year=updated_year, month=updated_month, day=day_of_month)
+        return self
+
+    def _subtract_months(self, *, months: int = 0) -&gt; TimeTravel:
+        diff_years, diff_months = divmod(months, constants.NUM_MONTHS_PER_YEAR)
+        if diff_years &gt; 0:
+            self = self._subtract_years(years=diff_years)
+        if diff_months == 0:
+            return self
+        updated_month = (
+            constants.NUM_MONTHS_PER_YEAR - abs(self.value.month - diff_months)
+            if self.value.month - diff_months &lt;= 0 else
+            self.value.month - diff_months
+        )
+        updated_year = self.value.year - 1 if self.value.month - diff_months &lt; 0 else self.value.year
+        if 1 &lt;= self.value.day &lt;= 28:
+            self.value = self.value.replace(year=updated_year, month=updated_month)
+        else:
+            day_of_month = self._compute_day_of_month_after_travelling(
+                to_year=updated_year,
+                to_month=updated_month,
+                day_of_month=self.value.day,
+            )
+            self.value = self.value.replace(year=updated_year, month=updated_month, day=day_of_month)
+        return self
+
+    def add(
+            self,
+            *,
+            years: int = 0,
+            months: int = 0,
+            weeks: int = 0,
+            days: int = 0,
+            hours: int = 0,
+            minutes: int = 0,
+            seconds: int = 0,
+            milliseconds: int = 0,
+            microseconds: int = 0,
+        ) -&gt; TimeTravel:
+        &#34;&#34;&#34;Returns the same `TimeTravel` instance after modifying it in-place&#34;&#34;&#34;
+        assert checks.is_non_negative_integer(years), &#34;Param `years` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(months), &#34;Param `months` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(weeks), &#34;Param `weeks` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(days), &#34;Param `days` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(hours), &#34;Param `hours` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(minutes), &#34;Param `minutes` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(seconds), &#34;Param `seconds` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(milliseconds), &#34;Param `milliseconds` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(microseconds), &#34;Param `microseconds` must be a non-negative integer&#34;
+        if self.dtype == &#34;DATE&#34;:
+            assert checks.is_zero_or_none(hours), &#34;Param `hours` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(minutes), &#34;Param `minutes` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(seconds), &#34;Param `seconds` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(milliseconds), &#34;Param `milliseconds` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(microseconds), &#34;Param `microseconds` must not be passed when a date-object is used&#34;
+        self = self._add_years(years=years)
+        self = self._add_months(months=months)
+        self.value += timedelta(
+            weeks=weeks,
+            days=days,
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds,
+            milliseconds=milliseconds,
+            microseconds=microseconds,
+        )
+        return self
+
+    def subtract(
+            self,
+            *,
+            years: int = 0,
+            months: int = 0,
+            weeks: int = 0,
+            days: int = 0,
+            hours: int = 0,
+            minutes: int = 0,
+            seconds: int = 0,
+            milliseconds: int = 0,
+            microseconds: int = 0,
+        ) -&gt; TimeTravel:
+        &#34;&#34;&#34;Returns the same `TimeTravel` instance after modifying it in-place&#34;&#34;&#34;
+        assert checks.is_non_negative_integer(years), &#34;Param `years` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(months), &#34;Param `months` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(weeks), &#34;Param `weeks` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(days), &#34;Param `days` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(hours), &#34;Param `hours` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(minutes), &#34;Param `minutes` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(seconds), &#34;Param `seconds` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(milliseconds), &#34;Param `milliseconds` must be a non-negative integer&#34;
+        assert checks.is_non_negative_integer(microseconds), &#34;Param `microseconds` must be a non-negative integer&#34;
+        if self.dtype == &#34;DATE&#34;:
+            assert checks.is_zero_or_none(hours), &#34;Param `hours` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(minutes), &#34;Param `minutes` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(seconds), &#34;Param `seconds` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(milliseconds), &#34;Param `milliseconds` must not be passed when a date-object is used&#34;
+            assert checks.is_zero_or_none(microseconds), &#34;Param `microseconds` must not be passed when a date-object is used&#34;
+        self = self._subtract_years(years=years)
+        self = self._subtract_months(months=months)
+        self.value -= timedelta(
+            weeks=weeks,
+            days=days,
+            hours=hours,
+            minutes=minutes,
+            seconds=seconds,
+            milliseconds=milliseconds,
+            microseconds=microseconds,
+        )
+        return self
+
+    def diff_for_humans(self) -&gt; str:
+        &#34;&#34;&#34;
+        Returns a string having a human-readable format of the difference between `value` and `initial_value`.
+        Computes it as `value` - `initial_value`.
+        &#34;&#34;&#34;
+        difference_in_seconds = (self.value - self.initial_value).total_seconds()
+        timetaken_fstring = utils.get_timetaken_fstring(
+            num_seconds=abs(difference_in_seconds),
+            shorten_unit=False,
+        )
+        if difference_in_seconds == 0:
+            return timetaken_fstring
+        sign = &#34;(+)&#34; if difference_in_seconds &gt; 0 else &#34;(-)&#34;
+        return f&#34;{sign} {timetaken_fstring}&#34;</code></pre>
+</details>
+<h3>Instance variables</h3>
+<dl>
+<dt id="slupy.dates.time_travel.TimeTravel.dtype"><code class="name">prop <span class="ident">dtype</span> : Literal['DATE', 'DATETIME']</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def dtype(self) -&gt; Literal[&#34;DATE&#34;, &#34;DATETIME&#34;]:
+    return self._dtype</code></pre>
+</details>
+</dd>
+<dt id="slupy.dates.time_travel.TimeTravel.initial_value"><code class="name">prop <span class="ident">initial_value</span> : Union[datetime, date]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def initial_value(self) -&gt; Union[datetime, date]:
+    return self._initial_value</code></pre>
+</details>
+</dd>
+<dt id="slupy.dates.time_travel.TimeTravel.value"><code class="name">prop <span class="ident">value</span> : Union[datetime, date]</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def value(self) -&gt; Union[datetime, date]:
+    return self._value</code></pre>
+</details>
+</dd>
+</dl>
+<h3>Methods</h3>
+<dl>
+<dt id="slupy.dates.time_travel.TimeTravel.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, *, years: int = 0, months: int = 0, weeks: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) ‑> <a title="slupy.dates.time_travel.TimeTravel" href="#slupy.dates.time_travel.TimeTravel">TimeTravel</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the same <code><a title="slupy.dates.time_travel.TimeTravel" href="#slupy.dates.time_travel.TimeTravel">TimeTravel</a></code> instance after modifying it in-place</p></div>
+</dd>
+<dt id="slupy.dates.time_travel.TimeTravel.copy"><code class="name flex">
+<span>def <span class="ident">copy</span></span>(<span>self) ‑> <a title="slupy.dates.time_travel.TimeTravel" href="#slupy.dates.time_travel.TimeTravel">TimeTravel</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a copy (new instance) of the <code><a title="slupy.dates.time_travel.TimeTravel" href="#slupy.dates.time_travel.TimeTravel">TimeTravel</a></code> object</p></div>
+</dd>
+<dt id="slupy.dates.time_travel.TimeTravel.diff_for_humans"><code class="name flex">
+<span>def <span class="ident">diff_for_humans</span></span>(<span>self) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns a string having a human-readable format of the difference between <code>value</code> and <code>initial_value</code>.
+Computes it as <code>value</code> - <code>initial_value</code>.</p></div>
+</dd>
+<dt id="slupy.dates.time_travel.TimeTravel.subtract"><code class="name flex">
+<span>def <span class="ident">subtract</span></span>(<span>self, *, years: int = 0, months: int = 0, weeks: int = 0, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0, milliseconds: int = 0, microseconds: int = 0) ‑> <a title="slupy.dates.time_travel.TimeTravel" href="#slupy.dates.time_travel.TimeTravel">TimeTravel</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the same <code><a title="slupy.dates.time_travel.TimeTravel" href="#slupy.dates.time_travel.TimeTravel">TimeTravel</a></code> instance after modifying it in-place</p></div>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="slupy.dates" href="index.html">slupy.dates</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="slupy.dates.time_travel.TimeTravel" href="#slupy.dates.time_travel.TimeTravel">TimeTravel</a></code></h4>
+<ul class="two-column">
+<li><code><a title="slupy.dates.time_travel.TimeTravel.add" href="#slupy.dates.time_travel.TimeTravel.add">add</a></code></li>
+<li><code><a title="slupy.dates.time_travel.TimeTravel.copy" href="#slupy.dates.time_travel.TimeTravel.copy">copy</a></code></li>
+<li><code><a title="slupy.dates.time_travel.TimeTravel.diff_for_humans" href="#slupy.dates.time_travel.TimeTravel.diff_for_humans">diff_for_humans</a></code></li>
+<li><code><a title="slupy.dates.time_travel.TimeTravel.dtype" href="#slupy.dates.time_travel.TimeTravel.dtype">dtype</a></code></li>
+<li><code><a title="slupy.dates.time_travel.TimeTravel.initial_value" href="#slupy.dates.time_travel.TimeTravel.initial_value">initial_value</a></code></li>
+<li><code><a title="slupy.dates.time_travel.TimeTravel.subtract" href="#slupy.dates.time_travel.TimeTravel.subtract">subtract</a></code></li>
+<li><code><a title="slupy.dates.time_travel.TimeTravel.value" href="#slupy.dates.time_travel.TimeTravel.value">value</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.11.1</a>.</p>
+</footer>
+</body>
+</html>

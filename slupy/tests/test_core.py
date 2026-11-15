@@ -197,4 +197,33 @@ class TestCore(unittest.TestCase):
             },
         )
 
+    def test_get_num_decimal_places(self):
+        self.assertEqual(
+            helpers.get_num_decimal_places(512.4729),
+            4,
+        )
+        self.assertEqual(
+            helpers.get_num_decimal_places(-512.4729),
+            4,
+        )
+        self.assertEqual(
+            helpers.get_num_decimal_places(512.472900),
+            4,
+        )
+        self.assertEqual(
+            helpers.get_num_decimal_places(-512.472900),
+            4,
+        )
+        self.assertEqual(
+            helpers.get_num_decimal_places(-512.4729001),
+            7,
+        )
+        self.assertEqual(
+            helpers.get_num_decimal_places(512.000),
+            0,
+        )
+        self.assertEqual(
+            helpers.get_num_decimal_places(-512.10),
+            1,
+        )
 
