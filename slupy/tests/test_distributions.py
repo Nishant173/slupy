@@ -32,7 +32,7 @@ class TestDistribution(unittest.TestCase):
                 "D": 11.6,
                 "E": 0.102,
             },
-            shuffle=False,
+            shuffle=True,
         )
         self.assertEqual(
             dist.sample_size,
